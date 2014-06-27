@@ -14,12 +14,13 @@
 namespace Karwana\Penelope;
 
 use Everyman\Neo4j;
+use LogicException;
 
 class Node extends Object {
 
 	public function fetch() {
 		if (is_null($this->id)) {
-			throw new \LogicException('Cannot fetch without ID.');
+			throw new LogicException('Cannot fetch without ID.');
 		}
 
 		$node = $this->client->getNode($this->id);
@@ -105,9 +106,7 @@ class Node extends Object {
 	public function delete() {
 		$node = $this->client->getNode($this->id);
 		if (!$node) {
-
-			// TODO: Use NotFoundException.
-			throw new \RuntimeException('Nonexistent node "' . $this->id . '".');
+			throw new NotFoundException('Nonexistent node "' . $this->id . '".');
 		}
 
 		$node->delete();
