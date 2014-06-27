@@ -105,16 +105,6 @@ class Penelope {
 		}
 	}
 
-	public function getNode($name, $id) {
-		$node_schema = $this->schema->getNode($name);
-		$node = new Node($node_schema, $this->client, $id);
-
-		// Preload data before returning.
-		// Exception will be thrown if the node does not exist or if there's a mismatch between the requested node and the given schema.
-		$node->fetch();
-		return $node;
-	}
-
 	public function getEdge($name, $id) {
 		$edge_schema = $this->schema->getEdge($name);
 		$edge = new Edge($edge_schema, $this->client, $id);
@@ -169,57 +159,56 @@ class Penelope {
 	}
 
 	public function defineNode($name, $slug, array $properties = array(), array $options = array()) {
+		$node_schema = $this->schema->addNode($name, $slug, $properties);
+
 		$app = $this->app;
-		$crud = $this->crud;
 		$penelope = $this;
 
-		$schema = $this->schema->addNode($name, $slug, $properties);
-
-		$app->group('/' . $slug, function() use ($penelope, $app, $crud, $name, $schema) {
-			$app->get('/', function() use ($crud, $schema) {
-				$crud->readNodes($schema);
-			})->name('nodes_' . $name);
-
-			$app->post('/', function() use ($crud, $schema) {
-				$crud->createNode($schema);
-			});
-
-			$app->get('/new', function() use ($crud, $schema) {
-				$crud->renderNewNodeForm($schema);
-			})->name('new_node_' . $name);
+		$app->get($node_schema->getCollectionPath(), function() use ($penelope, $node_schema) {
+			$penelope->getCrud()->readNodes($node_schema);
 		});
 
-		$app->group('/' . $slug, function() use ($penelope, $app, $crud, $name) {
-			$route = $app->router()->getCurrentRoute();
+		$app->post($node_schema->getCollectionPath(), function() use ($penelope, $node_schema) {
+			$penelope->getCrud()->createNode($node_schema);
+		});
+
+		$app->get($node_schema->getNewPath(), function() use ($penelope, $node_schema) {
+			$penelope->getCrud()->renderNewNodeForm($node_schema);
+		});
+
+		// Middleware to preload the node specified by the ID in the URL.
+		$node_middleware = function($route) use ($penelope, $node_schema) {
+			$node_id = $route->getParam('node_id');
+			$app = $penelope->getApp();
 
 			try {
-
-				// Attempt to preload the node specified by the ID in the URL.
-				$node = $penelope->getNode($name, $route->getParam('node_id'));
+				$node = $node_schema->get($penelope->getClient(), $node_id);
 			} catch (NotFoundException $e) {
-				$crud->render404($e);
+				$penelope->getCrud()->render404($e);
 				$app->stop();
 			}
 
 			$app->node = $node;
+		};
 
-		}, function() use ($app, $crud, $name) {
+		$node_slug = $node_schema->getSlug();
+		$node_path = sprintf($node_schema->getPathFormat(), $node_slug, ':node_id');
+		$node_edit_path = sprintf($node_schema->getPathFormat('edit'), $node_slug, ':node_id');
 
-			$app->get('/:node_id', function() use ($app, $crud) {
-				$crud->readNode($app->node);
-			})->name('node_' . $name);
+		$app->get($node_path, $node_middleware, function() use ($penelope) {
+			$penelope->getCrud()->readNode($penelope->getApp()->node);
+		});
 
-			$app->put('/:node_id', function() use ($app, $crud) {
-				$crud->updateNode($app->node);
-			});
+		$app->put($node_path, $node_middleware, function() use ($penelope) {
+			$penelope->getCrud()->updateNode($penelope->getApp()->node);
+		});
 
-			$app->delete('/:node_id', function() use ($app, $crud) {
-				$crud->deleteNode($app->node);
-			});
+		$app->delete($node_path, $node_middleware, function() use ($penelope) {
+			$penelope->getCrud()->deleteNode($penelope->getApp()->node);
+		});
 
-			$app->get('/:node_id/edit', function() use ($app, $crud) {
-				$crud->renderEditNodeForm($app->node);
-			})->name('edit_node_' . $name);
+		$app->get($node_edit_path, function() use ($penelope) {
+			$penelope->getCrud()->renderEditNodeForm($penelope->getApp()->node);
 		});
 	}
 }

@@ -13,7 +13,23 @@
 
 namespace Karwana\Penelope;
 
+use Everyman\Neo4j;
+
 class NodeSchema extends ObjectSchema {
+
+	public function get(Neo4j\Client $client, $id, $fetch = true) {
+		$node = new Node($this, $client, $id);
+
+		// Preload data before returning.
+		// Exception will be thrown if:
+		//  - the node does not exist
+		//  - there's a mismatch between the requested node and the given schema
+		if ($fetch) {
+			$node->fetch();
+		}
+
+		return $node;
+	}
 
 	public function getNewPath() {
 		return sprintf($this->getPathFormat('new'), $this->getSlug());
