@@ -207,7 +207,7 @@ class Penelope {
 			$penelope->getCrud()->deleteNode($penelope->getApp()->node);
 		});
 
-		$app->get($node_edit_path, function() use ($penelope) {
+		$app->get($node_edit_path, $node_middleware, function() use ($penelope) {
 			$penelope->getCrud()->renderEditNodeForm($penelope->getApp()->node);
 		});
 	}
