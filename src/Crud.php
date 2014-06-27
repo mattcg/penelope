@@ -69,17 +69,14 @@ class Crud {
 			return;
 		}
 
-		$node_uri = $this->app->urlFor('node_' . $node_schema->getName(), array('node_id' => $node->getId()));
-
-		$view_data = array('title' => $node_schema->getName() . ' #' . $node->getId() . ' created', 'node' => $node, 'node_uri' => $node_uri);
+		$view_data = array('title' => $node_schema->getName() . ' #' . $node->getId() . ' created', 'node' => $node);
 		$this->app->response->setStatus(201);
-		$this->app->response->headers->set('Location', $node_uri);
+		$this->app->response->headers->set('Location', $node->getPath());
 		$this->app->render('node_created', $view_data);
 	}
 
 	public function renderNewNodeForm(NodeSchema $node_schema, array $transient_properties = null, \Exception $e = null) {
 		$view_data = array('title' => 'New ' . $node_schema->getName(), 'error' => $e);
-
 		$view_data['properties'] = array();
 
 		foreach ($node_schema->getProperties() as $property_schema) {
@@ -100,12 +97,7 @@ class Crud {
 			$this->app->response->setStatus(422);
 		}
 
-		$schema_name = $node_schema->getName();
-
 		$view_data['node_schema'] = $node_schema;
-		$view_data['action_uri'] = $this->app->urlFor('nodes_' . $schema_name);
-		$view_data['node_uris'] = array('collection' => $this->app->urlFor('nodes_' . $schema_name));
-
 		$this->app->render('node_new', $view_data);
 	}
 
@@ -177,27 +169,15 @@ class Crud {
 			$this->app->response->setStatus(422);
 		}
 
-		$schema_name = $node_schema->getName();
-
-		$view_data['action_uri'] = $this->app->urlFor('node_' . $schema_name, array('node_id' => $node->getId()));
 		$view_data['node_schema'] = $node_schema;
-		$view_data['node_uris'] = array();
-		$view_data['node_uris']['new'] = $this->app->urlFor('new_node_' . $schema_name);
-		$view_data['node_uris']['collection'] = $this->app->urlFor('nodes_' . $schema_name);
-
+		$view_data['node'] = $node;
 		$this->app->render('node_edit', $view_data);
 	}
 
 	public function readNode(Node $node) {
 		$node_schema = $node->getSchema();
-		$schema_name = $node_schema->getName();
 
 		$view_data = array('title' => $node->getTitle(), 'node' => $node, 'node_schema' => $node->getSchema());
-		$view_data['node_uris'] = array();
-		$view_data['node_uris']['edit'] = $this->app->urlFor('edit_node_' . $schema_name, array('node_id' => $node->getId()));
-		$view_data['node_uris']['new'] = $this->app->urlFor('new_node_' . $schema_name);
-		$view_data['node_uris']['collection'] = $this->app->urlFor('nodes_' . $schema_name);
-
 		$this->app->render('node', $view_data);
 	}
 
@@ -212,9 +192,6 @@ class Crud {
 			$view_data['nodes'][] = new Node($node_schema, $this->client, $node);
 		}
 
-		$view_data['node_uris'] = array();
-		$view_data['node_uris']['new'] = $this->app->urlFor('new_node_' . $node_schema->getName());
-
 		$this->app->render('nodes', $view_data);
 	}
 
@@ -223,7 +200,6 @@ class Crud {
 		$node_schema = $node->getSchema();
 
 		$view_data = array('title' => 'Deleted ' . $node_schema->getName() . ' #' . $id, 'node_schema' => $node_schema);
-		$view_data['nodes_uri'] = $this->app->urlFor('nodes_' . $node_schema->getName());
 
 		$node->delete();
 		$this->app->render('node_deleted', $view_data);

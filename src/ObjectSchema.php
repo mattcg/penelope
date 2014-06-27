@@ -13,9 +13,14 @@
 
 namespace Karwana\Penelope;
 
+use BadMethodCallException;
+use InvalidArgumentException;
+
 abstract class ObjectSchema extends OptionContainer {
 
 	protected $name, $slug, $property_schemas = array();
+
+	protected $path_formats = array('collection' => '/%s/', 'new' => '/%s/new', 'edit' => '/%s/%d/edit', 'object' => '/%s/%d');
 
 	public function __construct($name, $slug, array $properties, array $options = null) {
 		parent::__construct($options);
@@ -51,7 +56,7 @@ abstract class ObjectSchema extends OptionContainer {
 			unset($property['type']);
 			$options = $property;
 		} else {
-			throw new \InvalidArgumentException('Invalid property definition at index "' . $name . '".');
+			throw new InvalidArgumentException('Invalid property definition at index "' . $name . '".');
 		}
 
 		if (substr($type, -2) === '[]') {
@@ -80,9 +85,22 @@ abstract class ObjectSchema extends OptionContainer {
 
 	public function getProperty($name) {
 		if (!$this->hasProperty($name)) {
-			throw new \InvalidArgumentException('Unknown property "' . $name . '".');
+			throw new InvalidArgumentException('Unknown property "' . $name . '".');
 		}
 
 		return $this->property_schemas[$name];
+	}
+
+	public function getPathFormat($type = 'object') {
+		if (!isset($this->path_formats[$type])) {
+			throw new InvalidArgumentException('Invalid path type "' . $type . '".');
+		}
+
+		$format = $this->getOption('path.format.' . $type);
+		if ($format) {
+			return $format;
+		}
+
+		return $this->path_formats[$type];
 	}
 }

@@ -1,43 +1,45 @@
-<?php
-
-require __path('node_header.php');
-
-?>
-
-<?php
-
-if (empty($nodes)) {
-
-?>
-<p>There aren't any <?php __($node_schema->getName()); ?> nodes.</p>
-<?php
-
-}
-
-?>
-
-<?php
-
-if (!empty($nodes)) {
-
-?>
-<nav class="nodes">
-	<ul>
+<main class="nodes">
 	<?php
 
-	foreach ($nodes as $node) {
+	require __path('node_header.php');
 
 	?>
-		<li><a href="/<?php __($node->getSlug()); ?>"><?php __($node->getTitle()); ?></a></li>
+
+	<?php
+
+	if (empty($nodes)) {
+
+	?>
+	<p>There aren't any <?php __($node_schema->getName()); ?> nodes.</p>
 	<?php
 
 	}
 
 	?>
-	</ul>
-</nav>
-<?php
 
-}
+	<?php
 
-?>
+	if (!empty($nodes)) {
+
+	?>
+	<nav class="nodes">
+		<ul>
+		<?php
+
+		foreach ($nodes as $node) {
+
+		?>
+			<li><a href="<?php __($node->getPath()); ?>" title="<?php __($node->getTitle()); ?>"><?php __($node->getTitle()); ?></a></li>
+		<?php
+
+		}
+
+		?>
+		</ul>
+	</nav>
+	<?php
+
+	}
+
+	?>
+</main>

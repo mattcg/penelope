@@ -1,1 +1,3 @@
-<p>Go to node <a href="<?php __($node_uri); ?>" title="Node #<?php __($node->getId()); ?>">#<?php __($node->getId()); ?></a>.</p>
+<main class="node created">
+	<p>View <a href="<?php __($node->getPath()); ?>" title="<?php __($node->getTitle()); ?>"><?php __($node->getTitle()); ?></a>.</p>
+</main>

@@ -18,6 +18,24 @@ use LogicException;
 
 class Node extends Object {
 
+	public function getPath() {
+		if (!$this->hasId()) {
+			throw new LogicException('Cannot create path for node with no ID.');
+		}
+
+		$format = $this->schema->getPathFormat();
+		return sprintf($format, $this->schema->getSlug(), $this->getId());
+	}
+
+	public function getEditPath() {
+		if (!$this->hasId()) {
+			throw new LogicException('Cannot create edit path for node with no ID.');
+		}
+
+		$format = $this->schema->getPathFormat('edit');
+		return sprintf($format, $this->schema->getSlug(), $this->getId());
+	}
+
 	public function fetch() {
 		if (is_null($this->id)) {
 			throw new LogicException('Cannot fetch without ID.');

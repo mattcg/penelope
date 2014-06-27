@@ -13,4 +13,13 @@
 
 namespace Karwana\Penelope;
 
-class NodeSchema extends ObjectSchema {}
+class NodeSchema extends ObjectSchema {
+
+	public function getNewPath() {
+		return sprintf($this->getPathFormat('new'), $this->getSlug());
+	}
+
+	public function getCollectionPath() {
+		return sprintf($this->getPathFormat('collection'), $this->getSlug());
+	}
+}

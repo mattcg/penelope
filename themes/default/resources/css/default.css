@@ -58,16 +58,13 @@ article.node > header > h1 {
   float: left;
 }
 
-main > header > nav.crud > ul,
-main > header > nav.crud > ul > li,
-article.node > header > nav.crud > ul,
-article.node > header > nav.crud > ul > li {
+header.node > nav.crud > ul,
+header.node > nav.crud > ul > li {
   display: inline;
   margin: 0;
   padding: 0;
 }
-main > header > nav.crud > ul > li > a,
-article.node > header > nav.crud > ul > li > a {
+header.node > nav.crud > ul > li > a {
   text-transform: uppercase;
   color: white;
   font-size: 0.7rem;
@@ -82,23 +79,22 @@ article.node > header > nav.crud > ul > li > a {
   -o-border-radius: 0.2em;
   border-radius: 0.2em;
 }
-main > header > nav.crud > ul > li + li,
-article.node > header > nav.crud > ul > li + li {
+header.node > nav.crud > ul > li + li {
   margin-left: 0.4rem;
 }
-main > header > nav.crud > ul > li > a.new,
-article.node > header > nav.crud > ul > li > a.new {
+header.node > nav.crud > ul > li > a.new {
   background-color: #428bca;
 }
-main > header > nav.crud > ul > li > a.edit,
-article.node > header > nav.crud > ul > li > a.edit {
+header.node > nav.crud > ul > li > a.edit {
   background-color: #d9534f;
 }
-main > header > nav.crud > ul > li > a.new,
-main > header > nav.crud > ul > li > a.edit,
-article.node > header > nav.crud > ul > li > a.new,
-article.node > header > nav.crud > ul > li > a.edit {
+header.node > nav.crud > ul > li > a.new,
+header.node > nav.crud > ul > li > a.edit {
   text-decoration: none;
+}
+
+main.node.new > header.node > nav.crud > ul > li.new {
+  display: none;
 }
 
 article.node > dl.node-properties {

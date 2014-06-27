@@ -49,14 +49,6 @@ abstract class Object {
 		return $this->schema;
 	}
 
-	public function getSlug() {
-		if (!$this->hasId()) {
-			throw new LogicException('Cannot create slug for object with no ID.');
-		}
-
-		return $this->schema->getSlug() . '/' . $this->id;
-	}
-
 	public function getTitle() {
 		$option = $this->schema->getOption('title');
 		if (!$option) {

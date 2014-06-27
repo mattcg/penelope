@@ -28,4 +28,3 @@
 		<header>
 			<h1>Penelope</h1>
 		</header>
-		<main>

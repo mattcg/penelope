@@ -65,8 +65,7 @@ article.node > header {
 	}
 }
 
-main > header > nav.crud,
-article.node > header > nav.crud {
+header.node > nav.crud {
 	> ul,
 	> ul > li {
 		display: inline;
@@ -101,6 +100,12 @@ article.node > header > nav.crud {
 	> ul > li > a.new,
 	> ul > li > a.edit {
 		text-decoration: none;
+	}
+}
+
+main.node.new > header.node > nav.crud {
+	> ul > li.new {
+		display: none;
 	}
 }
 
