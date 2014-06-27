@@ -15,6 +15,10 @@ namespace Karwana\Penelope;
 
 use Everyman\Neo4j;
 
+use LogicException;
+use RuntimeException;
+use InvalidArgumentException;
+
 abstract class Object {
 
 	protected $id, $schema, $object, $properties = array();
@@ -47,7 +51,7 @@ abstract class Object {
 
 	public function getSlug() {
 		if (!$this->hasId()) {
-			throw new \LogicException('Cannot create slug for object with no ID.');
+			throw new LogicException('Cannot create slug for object with no ID.');
 		}
 
 		return $this->schema->getSlug() . '/' . $this->id;
@@ -60,7 +64,7 @@ abstract class Object {
 		}
 
 		if (!is_callable($option)) {
-			throw new \RuntimeException('Option for "title" must be callable.');
+			throw new RuntimeException('Option for "title" must be callable.');
 		}
 
 		$title = $option($this);
@@ -85,7 +89,7 @@ abstract class Object {
 
 	public function getProperty($name) {
 		if (!$this->schema->hasProperty($name)) {
-			throw new \InvalidArgumentException('Unknown property "' . $name . '".');
+			throw new InvalidArgumentException('Unknown property "' . $name . '".');
 		}
 
 		if (!$this->got_properties) {
