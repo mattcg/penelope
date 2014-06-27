@@ -13,14 +13,14 @@
 
 namespace Karwana\Penelope\Types;
 
-class Datetime extends Type implements TypeInterface {
+class Datetime extends Type {
 
 	public function __construct($value = null, array $options = null) {
 		if (is_string($value)) {
 			$value = strtotime($value);
 		}
 
-		parent::__construct($value);
+		parent::__construct($value, $options);
 	}
 
 	public static function validate($value) {

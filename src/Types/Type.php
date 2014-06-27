@@ -13,11 +13,18 @@
 
 namespace Karwana\Penelope\Types;
 
-abstract class Type {
+use Karwana\Penelope\OptionContainer;
+
+use BadMethodCallException;
+use InvalidArgumentException;
+
+abstract class Type extends OptionContainer {
 
 	private $value;
 
 	public function __construct($value = null, array $options = null) {
+		parent::__construct($options);
+
 		if (is_null($value)) {
 			return;
 		}
@@ -25,11 +32,15 @@ abstract class Type {
 		if (static::validate($value)) {
 			$this->value = $value;
 		} else {
-			throw new \InvalidArgumentException('Invalid type.');
+			throw new InvalidArgumentException('Invalid type.');
 		}
 	}
 
 	public function getValue() {
 		return $this->value;
+	}
+
+	public static function validate($value) {
+		throw new BadMethodCallException('Not implemented.');
 	}
 }

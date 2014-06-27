@@ -14,16 +14,18 @@
 namespace Karwana\Penelope\Types;
 
 use Alcohol\ISO3166;
+use Exception;
+use InvalidArgumentException;
 
-class Country extends Type implements TypeInterface {
+class Country extends Type {
 
 	private $mode;
 
 	public function __construct($value = null, array $options = null) {
 
-		// Normalize to uppercase.
+		// Normalize code to uppercase.
 		$value = strtoupper($value);
-		parent::__construct($value);
+		parent::__construct($value, $options);
 	}
 
 	public static function getCountries() {
@@ -38,12 +40,12 @@ class Country extends Type implements TypeInterface {
 	public static function getCountryName($code) {
 		try {
 			$country = ISO3166::getByAlpha3($code);
-		} catch (\Exception $e) {
+		} catch (Exception $e) {
 			$country = null;
 		}
 
 		if (!$country) {
-			throw new \InvalidArgumentException('Invalid code "' . $code . '".');
+			throw new InvalidArgumentException('Invalid code "' . $code . '".');
 		}
 
 		return $country['name'];
@@ -52,7 +54,7 @@ class Country extends Type implements TypeInterface {
 	public static function validate($value) {
 		try {
 			$valid = (bool) ISO3166::getByAlpha3($value);
-		} catch (\Exception $e) {
+		} catch (Exception $e) {
 			$valid = false;
 		}
 

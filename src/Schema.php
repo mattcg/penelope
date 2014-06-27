@@ -17,8 +17,8 @@ class Schema {
 
 	private $nodes = array(), $edges = array(), $node_slugs = array(), $edge_slugs = array();
 
-	public function addNode($name, $slug, array $properties) {
-		$schema = new NodeSchema($name, $slug, $properties);
+	public function addNode($name, $slug, array $properties, array $options = null) {
+		$schema = new NodeSchema($name, $slug, $properties, $options);
 		$this->nodes[$name] = $schema;
 		$this->node_slugs[$slug] = $name;
 

@@ -13,11 +13,13 @@
 
 namespace Karwana\Penelope;
 
-class PropertySchema {
+class PropertySchema extends OptionContainer {
 
-	private $name, $type, $is_multi_value, $options;
+	private $name, $type, $is_multi_value;
 
 	public function __construct($name, $type, $is_multi_value = false, array $options = null) {
+		parent::__construct($options);
+
 		if (empty($name)) {
 			throw new \InvalidArgumentException('Property name can not be empty.');
 		}
@@ -29,7 +31,6 @@ class PropertySchema {
 		$this->name = $name;
 		$this->type = $type;
 		$this->is_multi_value = (bool) $is_multi_value;
-		$this->options = $options;
 	}
 
 	public function getName() {
@@ -42,15 +43,5 @@ class PropertySchema {
 
 	public function getType() {
 		return $this->type;
-	}
-
-	public function getOptions() {
-		return $this->options;
-	}
-
-	public function getOption($name) {
-		if (isset($this->options[$name])) {
-			return $this->options[$name];
-		}
 	}
 }

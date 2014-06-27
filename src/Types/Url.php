@@ -13,7 +13,7 @@
 
 namespace Karwana\Penelope\Types;
 
-class Url extends Type implements TypeInterface {
+class Url extends Type {
 
 	public static function validate($value) {
 		return (bool) filter_var($value, FILTER_VALIDATE_URL);

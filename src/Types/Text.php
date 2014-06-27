@@ -13,7 +13,7 @@
 
 namespace Karwana\Penelope\Types;
 
-class Text extends Type implements TypeInterface {
+class Text extends Type {
 
 	public static function validate($value) {
 		return is_string($value);
