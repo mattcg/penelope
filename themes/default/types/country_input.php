@@ -19,6 +19,11 @@ if ($property->getSchema()->isMultiValue()) {
 		}
 ?>
 </select>
+<?php
+
+	}
+
+?>
 <select id="<?php __($property_id); ?>" name="<?php __($property->getName()); ?>[]" class="new">
 	<option value=""></option>
 <?php
@@ -33,7 +38,6 @@ if ($property->getSchema()->isMultiValue()) {
 ?>
 </select>
 <?php
-	}
 
 } else {
 
