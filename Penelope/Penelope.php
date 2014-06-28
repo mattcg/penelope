@@ -116,7 +116,7 @@ class Penelope {
 	}
 
 	public function defineEdge($name, $slug, array $relationships, array $properties = array(), array $options = array()) {
-		$schema = $this->schema->addEdge($name, $slug, $relationships, $properties);
+		$schema = $this->schema->addEdge($name, $slug, $relationships, $properties, $options);
 
 		foreach ($relationships as $relationship) {
 			$this->defineEdgeFrom($this->schema->getNode($relationship[0]), $schema);
@@ -159,7 +159,7 @@ class Penelope {
 	}
 
 	public function defineNode($name, $slug, array $properties = array(), array $options = array()) {
-		$node_schema = $this->schema->addNode($name, $slug, $properties);
+		$node_schema = $this->schema->addNode($name, $slug, $properties, $options);
 
 		$app = $this->app;
 
