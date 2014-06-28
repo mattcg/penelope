@@ -20,24 +20,16 @@ use InvalidArgumentException;
 
 abstract class Type extends OptionContainer {
 
-	private $value;
-
-	public static function isEmpty($value) {
-		if (is_null($value)) {
-			return true;
-		}
-
-		if ('' === $value) {
-			return true;
-		}
-
-		return false;
-	}
+	protected $value;
 
 	public function __construct($value = null, array $options = null) {
 		parent::__construct($options);
+		$this->setValue($value);
+	}
 
-		if (is_null($value)) {
+	protected function setValue($value) {
+		if (static::isEmpty($value)) {
+			$this->value = null;
 			return;
 		}
 
@@ -54,5 +46,17 @@ abstract class Type extends OptionContainer {
 
 	public static function validate($value) {
 		throw new BadMethodCallException('Not implemented.');
+	}
+
+	public static function isEmpty($value) {
+		if (is_null($value)) {
+			return true;
+		}
+
+		if ('' === $value) {
+			return true;
+		}
+
+		return false;
 	}
 }

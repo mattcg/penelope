@@ -19,13 +19,6 @@ use InvalidArgumentException;
 
 class Country extends Type {
 
-	public function __construct($value = null, array $options = null) {
-
-		// Normalize code to uppercase.
-		$value = strtoupper($value);
-		parent::__construct($value, $options);
-	}
-
 	public static function getCountries() {
 		$countries = array();
 		foreach (ISO3166::getAll() as $country) {
@@ -47,6 +40,16 @@ class Country extends Type {
 		}
 
 		return $country['name'];
+	}
+
+	protected function setValue($value) {
+
+		// Normalize code to uppercase.
+		if (is_string($value)) {
+			$value = strtoupper($value);
+		}
+
+		parent::setValue($value);
 	}
 
 	public static function validate($value) {
