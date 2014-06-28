@@ -122,6 +122,7 @@ article.node > dl.node-properties {
 
 	> dd {
 		margin: 1em 0;
+		max-width: $max-reading-width;
 	}
 
 	> dd + dt {
@@ -227,8 +228,9 @@ input[type=submit] {
 }
 
 textarea {
-	width: 50%;
+	width: 100%;
 	min-height: 10em;
+	max-width: $max-reading-width;
 	@include box-sizing(border-box);
 }
 

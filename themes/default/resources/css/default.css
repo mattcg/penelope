@@ -109,6 +109,7 @@ article.node > dl.node-properties > dt {
 }
 article.node > dl.node-properties > dd {
   margin: 1em 0;
+  max-width: 40rem;
 }
 article.node > dl.node-properties > dd + dt {
   margin-top: 2em;
@@ -203,8 +204,9 @@ input[type=submit] {
 }
 
 textarea {
-  width: 50%;
+  width: 100%;
   min-height: 10em;
+  max-width: 40rem;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
