@@ -15,6 +15,8 @@ namespace Karwana\Penelope;
 
 const VERSION = '1.0.0';
 
+use Closure;
+
 use Slim;
 use Everyman\Neo4j;
 use Exceptions\NotFoundException;
@@ -42,10 +44,9 @@ class Penelope {
 		$this->crud = new Crud($this->schema, $client, $app);
 
 		// Set up the home route.
-		$penelope = $this;
-		$app->get('/', function() use ($penelope) {
-			$penelope->getCrud()->readHome();
-		});
+		$app->get('/', Closure::bind(function() {
+			$this->getCrud()->readHome();
+		}, $this));
 	}
 
 	public function getClient() {
@@ -78,23 +79,22 @@ class Penelope {
 			return;
 		}
 
-		$penelope = $this;
-		$this->app->get($pattern, function($resource_type, $file) use ($penelope) {
-			$theme = $penelope->getTheme();
+		$this->app->get($pattern, Closure::bind(function($resource_type, $file) {
+			$theme = $this->getTheme();
 
 			// Pass if not an instance or child of the default theme, as DefaultTheme#renderResource won't be present.
 			// In non-standard use cases, this allows the user to use a regular Slim\View as the view.
 			if (!$theme) {
-				$penelope->getApp()->pass();
+				$this->getApp()->pass();
 			}
 
 			try {
 				$theme->renderResource($resource_type, $file);
 			} catch (NotFoundException $e) {
-				$penelope->getCrud()->render404($e);
+				$this->getCrud()->render404($e);
 			}
 
-		})->name($theme::ROUTE_NAME);
+		}, $this))->name($theme::ROUTE_NAME);
 	}
 
 	public function getTheme() {
@@ -162,53 +162,52 @@ class Penelope {
 		$node_schema = $this->schema->addNode($name, $slug, $properties);
 
 		$app = $this->app;
-		$penelope = $this;
 
-		$app->get($node_schema->getCollectionPath(), function() use ($penelope, $node_schema) {
-			$penelope->getCrud()->readNodes($node_schema);
-		});
+		$app->get($node_schema->getCollectionPath(), Closure::bind(function() use ($node_schema) {
+			$this->getCrud()->readNodes($node_schema);
+		}, $this));
 
-		$app->post($node_schema->getCollectionPath(), function() use ($penelope, $node_schema) {
-			$penelope->getCrud()->createNode($node_schema);
-		});
+		$app->post($node_schema->getCollectionPath(), Closure::bind(function() use ($node_schema) {
+			$this->getCrud()->createNode($node_schema);
+		}, $this));
 
-		$app->get($node_schema->getNewPath(), function() use ($penelope, $node_schema) {
-			$penelope->getCrud()->renderNewNodeForm($node_schema);
-		});
+		$app->get($node_schema->getNewPath(), Closure::bind(function() use ($node_schema) {
+			$this->getCrud()->renderNewNodeForm($node_schema);
+		}, $this));
 
 		// Middleware to preload the node specified by the ID in the URL.
-		$node_middleware = function($route) use ($penelope, $node_schema) {
+		$node_middleware = Closure::bind(function($route) use ($node_schema) {
 			$node_id = $route->getParam('node_id');
-			$app = $penelope->getApp();
+			$app = $this->getApp();
 
 			try {
-				$node = $node_schema->get($penelope->getClient(), $node_id);
+				$node = $node_schema->get($this->getClient(), $node_id);
 			} catch (NotFoundException $e) {
-				$penelope->getCrud()->render404($e);
+				$this->getCrud()->render404($e);
 				$app->stop();
 			}
 
 			$app->node = $node;
-		};
+		}, $this);
 
 		$node_slug = $node_schema->getSlug();
 		$node_path = sprintf($node_schema->getPathFormat(), $node_slug, ':node_id');
 		$node_edit_path = sprintf($node_schema->getPathFormat('edit'), $node_slug, ':node_id');
 
-		$app->get($node_path, $node_middleware, function() use ($penelope) {
-			$penelope->getCrud()->readNode($penelope->getApp()->node);
-		});
+		$app->get($node_path, $node_middleware, Closure::bind(function() {
+			$this->getCrud()->readNode($this->getApp()->node);
+		}, $this));
 
-		$app->put($node_path, $node_middleware, function() use ($penelope) {
-			$penelope->getCrud()->updateNode($penelope->getApp()->node);
-		});
+		$app->put($node_path, $node_middleware, Closure::bind(function() {
+			$this->getCrud()->updateNode($this->getApp()->node);
+		}, $this));
 
-		$app->delete($node_path, $node_middleware, function() use ($penelope) {
-			$penelope->getCrud()->deleteNode($penelope->getApp()->node);
-		});
+		$app->delete($node_path, $node_middleware, Closure::bind(function() {
+			$this->getCrud()->deleteNode($this->getApp()->node);
+		}, $this));
 
-		$app->get($node_edit_path, $node_middleware, function() use ($penelope) {
-			$penelope->getCrud()->renderEditNodeForm($penelope->getApp()->node);
-		});
+		$app->get($node_edit_path, $node_middleware, Closure::bind(function() {
+			$this->getCrud()->renderEditNodeForm($this->getApp()->node);
+		}, $this));
 	}
 }
