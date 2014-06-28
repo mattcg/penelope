@@ -201,3 +201,28 @@ input[type=submit] {
   -o-border-radius: 0.2em;
   border-radius: 0.2em;
 }
+
+textarea {
+  width: 50%;
+  min-height: 10em;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+input[type=text],
+input:not([type]),
+textarea {
+  font: 0.9rem sans-serif;
+  padding: 0.4em;
+  border: 1px solid #eee;
+  -webkit-border-radius: 0.2em;
+  -moz-border-radius: 0.2em;
+  -ms-border-radius: 0.2em;
+  -o-border-radius: 0.2em;
+  border-radius: 0.2em;
+}
+
+select {
+  font: 0.9rem sans-serif;
+}

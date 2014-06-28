@@ -226,3 +226,21 @@ input[type=submit] {
 	@include border-radius(0.2em);
 }
 
+textarea {
+	width: 50%;
+	min-height: 10em;
+	@include box-sizing(border-box);
+}
+
+input[type=text],
+input:not([type]),
+textarea {
+	font: 0.9rem sans-serif;
+	padding: 0.4em;
+	border: 1px solid #eee;
+	@include border-radius(0.2em);
+}
+
+select {
+	font: 0.9rem sans-serif;
+}
