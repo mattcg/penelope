@@ -50,7 +50,7 @@ abstract class Object {
 	}
 
 	public function getTitle() {
-		$option = $this->schema->getOption('title');
+		$option = $this->schema->getOption('format.title');
 		if (!$option) {
 			return $this->getDefaultTitle();
 		}
