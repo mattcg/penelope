@@ -19,8 +19,6 @@ use InvalidArgumentException;
 
 class Country extends Type {
 
-	private $mode;
-
 	public function __construct($value = null, array $options = null) {
 
 		// Normalize code to uppercase.
