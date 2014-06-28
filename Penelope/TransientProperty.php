@@ -14,6 +14,7 @@
 namespace Karwana\Penelope;
 
 class TransientProperty extends Property {
+
 	private $exception;
 
 	public function setError(\Exception $e) {
@@ -25,24 +26,12 @@ class TransientProperty extends Property {
 	}
 
 	public function setValue($value) {
-		if ($this->schema->isMultiValue()) {
-			$values = (array) $value;
-			$this->values = array(); // Reset.
-			foreach ($values as $value) {
-				$this->values[] = $value;
-			}
-		} else {
-			$this->values[0] = $value;
-		}
+		$this->value = $this->filterValue($value);
 	}
 
 	public function getValue() {
-		if ($this->schema->isMultiValue()) {
-			return $this->values;
-		}
-
-		if (!empty($this->values)) {
-			return $this->values[0];
+		if ($this->hasValue()) {
+			return $this->value;
 		}
 	}
 }

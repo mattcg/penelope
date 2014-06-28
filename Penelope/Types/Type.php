@@ -22,6 +22,18 @@ abstract class Type extends OptionContainer {
 
 	private $value;
 
+	public static function isEmpty($value) {
+		if (is_null($value)) {
+			return true;
+		}
+
+		if ('' === $value) {
+			return true;
+		}
+
+		return false;
+	}
+
 	public function __construct($value = null, array $options = null) {
 		parent::__construct($options);
 
@@ -32,7 +44,7 @@ abstract class Type extends OptionContainer {
 		if (static::validate($value)) {
 			$this->value = $value;
 		} else {
-			throw new InvalidArgumentException('Invalid type.');
+			throw new InvalidArgumentException('Invalid value.');
 		}
 	}
 

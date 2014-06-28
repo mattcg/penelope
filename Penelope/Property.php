@@ -14,10 +14,12 @@
 namespace Karwana\Penelope;
 
 class Property {
-	protected $values = array(), $schema;
+
+	protected $value, $schema, $type_class;
 
 	public function __construct(PropertySchema $property_schema) {
 		$this->schema = $property_schema;
+		$this->type_class = __NAMESPACE__ . '\\Types\\' . ucfirst($property_schema->getType());
 	}
 
 	public function getSchema() {
@@ -29,32 +31,57 @@ class Property {
 	}
 
 	public function hasValue() {
-		return !empty($this->values);		
+		return !is_null($this->value);
 	}
 
 	public function setValue($value) {
-		$type_class = 'Karwana\\Penelope\\Types\\' . ucfirst($this->schema->getType());
+		$type_class = $this->type_class;
 		$options = $this->schema->getOptions();
 
-		if ($this->schema->isMultiValue()) {
-			$this->values = array_map(function($value) use ($type_class, $options) {
-				return new $type_class($value, $options);
-			}, (array) $value);
+		$value = $this->filterValue($value);
+		if (is_null($value)) {
+			$this->value = null;
+			return;
+		}
 
+		if ($this->schema->isMultiValue()) {
+			$this->value = array_map(function($value) use ($type_class, $options) {
+				return new $type_class($value, $options);
+			}, $value);
 		} else {
-			$this->values[0] = new $type_class($value, $options);
+			$this->value = new $type_class($value, $options);
 		}
 	}
 
 	public function getValue() {
-		if ($this->schema->isMultiValue()) {
-			return array_map(function($value) {
-				return $value->getValue();
-			}, $this->values);
+		if (!$this->hasValue()) {
+			return;
 		}
 
-		if (!empty($this->values)) {
-			return $this->values[0]->getValue();
+		if (!$this->schema->isMultiValue()) {
+			return $this->value->getValue();
+		}
+
+		return array_map(function($value) {
+			return $value->getValue();
+		}, $this->value);
+	}
+
+	public function filterValue($value) {
+		$type_class = $this->type_class;
+
+		if (!$this->schema->isMultiValue()) {
+			if (!$type_class::isEmpty($value)) {
+				return $value;
+			}
+		}
+
+		$value = array_filter((array) $value, function($value) use ($type_class) {
+			return !$type_class::isEmpty($value);
+		});
+
+		if (!empty($value)) {
+			return $value;
 		}
 	}
 }

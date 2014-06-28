@@ -1,17 +1,22 @@
 <?php
 
 if ($property->getSchema()->isMultiValue()) {
-	foreach (array_merge($property->getValue(), array(null)) as $value) {
+	foreach ((array) $property->getValue() as $value) {
 
 ?>
-<input id="<?php __($property_id); ?>" name="<?php __($property->getName()); ?>"<?php if ($value) { ?> value="<?php __datetime($value); ?>"<?php } ?>>
+<input name="<?php __($property->getName()); ?>"<?php if ($value) { ?> value="<?php __datetime($value); ?>"<?php } ?>>
 <?php
 
 	}
+
+?>
+<input id="<?php __($property_id); ?>" name="<?php __($property->getName()); ?>" class="new">
+<?php
+
 } else {
 
 ?>
-<input id="<?php __($property_id); ?>" name="<?php __($property->getName()); ?>"<?php if ($property->getValue()) { ?> value="<?php __datetime($property->getValue()); ?>"<?php } ?>>
+<input id="<?php __($property_id); ?>" name="<?php __($property->getName()); ?>"<?php if ($property->hasValue()) { ?> value="<?php __datetime($property->getValue()); ?>"<?php } ?>>
 <?php
 
 }

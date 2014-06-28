@@ -8,7 +8,7 @@ html {
 }
 
 body {
-	font-family: sans-serif;
+	font: 0.9rem sans-serif;
 	margin: 0;
 }
 
@@ -243,4 +243,8 @@ textarea {
 
 select {
 	font: 0.9rem sans-serif;
+}
+
+p.error {
+	color: $button-red;
 }
