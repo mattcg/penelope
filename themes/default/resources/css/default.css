@@ -111,6 +111,9 @@ article.node > dl.node-properties > dd {
   margin: 1em 0;
   max-width: 40rem;
 }
+article.node > dl.node-properties > dd > div.format-long {
+  white-space: pre-line;
+}
 article.node > dl.node-properties > dd + dt {
   margin-top: 2em;
 }

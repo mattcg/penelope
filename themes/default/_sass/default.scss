@@ -123,6 +123,10 @@ article.node > dl.node-properties {
 	> dd {
 		margin: 1em 0;
 		max-width: $max-reading-width;
+
+		> div.format-long {
+			white-space: pre-line;
+		}
 	}
 
 	> dd + dt {
