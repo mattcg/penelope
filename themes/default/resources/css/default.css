@@ -16,7 +16,10 @@ body > header {
   background-color: #a9ba9d;
   padding: 1rem;
 }
-body > header > h1 {
+body > header > a {
+  text-decoration: none;
+}
+body > header > a > h1 {
   margin: 0;
   color: white;
 }
@@ -43,18 +46,27 @@ main {
 }
 
 main > header,
-article.node > header {
+main > article > header {
   background-color: #333;
   padding: 0.8rem 1rem;
-  text-align: right;
 }
 main > header > h1,
-article.node > header > h1 {
+main > article > header > h1 {
   margin: 0;
   color: #999;
   font-weight: normal;
   font-size: 1.1rem;
   text-transform: uppercase;
+}
+
+main.nodes > header.node,
+main.node > header.node,
+article.node > header.node {
+  text-align: right;
+}
+main.nodes > header.node h1,
+main.node > header.node h1,
+article.node > header.node h1 {
   float: left;
 }
 

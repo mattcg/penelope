@@ -1,7 +1,18 @@
 <main class="home">
-	<?php if (empty($node_schemas)) { ?>
+	<header>
+		<h1><?php __($title); ?></h1>
+	</header>
+	<?php
+
+	if (empty($node_schemas)) {
+
+	?>
 	<p>No nodes defined.</p>
-	<?php } else { ?>
+	<?php
+
+	} else {
+
+	?>
 	<nav>
 		<ul>
 		<?php
@@ -17,5 +28,9 @@
 		?>
 		</ul>
 	</nav>
-	<?php } ?>
+	<?php
+
+	}
+
+	?>
 </main>

@@ -26,5 +26,5 @@
 	</head>
 	<body>
 		<header>
-			<h1>Penelope</h1>
+			<a href="/"><h1>Penelope</h1></a>
 		</header>
