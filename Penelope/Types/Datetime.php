@@ -13,14 +13,21 @@
 
 namespace Karwana\Penelope\Types;
 
+use InvalidArgumentException;
+
 class Datetime extends Type {
 
-	public function __construct($value = null, array $options = null) {
-		if (is_string($value)) {
-			$value = strtotime($value);
+	public static function unserialize($value) {
+		if (!is_string($value)) {
+			return $value;
 		}
 
-		parent::__construct($value, $options);
+		$value = strtotime($value);
+		if (false === $value) {
+			throw new InvalidArgumentException('Unable to convert "' . $value . '" to a valid time.');
+		}
+
+		return $value;
 	}
 
 	public static function isValid($value, &$message = null) {
