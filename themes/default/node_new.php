@@ -13,7 +13,7 @@
 
 	?>
 
-	<form class="create node node-<?php __class($node_schema->getName()); ?>" action="<?php __($node_schema->getCollectionPath()); ?>" method="POST">
+	<form enctype="<?php __formenc($node_schema); ?>" class="create node node-<?php __class($node_schema->getName()); ?>" action="<?php __($node_schema->getCollectionPath()); ?>" method="POST">
 		<?php
 
 		foreach ($properties as $property) {

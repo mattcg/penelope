@@ -15,7 +15,8 @@ namespace Karwana\Penelope;
 
 use Slim;
 use Negotiation\FormatNegotiator;
-use Dflydev\ApacheMimeTypes;
+
+use Karwana\Penelope\Types\File;
 
 class DefaultTheme extends Slim\View {
 
@@ -65,10 +66,7 @@ class DefaultTheme extends Slim\View {
 		}
 
 		$response = $this->app->response;
-		if ($mime_type = (new ApacheMimeTypes\PhpRepository())->findType(pathinfo($file, PATHINFO_EXTENSION))) {
-			$response->headers->set('Content-Type', $mime_type);
-		}
-
+		$response->headers->set('Content-Type', File::getMimeType($path));
 		$response->setBody(file_get_contents($path));
 	}
 

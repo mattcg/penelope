@@ -15,7 +15,12 @@ namespace Karwana\Penelope\Types;
 
 class Text extends Type {
 
-	public static function validate($value) {
-		return is_string($value);
+	public static function isValid($value, &$message = null) {
+		if (!is_string($value)) {
+			$message = 'Unexpected type received.';
+			return false;
+		}
+
+		return true;
 	}
 }

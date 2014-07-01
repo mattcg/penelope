@@ -19,20 +19,23 @@ use Closure;
 
 use Slim;
 use Everyman\Neo4j;
-use Exceptions\NotFoundException;
+
+use Karwana\Penelope\Exceptions\NotFoundException;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
 Slim\Route::setDefaultConditions(array(
-	'node_id' => '\d',
-	'edge_id' => '\d'
+	'node_id' => '\d+',
+	'edge_id' => '\d+'
 ));
 
-class Penelope {
+class Penelope extends OptionContainer {
 
 	private $schema, $app, $client, $crud;
 
-	public function __construct(Neo4j\Client $client, Slim\Slim $app, DefaultTheme $theme = null) {
+	public function __construct(Neo4j\Client $client, Slim\Slim $app, DefaultTheme $theme = null, array $options = null) {
+		parent::__construct($options);
+
 		$this->app = $app;
 		$this->client = $client;
 		$this->schema = new Schema();
@@ -47,6 +50,11 @@ class Penelope {
 		$app->get('/', Closure::bind(function() {
 			$this->getCrud()->readHome();
 		}, $this));
+
+		// Set up the uploads route.
+		$app->get('/uploads/:file_name', function($file_name) {
+			$this->getCrud()->readUpload($file_name);
+		});
 	}
 
 	public function getClient() {

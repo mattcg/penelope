@@ -146,6 +146,12 @@ dd.multivalue > ul.multivalue {
 	}
 }
 
+dd.type-image > img,
+form.node > img {
+	max-height: 10rem;
+	@include border-radius(50%);
+}
+
 main > nav.nodes {
 	margin: 1rem;
 
@@ -177,6 +183,10 @@ form.node {
 		border-color: #eee;
 		margin: 1rem 0;
 	}
+}
+
+form.node > img {
+	vertical-align: middle;
 }
 
 form.node.delete {

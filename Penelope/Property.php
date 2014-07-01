@@ -34,15 +34,19 @@ class Property {
 		return !is_null($this->value);
 	}
 
-	public function setValue($value) {
-		$type_class = $this->type_class;
-		$options = $this->schema->getOptions();
+	public function clearValue() {
+		$this->setValue(null);
+	}
 
+	public function setValue($value) {
 		$value = $this->filterValue($value);
 		if (is_null($value)) {
 			$this->value = null;
 			return;
 		}
+
+		$options = $this->schema->getOptions();
+		$type_class = $this->type_class;
 
 		if ($this->schema->isMultiValue()) {
 			$this->value = array_map(function($value) use ($type_class, $options) {
@@ -65,6 +69,41 @@ class Property {
 		return array_map(function($value) {
 			return $value->getValue();
 		}, $this->value);
+	}
+
+	public function setSerializedValue($value) {
+		if (is_null($value)) {
+			$this->setValue($value);
+			return;
+		}
+
+		$type_class = $this->type_class;
+
+		if ($this->schema->isMultiValue()) {
+			$value = array_map(function($value) use ($type_class) {
+				return $type_class::unserialize($value);
+			}, (array) $value);
+		} else {
+			$value = $type_class::unserialize($value);
+		}
+
+		$this->setValue($value);
+	}
+
+	public function getSerializedValue() {
+		if (!$this->hasValue()) {
+			return;
+		}
+
+		$type_class = $this->type_class;
+
+		if (!$this->schema->isMultiValue()) {
+			return $type_class::serialize($this->getValue());
+		}
+
+		return array_map(function($value) use ($type_class) {
+			return $type_class::serialize($value);
+		}, $this->getValue());
 	}
 
 	public function filterValue($value) {

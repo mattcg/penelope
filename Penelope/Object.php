@@ -99,6 +99,22 @@ abstract class Object {
 		return array_values($this->properties);
 	}
 
+	public function save() {
+
+		// Fetch the object if it hasn't been fetched yet.
+		if (!$this->object) {
+			$this->fetch();
+		}
+
+		$object = $this->object;
+		foreach ($this->properties as $property) {
+			$object->setProperty($property->getName(), $property->getSerializedValue());
+		}
+
+		$object->save();
+		$this->id = $object->getId();
+	}
+
 	private function loadProperties() {
 		$this->got_properties = true;
 
@@ -115,7 +131,7 @@ abstract class Object {
 			$this->properties[$property_name] = $property;
 
 			if ($this->object and !is_null($value = $this->object->getProperty($property_name))) {
-				$property->setValue($value);
+				$property->setSerializedValue($value);
 			}
 		}
 	}

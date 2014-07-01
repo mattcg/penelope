@@ -55,25 +55,17 @@ class Edge extends Object {
 			$edge = $this->client->makeRelationship();
 			$edge->setType($this->schema->getName());
 			$this->object = $edge;
-
-		// Fetch the node if it has an ID but hasn't been fetched yet.
 		} else if (!$this->object) {
-			$edge = $this->fetch();
-		} else {
-			$edge = $this->object;
+			$this->fetch();
 		}
 
-		foreach ($this->properties as $property) {
-			$edge->setProperty($property->getName(), $property->getValue());
-		}
-
+		$edge = $this->object;
 		if ($this->from_node and $this->to_node) {
 			$edge->setStartNode($this->from_node);
 			$edge->setEndNode($this->to_node);
 		}
 
-		$edge->save();
-		$this->id = $edge->getId();
+		parent::save();
 	}
 
 	public function delete() {

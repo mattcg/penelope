@@ -33,18 +33,41 @@ abstract class Type extends OptionContainer {
 			return;
 		}
 
-		if (static::validate($value)) {
-			$this->value = $value;
-		} else {
-			throw new InvalidArgumentException('Invalid value.');
+		if (!static::isValid($value, $message)) {
+			throw new InvalidArgumentException($message);	
 		}
+
+		$this->value = $value;
 	}
 
 	public function getValue() {
 		return $this->value;
 	}
 
-	public static function validate($value) {
+	public function hasValue() {
+		return !is_null($this->value);
+	}
+
+	public static function serialize($value) {
+		if (!is_scalar($value)) {
+			$value = json_encode($value, JSON_BIGINT_AS_STRING);
+			if (false === $value) {
+				throw new InvalidArgumentException(json_last_error_msg(), json_last_error());
+			}
+		}
+
+		return $value;
+	}
+
+	public static function unserialize($value) {
+		if (!is_scalar($value)) {
+			throw new InvalidArgumentException('Cannot unserialize non-scalar value.');
+		}
+
+		return $value;
+	}
+
+	public static function isValid($value, &$message = null) {
 		throw new BadMethodCallException('Not implemented.');
 	}
 

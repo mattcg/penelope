@@ -15,7 +15,12 @@ namespace Karwana\Penelope;
 
 use Slim;
 use Everyman\Neo4j;
-use Exceptions\NotFoundException;
+
+use Karwana\Penelope\Exceptions\NotFoundException;
+use Karwana\Penelope\Types\File;
+
+use Exception;
+use InvalidArgumentException;
 
 class Crud {
 
@@ -27,35 +32,107 @@ class Crud {
 		$this->app = $app;
 	}
 
-	public function readHome() {
-		$view_data = array('title' => 'Welcome', 'node_schemas' => $this->schema->getNodes());
-		$this->app->render('home', $view_data);
+	private function processFile(Object $object, $name, $file, array &$transient_properties, &$has_errors) {
+		$object_schema = $object->getSchema();
+		if (!$object_schema->hasProperty($name)) {
+			return;
+		}
+
+		$property_schema = $object_schema->getProperty($name);
+		$transient_property = new TransientProperty($property_schema);
+		$transient_properties[$name] = $transient_property;
+
+		// Check if each uploaded file was "OK" and if so set the value on the transient propert.
+		// Otherwise, set an error.
+		if ($property_schema->isMultiValue()) {
+			$this->processMultiFile($transient_property, $file);
+		} else if (UPLOAD_ERR_OK === $file['error']) {
+			$transient_property->setValue(array($file['tmp_name'], $file['name']));
+		} else {
+			$transient_property->setError(new UploadException($file['error']));
+		}
+
+		if ($transient_property->hasError()) {
+			$has_errors = true;
+			return;
+		}
+
+		try {
+			$object->setProperty($name, $transient_property->getValue());
+		} catch (InvalidArgumentException $e) {
+			$transient_property->setError($e);
+			$has_errors = true;
+		}
+	}
+
+	private function processMultiFile(TransientProperty $transient_property, $file) {
+
+		// Expecting an array of files.
+		if (!is_array($file['error'])) {
+			$transient_property->setError(new InvalidArgumentException('Expecting multiple files; only one received.'));
+			return;
+		}
+
+		$value = array();
+
+		// Array of files needs a second loop.
+		foreach ($file['error'] as $i => $error) {
+			if (UPLOAD_ERR_OK !== $error) {
+				$transient_property->setError(new UploadException($error));
+				continue;
+			}
+
+			$value[] = array($file['tmp_name'][$i], $file['name'][$i]);
+		}
+
+		$transient_property->setValue($value);
+	}
+
+	private function processProperties(Object $object, $data, array &$transient_properties, &$has_errors) {
+		$object_schema = $object->getSchema();
+
+		// Process file uploads.
+		foreach ($_FILES as $name => $file) {
+			$this->processFile($object, $name, $file, $transient_properties, $has_errors);
+		}
+
+		// Process form data into properties.
+		foreach ($object_schema->getProperties() as $property_schema) {
+			$name = $property_schema->getName();
+
+			// Skip over files, which are handled separately.
+			if (isset($_FILES[$name])) {
+				continue;
+			}
+
+			// If any properties are left out of the form, set them to null.
+			if (isset($data[$name])) {
+				$value = $data[$name];
+			} else {
+				$value = null;
+			}
+
+			// Create a transient property that will be used to contain invalid values.
+			$transient_property = new TransientProperty($object_schema->getProperty($name));
+			$transient_properties[$name] = $transient_property;
+			$transient_property->setSerializedValue($value);
+
+			try {
+				$object->setProperty($name, $transient_property->getValue());
+			} catch (InvalidArgumentException $e) {
+				$transient_property->setError($e);
+				$has_errors = true;
+			}
+		}
 	}
 
 	public function createNode(NodeSchema $node_schema) {
 		$node = new Node($node_schema, $this->client);
-		$data = $this->app->request->post();
 
 		$transient_properties = array();
 		$has_errors = false;
 
-		foreach ($data as $name => $value) {
-			if (!$node_schema->hasProperty($name)) {
-				continue;
-			}
-
-			$transient_property = new TransientProperty($node_schema->getProperty($name));
-			$transient_property->setValue($value);
-
-			try {
-				$node->setProperty($name, $value);
-			} catch (\InvalidArgumentException $e) {
-				$transient_property->setError($e);
-				$has_errors = true;
-			}
-
-			$transient_properties[$name] = $transient_property;
-		}
+		$this->processProperties($node, $this->app->request->post(), $transient_properties, $has_errors);
 
 		if ($has_errors) {
 			$this->renderNewNodeForm($node_schema, $transient_properties);
@@ -64,7 +141,7 @@ class Crud {
 
 		try {
 			$node->save();
-		} catch (\Exception $e) {
+		} catch (Exception $e) {
 			$this->renderNewNodeForm($node_schema, $transient_properties, $e);
 			return;
 		}
@@ -102,29 +179,10 @@ class Crud {
 	}
 
 	public function updateNode(Node $node) {
-		$data = $this->app->request->put();
-
-		$node_schema = $node->getSchema();
 		$transient_properties = array();
 		$has_errors = false;
 
-		foreach ($data as $name => $value) {
-			if (!$node_schema->hasProperty($name)) {
-				continue;
-			}
-
-			$transient_property = new TransientProperty($node_schema->getProperty($name));
-			$transient_property->setValue($value);
-	
-			try {
-				$node->setProperty($name, $value);
-			} catch (\InvalidArgumentException $e) {
-				$transient_property->setError($e);
-				$has_errors = true;
-			}
-	
-			$transient_properties[$name] = $transient_property;
-		}
+		$this->processProperties($node, $this->app->request->put(), $transient_properties, $has_errors);
 
 		if ($has_errors) {
 			$this->app->response->setStatus(422);
@@ -137,7 +195,7 @@ class Crud {
 		} catch (NotFoundException $e) { // Thrown when the node isn't found. Indicates an edit conflict in this case.
 			$this->render404(new NotFoundException('The node was deleted by another user before it could be updated.'));
 			return;
-		} catch (\Exception $e) {
+		} catch (Exception $e) {
 			$this->renderEditNodeForm($node, $transient_properties, $e);
 			return;
 		}
@@ -311,6 +369,23 @@ class Crud {
 
 		$edge->delete();
 		$this->app->render('edge_deleted', array('title' => 'Deleted edge ' . $id));
+	}
+
+	public function readHome() {
+		$view_data = array('title' => 'Welcome', 'node_schemas' => $this->schema->getNodes());
+		$this->app->render('home', $view_data);
+	}
+
+	public function readUpload($file_name) {
+		$system_path = File::getSystemPath($file_name);
+		if (false === $system_path) {
+			$this->render404();
+			return;
+		}
+
+		$response = $this->app->response;
+		$response->headers->set('Content-Type', File::getMimeType($system_path));
+		$response->setBody(file_get_contents($system_path));
 	}
 
 	public function render404(\Exception $e) {

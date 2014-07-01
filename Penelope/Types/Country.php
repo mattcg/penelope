@@ -52,13 +52,16 @@ class Country extends Type {
 		parent::setValue($value);
 	}
 
-	public static function validate($value) {
+	public static function isValid($value, &$message = null) {
 		try {
 			$valid = (bool) ISO3166::getByAlpha3($value);
-		} catch (Exception $e) {
-			$valid = false;
+		} catch (Exception $e) {}
+
+		if (!$valid) {
+			$message = 'The specified country code does not exist.';
+			return false;
 		}
 
-		return $valid;
+		return true;
 	}
 }

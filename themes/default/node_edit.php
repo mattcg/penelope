@@ -13,7 +13,7 @@
 
 	?>
 
-	<form class="update node node-<?php __class($node_schema->getName()); ?>" action="<?php __($node->getPath()); ?>" method="POST">
+	<form enctype="<?php __formenc($node_schema); ?>" class="update node node-<?php __class($node_schema->getName()); ?>" action="<?php __($node->getPath()); ?>" method="POST">
 		<?php
 
 		foreach ($properties as $property) {

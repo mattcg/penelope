@@ -97,27 +97,15 @@ class Node extends Object {
 	public function save() {
 
 		// Make a node if this node is new.
-		if (is_null($this->id)) {
-			$node = $this->client->makeNode();
-			$this->object = $node;
-
-		// Fetch the node if it has an ID but hasn't been fetched yet.
-		} else if (!$this->object) {
-			$node = $this->fetch();
-		} else {
-			$node = $this->object;
+		if ($is_new = !$this->hasId()) {
+			$this->object = $this->client->makeNode();
 		}
 
-		foreach ($this->properties as $property) {
-			$node->setProperty($property->getName(), $property->getValue());
-		}
-
-		$node->save();
+		parent::save();
 
 		// Labels can only be added after the node is saved.
-		if (is_null($this->id)) {
-			$node->addLabels(array($this->client->makeLabel($this->schema->getName())));
-			$this->id = $node->getId();
+		if ($is_new) {
+			$this->object->addLabels(array($this->client->makeLabel($this->schema->getName())));
 		}
 	}
 

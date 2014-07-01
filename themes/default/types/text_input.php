@@ -5,13 +5,13 @@ if ($property->getSchema()->isMultiValue()) {
 		if ($property->getSchema()->getOption('format.long')) {
 
 ?>
-<textarea name="<?php __($property->getName()); ?>"><?php __($value); ?></textarea>
+<textarea name="<?php __($property->getName()); ?>[]"><?php __($value); ?></textarea>
 <?php
 
 		} else {
 
 ?>
-<input name="<?php __($property->getName()); ?>"<?php if ($value) { ?> value="<?php __($value); ?>"<?php } ?>>
+<input name="<?php __($property->getName()); ?>[]"<?php if ($value) { ?> value="<?php __($value); ?>"<?php } ?>>
 <?php
 
 		}
@@ -20,13 +20,13 @@ if ($property->getSchema()->isMultiValue()) {
 	if ($property->getSchema()->getOption('format.long')) {
 
 ?>
-<textarea id="<?php __($property_id); ?>" name="<?php __($property->getName()); ?>" class="new"><?php __($value); ?></textarea>
+<textarea id="<?php __($property_id); ?>" name="<?php __($property->getName()); ?>[]" class="new"><?php __($value); ?></textarea>
 <?php
 
 	} else {
 
 ?>
-<input id="<?php __($property_id); ?>" name="<?php __($property->getName()); ?>" class="new">
+<input id="<?php __($property_id); ?>" name="<?php __($property->getName()); ?>[]" class="new">
 <?php
 
 	}

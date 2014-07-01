@@ -129,6 +129,16 @@ dd.multivalue > ul.multivalue > li {
   font-size: 0.8em;
 }
 
+dd.type-image > img,
+form.node > img {
+  max-height: 10rem;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+  border-radius: 50%;
+}
+
 main > nav.nodes {
   margin: 1rem;
 }
@@ -156,6 +166,10 @@ form.node > hr {
   border-style: solid none none none;
   border-color: #eee;
   margin: 1rem 0;
+}
+
+form.node > img {
+  vertical-align: middle;
 }
 
 form.node.delete > input[type=submit] {

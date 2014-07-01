@@ -13,11 +13,19 @@
 
 namespace Karwana\Penelope\Types;
 
-class Url extends Type {
+class Image extends File {
 
 	public static function isValid($value, &$message = null) {
-		if (!filter_var($value, FILTER_VALIDATE_URL)) {
-			$message = 'Invalid URL.';
+		if (!parent::isValid($value, $message)) {
+			return false;
+		}
+
+		$path = $value[static::PATH_KEY];
+		$name = $value[static::NAME_KEY];
+
+		$valid_mimes = array('image/gif', 'image/jpeg', 'image/png', 'image/bmp');
+		if (!in_array(static::getMimeType(static::getSystemPath($path), $name), $valid_mimes)) {
+			$message = 'Unsupported image type.';
 			return false;
 		}
 

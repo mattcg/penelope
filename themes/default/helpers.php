@@ -1,6 +1,6 @@
 <?php
 
-use Karwana\Penelope\Property;
+use Karwana\Penelope;
 
 function __() {
 	global $app;
@@ -8,7 +8,7 @@ function __() {
 	call_user_func_array(array($app->view(), '__'), func_get_args());
 }
 
-function __label(Property $property) {
+function __label(Penelope\Property $property) {
 	$label = $property->getSchema()->getOption('label');
 
 	if (!$label) {
@@ -51,4 +51,15 @@ function __path($file) {
 	global $app;
 
 	return $app->view()->getTemplatePathname($file);
+}
+
+function __formenc(Penelope\ObjectSchema $object_schema) {
+	foreach ($object_schema->getProperties() as $property_schema) {
+		if (in_array($property_schema->getType(), array('file', 'image'))) {
+			__('multipart/form-data');
+			return;
+		}
+	}
+
+	__('application/x-www-form-urlencoded');
 }

@@ -4,13 +4,13 @@ if ($property->getSchema()->isMultiValue()) {
 	foreach ((array) $property->getValue() as $value) {
 
 ?>
-<input name="<?php __($property->getName()); ?>"<?php if ($value) { ?> value="<?php __datetime($value); ?>"<?php } ?>>
+<input name="<?php __($property->getName()); ?>[]"<?php if ($value) { ?> value="<?php __datetime($value); ?>"<?php } ?>>
 <?php
 
 	}
 
 ?>
-<input id="<?php __($property_id); ?>" name="<?php __($property->getName()); ?>" class="new">
+<input id="<?php __($property_id); ?>" name="<?php __($property->getName()); ?>[]" class="new">
 <?php
 
 } else {

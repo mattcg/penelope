@@ -23,7 +23,12 @@ class Datetime extends Type {
 		parent::__construct($value, $options);
 	}
 
-	public static function validate($value) {
-		return is_int($value);
+	public static function isValid($value, &$message = null) {
+		if (!is_int($value)) {
+			$message = 'Invalid type received.';
+			return false;
+		}
+
+		return true;
 	}
 }
