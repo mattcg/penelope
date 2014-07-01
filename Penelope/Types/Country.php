@@ -42,7 +42,7 @@ class Country extends Type {
 		return $country['name'];
 	}
 
-	protected function setValue($value) {
+	public static function unserialize($value) {
 
 		// Normalize code to uppercase.
 		if (is_string($value)) {

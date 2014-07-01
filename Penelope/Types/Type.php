@@ -24,10 +24,7 @@ abstract class Type extends OptionContainer {
 
 	public function __construct($value = null, array $options = null) {
 		parent::__construct($options);
-		$this->setValue($value);
-	}
 
-	protected function setValue($value) {
 		if (static::isEmpty($value)) {
 			$this->value = null;
 			return;
