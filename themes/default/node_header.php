@@ -4,6 +4,10 @@
 		<ul>
 			<?php
 
+			if (!isset($node_schema)) {
+				$node_schema = $node->getSchema();
+			}
+
 			$schema_name = $node_schema->getName();
 
 			?>
