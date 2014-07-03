@@ -16,6 +16,10 @@ namespace Karwana\Penelope\Types;
 class Url extends Type {
 
 	public static function isValid($value, &$message = null) {
+		if (static::isEmpty($value)) {
+			return true;
+		}
+
 		if (!filter_var($value, FILTER_VALIDATE_URL)) {
 			$message = 'Invalid URL.';
 			return false;

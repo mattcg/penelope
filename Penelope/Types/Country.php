@@ -43,6 +43,9 @@ class Country extends Type {
 	}
 
 	public static function unserialize($value) {
+		if (static::isEmpty($value)) {
+			return;
+		}
 
 		// Normalize code to uppercase.
 		if (is_string($value)) {
@@ -53,6 +56,10 @@ class Country extends Type {
 	}
 
 	public static function isValid($value, &$message = null) {
+		if (static::isEmpty($value)) {
+			return true;
+		}
+
 		try {
 			$valid = (bool) ISO3166::getByAlpha3($value);
 		} catch (\Exception $e) {}

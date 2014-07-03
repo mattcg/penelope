@@ -18,6 +18,10 @@ use Karwana\Penelope\Exceptions;
 class Datetime extends Type {
 
 	public static function unserialize($value) {
+		if (static::isEmpty($value)) {
+			return;
+		}
+
 		if (!is_string($value)) {
 			return $value;
 		}
@@ -31,6 +35,10 @@ class Datetime extends Type {
 	}
 
 	public static function isValid($value, &$message = null) {
+		if (static::isEmpty($value)) {
+			return true;
+		}
+
 		if (!is_int($value)) {
 			$message = 'Invalid type received.';
 			return false;

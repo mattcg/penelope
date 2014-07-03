@@ -16,6 +16,10 @@ namespace Karwana\Penelope\Types;
 class Text extends Type {
 
 	public static function isValid($value, &$message = null) {
+		if (static::isEmpty($value)) {
+			return true;
+		}
+
 		if (!is_string($value)) {
 			$message = 'Unexpected type received.';
 			return false;

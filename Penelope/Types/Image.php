@@ -20,6 +20,10 @@ class Image extends File {
 			return false;
 		}
 
+		if (static::isEmpty($value)) {
+			return true;
+		}
+
 		$path = $value[static::PATH_KEY];
 		$name = $value[static::NAME_KEY];
 

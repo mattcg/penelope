@@ -13,4 +13,4 @@
 
 namespace Karwana\Penelope\Exceptions;
 
-class SchemaException extends Exception {}
+class TypeException extends Exception {}

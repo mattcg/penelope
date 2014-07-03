@@ -44,6 +44,10 @@ abstract class Type extends OptionContainer {
 	}
 
 	public static function serialize($value) {
+		if (static::isEmpty($value)) {
+			return;
+		}
+
 		if (!is_scalar($value)) {
 			$value = json_encode($value, JSON_BIGINT_AS_STRING);
 			if (false === $value) {
@@ -55,6 +59,10 @@ abstract class Type extends OptionContainer {
 	}
 
 	public static function unserialize($value) {
+		if (static::isEmpty($value)) {
+			return;
+		}
+
 		if (!is_scalar($value)) {
 			throw new Exceptions\TypeException('Cannot unserialize non-scalar value.');
 		}

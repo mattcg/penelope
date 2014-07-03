@@ -60,7 +60,7 @@ class File extends Type {
 
 		$extension = pathinfo($file_name, PATHINFO_EXTENSION);
 		if ($extension) {
-			return $extension;
+			return strtolower($extension);
 		}
 
 		// Attempt to guess the extension using MIME magic.
@@ -99,6 +99,9 @@ class File extends Type {
 	}
 
 	public static function unserialize($value) {
+		if (static::isEmpty($value)) {
+			return;
+		}
 
 		// Files are encoded as non-scalar values.
 		// Because Neo4j doesn't support multidimensional arrays, they must be serialized and unserialized before storage.
@@ -113,6 +116,10 @@ class File extends Type {
 	}
 
 	public static function isValid($value, &$message = null) {
+		if (static::isEmpty($value)) {
+			return true;
+		}
+
 		if (!is_array($value)) {
 			$message = 'Unexpected type received.';
 			return false;
