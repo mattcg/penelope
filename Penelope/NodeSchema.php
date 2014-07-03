@@ -17,6 +17,8 @@ use Everyman\Neo4j;
 
 class NodeSchema extends ObjectSchema {
 
+	protected $path_formats = array('collection' => '/%s/', 'new' => '/%s/new', 'edit' => '/%s/%s/edit', 'object' => '/%s/%s');
+
 	public function get(Neo4j\Client $client, $id, $fetch = true) {
 		$node = new Node($this, $client, $id);
 

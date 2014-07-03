@@ -17,11 +17,22 @@ use Karwana\Penelope\Exceptions;
 
 abstract class EdgesController extends ObjectController {
 
-	public function getSchemaBySlug($schema_slug) {
+	public function getSchemaBySlugs($node_schema_slug, $edge_schema_slug) {
+
 		try {
-			$edge_schema = $this->schema->getEdgeBySlug($schema_slug);
+			$edge_schema = $this->schema->getEdgeBySlug($edge_schema_slug);
+
+		// If the edge schema with the given slug doesn't exist.
 		} catch (\InvalidArgumentException $e) {
 			$this->render404($e);
+			$this->app->stop();
+		}
+
+		$from_node_schema = $edge_schema->getFromSchema();
+
+		// If the edge's schema defines relationships from nodes of a different schema.
+		if ($from_node_schema->getSlug() !== $node_schema_slug) {
+			$this->render404(new Exceptions\SchemaException('The schema for edges of type "' . $edge_schema->getName() . '" does not permit relationships with nodes of the given type.'));
 			$this->app->stop();
 		}
 
@@ -29,13 +40,22 @@ abstract class EdgesController extends ObjectController {
 	}
 
 	public function getByParams($node_schema_slug, $node_id, $edge_schema_slug) {
-		$edge_schema = $this->getSchemaBySlug($edge_schema_slug);
 
+		// Check that:
+		// - the edge schema with the given slug exists
+		// - the edge schema defines relationships with nodes of the given node schema
+		$edge_schema = $this->getSchemaBySlugs($node_schema_slug, $edge_schema_slug);
+
+		// Check that:
+		// - the node schema with the given slug exists
+		// - the node with the given ID exists
 		$controller = new NodeController($this->app, $this->schema, $this->client);
 		$node = $controller->getByParams($node_schema_slug, $node_id);
 
 		try {
 			$edges = $node->getOutEdges($edge_schema);
+
+		// If the edge schema does not define relationships from nodes of the given type.
 		} catch (Exceptions\SchemaException $e) {
 			$this->render404($e);
 			$this->app->stop();
@@ -44,104 +64,52 @@ abstract class EdgesController extends ObjectController {
 		return $edges;
 	}
 
-	public function create(Node $from_node, EdgeSchema $edge_schema) {
-		$request = $this->app->request;
+	public function create($node_schema_slug, $node_id, $edge_schema_slug) {
+		$edge_schema = $this->getSchemaBySlug($edge_schema_slug);
+		$edge = new Edge($edge_schema, $this->client);
 
-		$user_input_errors = array();
+		$transient_properties = array();
+		$has_errors = false;
 
-		$to_node_id = $request->post('to_node_id');
-		if (!$to_node_id) {
-			$error_fields[] = 'to_node_id';
+		$app = $this->app;
+
+		$from_node_id = $app->request->post('from_node_id');
+
+		$from_schema = $edge_schema->getFromSchema();
+
+		try {
+			$edge = $edge_schema->get($this->client, $edge_id);
+		} catch (Exceptions\Exception $e) {
+			$this->render404($e);
+			$this->app->stop();
+		} catch (Exceptions\SchemaException $e) {
+			$this->render404($e);
+			$this->app->stop();
 		}
 
-		$to_node_name = $request->post('to_node_name');
-		if (!$to_node_name) {
-			$error_fields[] = 'to_node_name';
-		}
+		$this->processProperties($edge, $app->request->post(), $transient_properties, $has_errors);
 
-		$data = $this->app->request->post();
-		$user_input = array();
-
-		foreach ($data as $name => $value) {
-			if (!$schema->hasProperty($name)) {
-				continue;
-			}
-
-			$user_input[$name] = $value;
-
-			try {
-				$node->setProperty($name, $value);
-			} catch (Exceptions\TypeException $e) {
-				$user_input_errors[$name] = $e;
-			}
-		}
-
-		if (!empty($user_input_errors)) {
-			$this->renderNewNodeForm($schema, $user_input, $user_input_errors);
+		if ($has_errors) {
+			$this->renderNewForm($schema_slug, $transient_properties);
 			return;
 		}
 
 		try {
 			$node->save();
 		} catch (\Exception $e) {
-			$this->renderNewNodeForm($schema, $user_input, null, $e);
+			$this->renderNewForm($schema_slug, $transient_properties, $e);
 			return;
 		}
 
-		$this->redirect($this->app->urlFor('node_' . $node->getSchema()->getName(), array('node_id' => $node->getId())), 201);
-
-
-
-		if (!empty($error_fields)) {
-			$this->app->render('edge/create/failure', array('error_fields' => $error_fields), 422);
-			return;
-		}
-
-		$to_node = new Node($this->schema->getNode($to_node_name), $this->client, $to_node_id);
-		try {
-			$from_node->fetch();
-		} catch (NotFoundException $e) {
-			$error_fields[] = 'to_node_id';
-			$this->app->render('edge/create/failure', array('error_fields' => $error_fields), 422);
-			return;
-		}
-
-		$edge = new Edge($this->schema->getEdge($edge_name), $this->client);
-		$data = $request->post();
-
-		foreach ($data as $name => $value) {
-			if (!$edge->schema->hasProperty($name)) {
-				continue;
-			}
-
-			try {
-				$edge->setProperty($name, $value);
-			} catch (\InvalidArgumentException $e) {
-				$error_fields[] = $name;
-			}
-		}
-
-		if (!empty($error_fields)) {
-			$this->app->render('edge/create/failure', array('error_fields' => $error_fields));
-			return;
-		}
-
-		try {
-			$edge->setRelationship($from_node, $to_node);
-		} catch (\InvalidArgumentException $e) {
-			$this->app->render('edge/create/failure', array('error' => $e), 422);
-			return;
-		}
-
-		$this->app->render('edge/create/success', array(
-			'from_node' => $from_node,
-			'to_node' => $to_node,
-			'edge' => $edge));
+		$view_data = array('title' => $node_schema->getName() . ' #' . $node->getId() . ' created', 'node' => $node);
+		$app->response->setStatus(201);
+		$app->response->headers->set('Location', $node->getPath());
+		$app->render('node_created', $view_data);
 	}
 
 	public function read($node_schema_slug, $node_id, $edge_schema_slug) {
 		$edges = $this->getByParams($node_schema_slug, $node_id, $edge_schema_slug);
-		$edge_schema = $this->schema->getEdgeBySlug($edge_schema_slug);
+		$edge_schema = $this->getSchemaBySlug();
 
 		$view_data = array('title' => $edge_schema->getName() . ' Edges from node #' . $node->getId());
 		$this->app->render('edges', $view_data);

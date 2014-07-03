@@ -22,13 +22,9 @@ class Edge extends Object {
 			throw new \LogicException('Cannot create path for edge with no ID.');
 		}
 
-		if (!$this->object) {
-
-		}
-
 		$path = $this->schema->getPath();
 		$path = preg_replace('/:edge_id/', $this->getId(), $path);
-		$path = preg_replace('/:node_id/', 'TK', $path);
+		$path = preg_replace('/:node_id/', $this->getFromNode()->getId(), $path);
 
 		return $path;
 	}
@@ -38,7 +34,11 @@ class Edge extends Object {
 			throw new \LogicException('Cannot create edit path for edge with no ID.');
 		}
 
-		return preg_replace('/:edge_id/', $this->getId(), $this->schema->getEditPath());
+		$path = $this->schema->getEditPath();
+		$path = preg_replace('/:edge_id/', $this->getId(), $path);
+		$path = preg_replace('/:node_id/', $this->getFromNode()->getId(), $path);
+
+		return $path;
 	}
 
 	public function fetch() {
@@ -56,32 +56,11 @@ class Edge extends Object {
 			throw new Exceptions\SchemaException('Edge with ID "' . $this->id . '" exists, but does not match schema "' . $schema_name . '".');
 		}
 
-		// Check that the edge's relationships are permitted by the schema.
+		// Preload the start and end nodes.
+		// Implicitly checks that the edge's relationships are permitted by the schema.
 		$edge_schema = $this->getSchema();
-
-		$can_relate_from = false;
-		foreach ($edge->getStartNode()->getLabels() as $label) {
-			if ($edge_schema->canRelateFrom($label->getName())) {
-				$can_relate_from = $label->getName();
-				break;
-			}
-		}
-
-		if (!$can_relate_from) {
-			throw new Exceptions\SchemaException('Edge with ID "' . $this->id . '" exists, but has a relationship with a start node that does not match the schema "' . $schema_name . '".');
-		}
-
-		$can_relate_to = false;
-		foreach ($edge->getEndNode()->getLabels() as $label) {
-			if ($edge_schema->canRelateTo($label->getName())) {
-				$can_relate_to = $label->getName();
-				break;
-			}
-		}
-
-		if (!$can_relate_to) {
-			throw new Exceptions\SchemaException('Edge with ID "' . $this->id . '" exists, but has a relationship with an end node that does not match the schema "' . $schema_name . '".');
-		}
+		$this->to_node = $edge_schema->getToSchema()->get($this->client, $edge->getEndNode()->getId());
+		$this->from_node = $edge_schema->getFromSchema()->get($this->client, $edge->getStartNode()->getId());
 
 		$this->object = $edge;
 

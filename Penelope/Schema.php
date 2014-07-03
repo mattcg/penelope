@@ -45,8 +45,8 @@ class Schema {
 		return array_values($this->nodes);
 	}
 
-	public function addEdge($name, $slug, array $relationships, array $properties, array $options = null) {
-		$schema = new EdgeSchema($name, $slug, $relationships, $properties, $options);
+	public function addEdge($name, $slug, $from_name, $to_name, array $properties, array $options = null) {
+		$schema = new EdgeSchema($name, $slug, $this->getNode($from_name), $this->getNode($to_name), $properties, $options);
 		$this->edges[$name] = $schema;
 		$this->edge_slugs[$slug] = $name;
 

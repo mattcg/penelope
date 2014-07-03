@@ -17,7 +17,7 @@ abstract class ObjectSchema extends OptionContainer {
 
 	protected $name, $slug, $property_schemas = array();
 
-	protected $path_formats = array('collection' => '/%s/', 'new' => '/%s/new', 'edit' => '/%s/%s/edit', 'object' => '/%s/%s');
+	protected $path_formats = array();
 
 	public function __construct($name, $slug, array $properties, array $options = null) {
 		parent::__construct($options);

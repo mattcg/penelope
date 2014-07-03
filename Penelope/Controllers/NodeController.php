@@ -18,18 +18,21 @@ use Karwana\Penelope\Exceptions;
 abstract class NodeController extends ObjectController {
 
 	private function getSchemaBySlug($schema_slug) {
-		$controller = new NodesController($this->app, $this->schema, $this->client);
-		return $controller->getSchemaBySlug();
+		return (new NodesController($this->app, $this->schema, $this->client))->getSchemaBySlug($schema_slug);
 	}
 
 	public function getByParams($schema_slug, $node_id) {
-		$node_schema = $this->getSchemaBySlug();
+		$node_schema = $this->getSchemaBySlug($schema_slug);
 
 		try {
 			$node = $node_schema->get($this->client, $node_id);
+
+		// If the node with the given ID doesn't exist.
 		} catch (Exceptions\NotFoundException $e) {
 			$this->render404($e);
 			$this->app->stop();
+
+		// If the node with the given ID exists, but doesn't match the given schema.
 		} catch (Exceptions\SchemaException $e) {
 			$this->render404($e);
 			$this->app->stop();

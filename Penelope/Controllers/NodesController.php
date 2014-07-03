@@ -20,6 +20,8 @@ abstract class NodesController extends ObjectController {
 	public function getSchemaBySlug($schema_slug) {
 		try {
 			$node_schema = $this->schema->getNodeBySlug($schema_slug);
+
+		// If the node schema with the given slug doesn't exist.
 		} catch (\InvalidArgumentException $e) {
 			$this->render404($e);
 			$this->app->stop();

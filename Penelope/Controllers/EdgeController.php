@@ -17,31 +17,38 @@ use Karwana\Penelope\Exceptions;
 
 abstract class EdgeController extends ObjectController {
 
-	private function getSchemaBySlug($schema_slug) {
-		$controller = new EdgesController($this->app, $this->schema, $this->client);
-		return $controller->getSchemaBySlug();
+	private function getSchemaBySlugs($node_schema_slug, $edge_schema_slug) {
+		return (new EdgesController($this->app, $this->schema, $this->client))->getSchemaBySlugs($node_schema_slug, $edge_schema_slug);
 	}
 
 	public function getByParams($node_schema_slug, $node_id, $edge_schema_slug, $edge_id) {
-		$edge_schema = $this->getSchemaBySlug($edge_schema_slug);
+		$edge_schema = $this->getSchemaBySlugs($node_schema_slug, $edge_schema_slug);
 
+		// Check that:
+		// - the node schema with the given slug exists
+		// - the node with the given ID exists
 		$controller = new NodeController($this->app, $this->schema, $this->client);
 		$node = $controller->getByParams($node_schema_slug, $node_id);
-		$node_schema = $node->getSchema()->getName();
-
-		// Check if the relationship is allowed by the schema.
-		if (!$edge_schema->canRelateFrom($node_schema->getName())) {
-			$this->render404(new Exceptions\SchemaException('The schema for edges of type "' . $edge_schema->getName() . '" does not permit relationships from nodes of type "' . $node_schema->getName() . '".'));
-			$this->app->stop();
-		}
 
 		try {
 			$edge = $edge_schema->get($this->client, $edge_id);
+
+		// If the edge with the given ID doesn't exist.
 		} catch (Exceptions\NotFoundException $e) {
 			$this->render404($e);
 			$this->app->stop();
+
+		// If the edge with the given ID exists, but:
+		//  - it doesn't match the given schema
+		//  - its related nodes don't match its own schema
 		} catch (Exceptions\SchemaException $e) {
 			$this->render404($e);
+			$this->app->stop();
+		}
+
+		// If the node with the given ID is not the start node of the edge with the given ID.
+		if ($edge->getFromNode()->getId() !== $node->getId()) {
+			$this->render404(new Exceptions\NotFoundException('There is no edge from the given node.'));
 			$this->app->stop();
 		}
 

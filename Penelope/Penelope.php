@@ -104,48 +104,45 @@ class Penelope extends OptionContainer {
 		}
 	}
 
-	public function defineEdge($name, $slug, array $relationships, array $properties = array(), array $options = array()) {
-		$schema = $this->schema->addEdge($name, $slug, $relationships, $properties, $options);
+	public function defineEdge($name, $slug, $from_name, $to_name, array $properties = array(), array $options = null) {
+		$edge_schema = $this->schema->addEdge($name, $slug, $from_name, $to_name, $properties, $options);
+		$from_schema = $this->schema->getNode($from_name);
 
-		foreach ($relationships as $from_name => $to_names) {
-			$this->defineEdgeFrom($this->schema->getNode($from_name), $schema);
-		}
-	}
-
-	private function defineEdgeFrom(NodeSchema $node_schema, EdgeSchema $edge_schema) {
 		$app = $this->app;
 
-		$app->group('/' . $node_schema->getSlug() . '/:node_id/' . $edge_schema->getSlug(), function() use ($penelope, $app, $crud, $edge_schema) {
+		// Factory middleware for creating the collection controller.
+		$edges_middleware = Closure::bind(function() {
+			$controller = new Controllers\EdgesController($this->app, $this->schema, $this->client);
+			$this->app->controller = $controller;
+		}, $this);
 
-			$app->post('/', function() use ($crud, $app) {
-				$crud->createEdge($app->node, $edge_schema);
-			});
+		$from_slug = $from_schema->getSlug();
+		$edge_slug = $edge_schema->getSlug();
 
-			$app->get('/', function() use ($crud, $app) {
-				$crud->readEdges($app->node, $edge_schema);
-			});
+		$edges_path = $edge_schema->getCollectionPath();
 
-			$app->delete('/:edge_id', function() use ($crud, $app) {
-				$route = $app->router()->getCurrentRoute();
+		$app->get($edges_path, $edges_middleware, Closure::bind(function($node_id) use ($from_slug, $edge_slug) {
+			$this->app->controller->read($from_slug, $node_id, $edge_slug);
+		}, $this));
 
-				try {
+		$app->post($edges_path, $nodes_middleware, Closure::bind(function($node_id) use ($from_slug, $edge_slug) {
+			$this->app->controller->create($from_slug, $node_id, $edge_slug);
+		}, $this));
 
-					// Attempt to preload the edge specified by the ID in the URL.
-					$edge = $penelope->getEdge($name, $route->getParam('edge_id'));
-				} catch (Exceptions\NotFoundException $e) {
-					$crud->render404($e);
-					$app->stop();
-				}
+		// Factory middleware for creating the object controller.
+		$edge_middleware = Closure::bind(function() {
+			$controller = new Controllers\EdgeController($this->app, $this->schema, $this->client);
+			$this->app->controller = $controller;
+		}, $this);
 
-				$app->edge = $edge;
+		$edge_path = $edge_schema->getPath();
 
-			}, function() use ($crud, $app) {
-				$crud->deleteEdge($app->edge);
-			});
-		});
+		$app->delete($edge_path, $edge_middleware, Closure::bind(function($node_id, $edge_id) use ($from_slug, $edge_slug) {
+			$this->app->controller->delete($from_slug, $node_id, $edge_slug, $edge_id);
+		}, $this));
 	}
 
-	public function defineNode($name, $slug, array $properties = array(), array $options = array()) {
+	public function defineNode($name, $slug, array $properties = array(), array $options = null) {
 		$node_schema = $this->schema->addNode($name, $slug, $properties, $options);
 
 		$app = $this->app;
@@ -156,19 +153,19 @@ class Penelope extends OptionContainer {
 			$this->app->controller = $controller;
 		}, $this);
 
-		$nodes_slug = $node_schema->getSlug();
+		$node_slug = $node_schema->getSlug();
 		$nodes_path = $node_schema->getCollectionPath();
 
-		$app->get($nodes_path, $nodes_middleware, Closure::bind(function() use ($nodes_slug) {
+		$app->get($nodes_path, $nodes_middleware, Closure::bind(function() use ($node_slug) {
 			$this->app->controller->read($nodes_slug);
 		}, $this));
 
-		$app->post($nodes_path, $nodes_middleware, Closure::bind(function() use ($nodes_slug) {
-			$this->app->controller->create($nodes_slug);
+		$app->post($nodes_path, $nodes_middleware, Closure::bind(function() use ($node_slug) {
+			$this->app->controller->create($node_slug);
 		}, $this));
 
-		$app->get($node_schema->getNewPath(), $nodes_middleware, Closure::bind(function() use ($nodes_slug) {
-			$this->app->controller->renderNewForm($nodes_slug);
+		$app->get($node_schema->getNewPath(), $nodes_middleware, Closure::bind(function() use ($node_slug) {
+			$this->app->controller->renderNewForm($node_slug);
 		}, $this));
 
 		// Factory middleware for creating the object controller.
@@ -177,7 +174,6 @@ class Penelope extends OptionContainer {
 			$this->app->controller = $controller;
 		}, $this);
 
-		$node_slug = $node_schema->getSlug();
 		$node_path = $node_schema->getPath();
 
 		$app->get($node_path, $node_middleware, Closure::bind(function($node_id) use ($node_slug) {
