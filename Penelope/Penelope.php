@@ -125,7 +125,7 @@ class Penelope extends OptionContainer {
 			$this->app->controller->read($from_slug, $node_id, $edge_slug);
 		}, $this));
 
-		$app->post($edges_path, $nodes_middleware, Closure::bind(function($node_id) use ($from_slug, $edge_slug) {
+		$app->post($edges_path, $edges_middleware, Closure::bind(function($node_id) use ($from_slug, $edge_slug) {
 			$this->app->controller->create($from_slug, $node_id, $edge_slug);
 		}, $this));
 
