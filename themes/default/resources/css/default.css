@@ -113,21 +113,21 @@ main.node.new > header.node > nav.crud > ul > li.new {
   display: none;
 }
 
-article.node > dl.node-properties > dt {
+dl.node-properties > dt {
   text-transform: uppercase;
   font-size: 0.8rem;
   font-weight: bold;
   border-bottom: 1px solid #ddd;
   padding-bottom: 0.4em;
 }
-article.node > dl.node-properties > dd {
+dl.node-properties > dd {
   margin: 1em 0;
   max-width: 40rem;
 }
-article.node > dl.node-properties > dd > div.format-long {
+dl.node-properties > dd > div.format-long {
   white-space: pre-line;
 }
-article.node > dl.node-properties > dd + dt {
+dl.node-properties > dd + dt {
   margin-top: 2em;
 }
 
