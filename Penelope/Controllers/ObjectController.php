@@ -93,7 +93,7 @@ abstract class ObjectController extends Controller {
 			$this->processMultiFile($transient_property, $file);
 		} else if (UPLOAD_ERR_OK === $file['error']) {
 			$transient_property->setValue(array($file['tmp_name'], $file['name']));
-		} else {
+		} else if (UPLOAD_ERR_NO_FILE !== $file['error'] or $transient_property->getSchema()->getOption('required')) {
 			$transient_property->setError(new Exceptions\UploadException($file['error']));
 		}
 
@@ -122,10 +122,10 @@ abstract class ObjectController extends Controller {
 
 		// Array of files needs a second loop.
 		foreach ($file['error'] as $i => $error) {
-			if (UPLOAD_ERR_OK !== $error) {
-				$transient_property->setError(new Exceptions\UploadException($error));
-			} else {
+			if (UPLOAD_ERR_OK === $error) {
 				$value[] = array($file['tmp_name'][$i], $file['name'][$i]);
+			} else if (UPLOAD_ERR_NO_FILE !== $error or $transient_property->getSchema()->getOption('required')) {
+				$transient_property->setError(new Exceptions\UploadException($error));
 			}
 		}
 
