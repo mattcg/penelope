@@ -17,8 +17,8 @@
 			if (isset($node)) {
 
 			?>
-
 			<li class="edit"><a class="edit" href="<?php __($node->getEditPath()); ?>" title="Edit <?php __($node->getTitle()); ?>">Edit</a></li>
+			<li class="view"><a class="view" href="<?php __($node->getPath()); ?>" title="View <?php __($node->getTitle()); ?>">View</a></li>
 			<?php
 
 			}

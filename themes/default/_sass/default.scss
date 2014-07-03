@@ -91,14 +91,16 @@ header.node > nav.crud {
 	}
 
 	> ul > li > a {
+		text-decoration: none;
 		text-transform: uppercase;
 		color: white;
 		font-size: 0.7rem;
 		font-weight: bold;
 		line-height: 1.6rem;
-		min-width: 4rem;
+		min-width: 5rem;
 		text-align: center;
 		display: inline-block;
+		background-color: #646464;
 		@include border-radius(0.2em);
 	}
 
@@ -114,15 +116,24 @@ header.node > nav.crud {
 		background-color: $button-red;
 	}
 
-	> ul > li > a.new,
-	> ul > li > a.edit {
-		text-decoration: none;
+	> ul > li.view {
+		display: none;
 	}
 }
 
-main.node.new > header.node > nav.crud {
+main.node.new header.node > nav.crud {
 	> ul > li.new {
 		display: none;
+	}
+}
+
+main.node.edit header.node > nav.crud {
+	> ul > li.edit {
+		display: none;
+	}
+
+	> ul > li.view {
+		display: inherit;
 	}
 }
 
