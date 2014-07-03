@@ -13,13 +13,11 @@
 
 namespace Karwana\Penelope;
 
-use Exception;
-
 class TransientProperty extends Property {
 
 	private $exception;
 
-	public function setError(Exception $e) {
+	public function setError(Exceptions\Exception $e) {
 		$this->exception = $e;
 	}
 

@@ -14,9 +14,7 @@
 namespace Karwana\Penelope\Types;
 
 use Karwana\Penelope\OptionContainer;
-
-use BadMethodCallException;
-use InvalidArgumentException;
+use Karwana\Penelope\Exceptions;
 
 abstract class Type extends OptionContainer {
 
@@ -31,7 +29,7 @@ abstract class Type extends OptionContainer {
 		}
 
 		if (!static::isValid($value, $message)) {
-			throw new InvalidArgumentException($message);	
+			throw new Exceptions\TypeException($message);	
 		}
 
 		$this->value = $value;
@@ -49,7 +47,7 @@ abstract class Type extends OptionContainer {
 		if (!is_scalar($value)) {
 			$value = json_encode($value, JSON_BIGINT_AS_STRING);
 			if (false === $value) {
-				throw new InvalidArgumentException(json_last_error_msg(), json_last_error());
+				throw new Exceptions\TypeException(json_last_error_msg(), json_last_error());
 			}
 		}
 
@@ -58,14 +56,14 @@ abstract class Type extends OptionContainer {
 
 	public static function unserialize($value) {
 		if (!is_scalar($value)) {
-			throw new InvalidArgumentException('Cannot unserialize non-scalar value.');
+			throw new Exceptions\TypeException('Cannot unserialize non-scalar value.');
 		}
 
 		return $value;
 	}
 
 	public static function isValid($value, &$message = null) {
-		throw new BadMethodCallException('Not implemented.');
+		throw new \BadMethodCallException('Not implemented.');
 	}
 
 	public static function isEmpty($value) {

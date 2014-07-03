@@ -15,10 +15,6 @@ namespace Karwana\Penelope;
 
 use Everyman\Neo4j;
 
-use LogicException;
-use RuntimeException;
-use InvalidArgumentException;
-
 abstract class Object {
 
 	protected $id, $schema, $object, $properties = array();
@@ -49,6 +45,10 @@ abstract class Object {
 		return $this->schema;
 	}
 
+	public function getClient() {
+		return $this->client;
+	}
+
 	public function getTitle() {
 		$option = $this->schema->getOption('format.title');
 		if (!$option) {
@@ -56,7 +56,7 @@ abstract class Object {
 		}
 
 		if (!is_callable($option)) {
-			throw new RuntimeException('Option for "title" must be callable.');
+			throw new \RuntimeException('Option for "title" must be callable.');
 		}
 
 		$title = $option($this);
@@ -81,7 +81,7 @@ abstract class Object {
 
 	public function getProperty($name) {
 		if (!$this->schema->hasProperty($name)) {
-			throw new InvalidArgumentException('Unknown property "' . $name . '".');
+			throw new \InvalidArgumentException('Unknown property "' . $name . '".');
 		}
 
 		if (!$this->got_properties) {

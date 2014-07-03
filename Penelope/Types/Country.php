@@ -14,8 +14,8 @@
 namespace Karwana\Penelope\Types;
 
 use Alcohol\ISO3166;
-use Exception;
-use InvalidArgumentException;
+
+use Karwana\Penelope\Exceptions;
 
 class Country extends Type {
 
@@ -31,12 +31,12 @@ class Country extends Type {
 	public static function getCountryName($code) {
 		try {
 			$country = ISO3166::getByAlpha3($code);
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			$country = null;
 		}
 
 		if (!$country) {
-			throw new InvalidArgumentException('Invalid code "' . $code . '".');
+			throw new Exceptions\TypeException('Invalid code "' . $code . '".');
 		}
 
 		return $country['name'];
@@ -55,7 +55,7 @@ class Country extends Type {
 	public static function isValid($value, &$message = null) {
 		try {
 			$valid = (bool) ISO3166::getByAlpha3($value);
-		} catch (Exception $e) {}
+		} catch (\Exception $e) {}
 
 		if (!$valid) {
 			$message = 'The specified country code does not exist.';

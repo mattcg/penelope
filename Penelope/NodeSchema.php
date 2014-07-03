@@ -21,8 +21,9 @@ class NodeSchema extends ObjectSchema {
 		$node = new Node($this, $client, $id);
 
 		// Preload data before returning.
-		// Exception will be thrown if:
+		// NotFoundException will be thrown if:
 		//  - the node does not exist
+		// SchemaException will be thrown if:
 		//  - there's a mismatch between the requested node and the given schema
 		if ($fetch) {
 			$node->fetch();
@@ -33,6 +34,14 @@ class NodeSchema extends ObjectSchema {
 
 	public function getNewPath() {
 		return sprintf($this->getPathFormat('new'), $this->getSlug());
+	}
+
+	public function getEditPath() {
+		return sprintf($this->getPathFormat('edit'), $this->getSlug(), ':node_id');
+	}
+
+	public function getPath() {
+		sprintf($node_schema->getPathFormat(), $this->getSlug(), ':node_id');
 	}
 
 	public function getCollectionPath() {

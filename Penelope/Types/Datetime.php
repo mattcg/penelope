@@ -13,7 +13,7 @@
 
 namespace Karwana\Penelope\Types;
 
-use InvalidArgumentException;
+use Karwana\Penelope\Exceptions;
 
 class Datetime extends Type {
 
@@ -24,7 +24,7 @@ class Datetime extends Type {
 
 		$value = strtotime($value);
 		if (false === $value) {
-			throw new InvalidArgumentException('Unable to convert "' . $value . '" to a valid time.');
+			throw new Exceptions\TypeException('Unable to convert "' . $value . '" to a valid time.');
 		}
 
 		return $value;

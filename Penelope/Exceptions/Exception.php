@@ -13,4 +13,4 @@
 
 namespace Karwana\Penelope;
 
-class NotFoundException extends \Exception {}
+class Exception extends \Exception {}

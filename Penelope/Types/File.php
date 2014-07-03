@@ -13,11 +13,10 @@
 
 namespace Karwana\Penelope\Types;
 
-use Exception;
-use InvalidArgumentException;
-
 use Rhumsaa\Uuid\Uuid;
 use Dflydev\ApacheMimeTypes;
+
+use Karwana\Penelope\Exceptions;
 
 class File extends Type {
 
@@ -30,12 +29,12 @@ class File extends Type {
 
 			try {
 				$moved_uploaded_file = move_uploaded_file($temp_path, static::getSystemPath($perm_name));
-			} catch (Exception $e) {
+			} catch (\Exception $e) {
 				$moved_uploaded_file = false;
 			}
 
 			if (false === $moved_uploaded_file) {
-				throw new InvalidArgumentException('Unable to move uploaded file. Please check that the directory "' . static::getSystemPath() . '" is writable.');
+				throw new Exceptions\TypeException('Unable to move uploaded file. Please check that the directory "' . static::getSystemPath() . '" is writable.');
 			}
 
 			$value[static::PATH_KEY] = $perm_name;
@@ -107,7 +106,7 @@ class File extends Type {
 
 		// Yes, json_encode returns null on error.
 		if (is_null($value)) {
-			throw new InvalidArgumentException(json_last_error_msg(), json_last_error());
+			throw new Exceptions\TypeException(json_last_error_msg(), json_last_error());
 		}
 
 		return $value;

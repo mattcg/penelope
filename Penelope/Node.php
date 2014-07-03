@@ -14,36 +14,33 @@
 namespace Karwana\Penelope;
 
 use Everyman\Neo4j;
-use LogicException;
 
 class Node extends Object {
 
 	public function getPath() {
 		if (!$this->hasId()) {
-			throw new LogicException('Cannot create path for node with no ID.');
+			throw new \LogicException('Cannot create path for node with no ID.');
 		}
 
-		$format = $this->schema->getPathFormat();
-		return sprintf($format, $this->schema->getSlug(), $this->getId());
+		return preg_replace('/:node_id/', $this->getId(), $this->schema->getPath());
 	}
 
 	public function getEditPath() {
 		if (!$this->hasId()) {
-			throw new LogicException('Cannot create edit path for node with no ID.');
+			throw new \LogicException('Cannot create edit path for node with no ID.');
 		}
 
-		$format = $this->schema->getPathFormat('edit');
-		return sprintf($format, $this->schema->getSlug(), $this->getId());
+		return preg_replace('/:node_id/', $this->getId(), $this->schema->getEditPath());
 	}
 
 	public function fetch() {
 		if (is_null($this->id)) {
-			throw new LogicException('Cannot fetch without ID.');
+			throw new \LogicException('Cannot fetch without ID.');
 		}
 
 		$node = $this->client->getNode($this->id);
 		if (!$node) {
-			throw new NotFoundException('No node with ID "' . $this->id . '".');
+			throw new Exceptions\NotFoundException('No node with ID "' . $this->id . '".');
 		}
 
 		// Check that the node given by the ID matches the schema.
@@ -57,7 +54,7 @@ class Node extends Object {
 		}
 
 		if (!$found_schema) {
-			throw new NotFoundException('Node with ID "' . $this->id . '" exists, but does not match schema "' . $schema_name . '".');
+			throw new Exceptions\SchemaException('Node with ID "' . $this->id . '" exists, but does not match schema "' . $schema_name . '".');
 		}
 
 		$this->object = $node;
@@ -65,25 +62,25 @@ class Node extends Object {
 		return $node;
 	}
 
-	public function getEdges(EdgeSchema $schema) {
+	public function getOutEdges(EdgeSchema $edge_schema) {
+		if (!$edge_schema->canRelateFrom($this->schema->getName())) {
+			throw new Exceptions\SchemaException('The schema for edges of type "' . $edge_schema->getName() . '" does not permit relationships from nodes of type "' . $this->schema->getName() . '".');
+		}
+
 		if (!$this->object) {
 			$this->fetch();
 		}
 
 		// No need to worry about caching, as the Neo4j client takes care of this.
 		$edges = array();
-		$relationships = $this->object->getRelationships(array($schema->getName()), Neo4j\Relationship::DirectionOut);
-
-		$name = $this->getName();
+		$relationships = $this->object->getRelationships(array($edge_schema->getName()), Neo4j\Relationship::DirectionOut);
 
 		foreach ($relationships as $relationship) {
 
 			// Only include edges permitted by the schema.
-			$to_names = $relationship->getEndNode()->getLabels();
-
-			foreach ($to_names as $to_name) {
-				if ($schema->canRelate($name, $to_name)) {
-					$edge = new Edge($schema, $this->client, $relationship->getId());
+			foreach ($relationship->getEndNode()->getLabels() as $to_name) {
+				if ($edge_schema->canRelate($this->schema->getName(), $to_name)) {
+					$edge = new Edge($edge_schema, $this->client, $relationship->getId());
 					$edge->fetch();
 					$edges[] = $edge;
 					break;
@@ -112,7 +109,7 @@ class Node extends Object {
 	public function delete() {
 		$node = $this->client->getNode($this->id);
 		if (!$node) {
-			throw new NotFoundException('Nonexistent node "' . $this->id . '".');
+			throw new Exceptions\NotFoundException('Nonexistent node "' . $this->id . '".');
 		}
 
 		$node->delete();

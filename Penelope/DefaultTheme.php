@@ -16,8 +16,6 @@ namespace Karwana\Penelope;
 use Slim;
 use Negotiation\FormatNegotiator;
 
-use Karwana\Penelope\Types\File;
-
 class DefaultTheme extends Slim\View {
 
 	const ROUTE_NAME = 'resource';
@@ -39,11 +37,11 @@ class DefaultTheme extends Slim\View {
 		return implode(DIRECTORY_SEPARATOR, array(__DIR__, '..', 'themes', 'default'));
 	}
 
-	public function getResourcePathname($resource_type, $file) {
-		return $this->getTemplatePathname(implode(DIRECTORY_SEPARATOR, array('resources', $resource_type, $file)));
+	public function getResourcePath($resource_type, $file) {
+		return $this->getTemplatePath(implode(DIRECTORY_SEPARATOR, array('resources', $resource_type, $file)));
 	}
 
-	public function getTemplatePathname($file) {
+	public function getTemplatePath($file) {
 		$relative_path = DIRECTORY_SEPARATOR . ltrim($file, DIRECTORY_SEPARATOR);
 		$path = $this->getTemplatesDirectory() . $relative_path;
 
@@ -59,17 +57,6 @@ class DefaultTheme extends Slim\View {
 		return $this->app->urlFor(static::ROUTE_NAME, array('resource_type' => $resource_type, 'file' => $file));
 	}
 
-	public function renderResource($resource_type, $file) {
-		$path = $this->getResourcePathname($resource_type, $file);
-		if (!is_file($path)) {
-			throw new NotFoundException('The file "' . $file . '" does not exist.');
-		}
-
-		$response = $this->app->response;
-		$response->headers->set('Content-Type', File::getMimeType($path));
-		$response->setBody(file_get_contents($path));
-	}
-
 	public function render($template, $data = null) {
 		$format = 'html';
 
@@ -82,7 +69,7 @@ class DefaultTheme extends Slim\View {
 			return json_encode($this->data->all());
 		}
 
-		$helpers_file = $this->getTemplatePathname('helpers.php');
+		$helpers_file = $this->getTemplatePath('helpers.php');
 		if (is_file($helpers_file)) {
 			$app = $this->app;
 			require_once $helpers_file;
