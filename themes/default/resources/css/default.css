@@ -34,7 +34,8 @@ body > footer {
   padding: 1rem 0;
 }
 body > footer a {
-  color: inherit;
+  color: #ccc;
+  text-decoration: none;
 }
 body > footer > p {
   margin: 0 1rem;
