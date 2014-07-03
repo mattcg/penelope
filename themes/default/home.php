@@ -2,35 +2,37 @@
 	<header>
 		<h1><?php __($title); ?></h1>
 	</header>
-	<?php
-
-	if (empty($node_schemas)) {
-
-	?>
-	<p>No nodes defined.</p>
-	<?php
-
-	} else {
-
-	?>
-	<nav>
-		<ul>
+	<div class="body">
 		<?php
 
-		foreach ($node_schemas as $node_schema) {
+		if (empty($node_schemas)) {
 
 		?>
-			<li><a href="/<?php __($node_schema->getSlug()); ?>/"><?php __($node_schema->getName()); ?></a></li>
+		<p>No nodes defined.</p>
+		<?php
+
+		} else {
+
+		?>
+		<nav>
+			<ul>
+			<?php
+
+			foreach ($node_schemas as $node_schema) {
+
+			?>
+				<li><a href="/<?php __($node_schema->getSlug()); ?>/"><?php __($node_schema->getName()); ?></a></li>
+			<?php
+
+			}
+
+			?>
+			</ul>
+		</nav>
 		<?php
 
 		}
 
 		?>
-		</ul>
-	</nav>
-	<?php
-
-	}
-
-	?>
+	</div>
 </main>

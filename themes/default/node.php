@@ -5,33 +5,34 @@
 		require __path('node_header.php');
 
 		?>
+		<div class="body">
+			<dl class="node-properties">
+			<?php
 
-		<dl class="node-properties">
-		<?php
+			foreach ($node->getProperties() as $property) {
+				if (!$property->hasValue()) {
+					continue;
+				}
 
-		foreach ($node->getProperties() as $property) {
-			if (!$property->hasValue()) {
-				continue;
-			}
+				$type_class = 'type-' . $property->getSchema()->getType();
+				if ($property->getSchema()->isMultiValue()) {
+					$type_class .= ' multivalue';
+				}
 
-			$type_class = 'type-' . $property->getSchema()->getType();
-			if ($property->getSchema()->isMultiValue()) {
-				$type_class .= ' multivalue';
+				?>
+				<dt class="<?php __($type_class); ?>"><?php __label($property); ?></dt>
+				<dd class="<?php __($type_class); ?>">
+				<?php
+
+				require __path('types/' . $property->getSchema()->getType() . '.php');
+
+				?>
+				</dd>
+				<?php
 			}
 
 			?>
-			<dt class="<?php __($type_class); ?>"><?php __label($property); ?></dt>
-			<dd class="<?php __($type_class); ?>">
-			<?php
-
-			require __path('types/' . $property->getSchema()->getType() . '.php');
-
-			?>
-			</dd>
-			<?php
-		}
-
-		?>
-		</dl>
+			</dl>
+		</div>
 	</article>
 </main>

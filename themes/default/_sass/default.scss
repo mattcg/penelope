@@ -51,6 +51,11 @@ body > footer {
 
 main {
 	margin-bottom: 6rem;
+
+	> .body,
+	> article > .body {
+		margin: 1em;
+	}
 }
 
 main > header,
@@ -122,8 +127,6 @@ main.node.new > header.node > nav.crud {
 }
 
 article.node > dl.node-properties {
-	margin: 1rem;
-
 	> dt {
 		text-transform: uppercase;
 		font-size: 0.8rem;
@@ -165,8 +168,6 @@ form.node > img {
 }
 
 main > nav.nodes {
-	margin: 1rem;
-
 	> ul {
 		padding-left: 1rem;
 	}
@@ -177,8 +178,6 @@ main > nav.nodes {
 }
 
 form.node {
-	margin: 1rem;
-
 	> label {
 		display: block;
 		text-transform: uppercase;

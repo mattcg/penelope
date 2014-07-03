@@ -44,6 +44,10 @@ body > footer > p {
 main {
   margin-bottom: 6rem;
 }
+main > .body,
+main > article > .body {
+  margin: 1em;
+}
 
 main > header,
 main > article > header {
@@ -109,9 +113,6 @@ main.node.new > header.node > nav.crud > ul > li.new {
   display: none;
 }
 
-article.node > dl.node-properties {
-  margin: 1rem;
-}
 article.node > dl.node-properties > dt {
   text-transform: uppercase;
   font-size: 0.8rem;
@@ -147,9 +148,6 @@ form.node > img {
   width: auto;
 }
 
-main > nav.nodes {
-  margin: 1rem;
-}
 main > nav.nodes > ul {
   padding-left: 1rem;
 }
@@ -157,9 +155,6 @@ main > nav.nodes > ul > li + li {
   margin-top: 1em;
 }
 
-form.node {
-  margin: 1rem;
-}
 form.node > label {
   display: block;
   text-transform: uppercase;
