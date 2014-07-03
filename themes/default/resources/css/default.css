@@ -144,11 +144,7 @@ dd.multivalue > ul.multivalue > li {
 dd.type-image > img,
 form.node > img {
   max-height: 10rem;
-  -webkit-border-radius: 50%;
-  -moz-border-radius: 50%;
-  -ms-border-radius: 50%;
-  -o-border-radius: 50%;
-  border-radius: 50%;
+  width: auto;
 }
 
 main > nav.nodes {

@@ -161,7 +161,7 @@ dd.multivalue > ul.multivalue {
 dd.type-image > img,
 form.node > img {
 	max-height: 10rem;
-	@include border-radius(50%);
+	width: auto;
 }
 
 main > nav.nodes {
