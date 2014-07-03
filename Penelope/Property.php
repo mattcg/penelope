@@ -15,11 +15,10 @@ namespace Karwana\Penelope;
 
 class Property {
 
-	protected $value, $schema, $type_class;
+	protected $value, $schema;
 
 	public function __construct(PropertySchema $property_schema) {
 		$this->schema = $property_schema;
-		$this->type_class = __NAMESPACE__ . '\\Types\\' . ucfirst($property_schema->getType());
 	}
 
 	public function getSchema() {
@@ -40,13 +39,14 @@ class Property {
 
 	public function setValue($value) {
 		$value = $this->filterValue($value);
+
 		if (is_null($value)) {
 			$this->value = null;
 			return;
 		}
 
 		$options = $this->schema->getOptions();
-		$type_class = $this->type_class;
+		$type_class = $this->schema->getTypeClass();
 
 		if ($this->schema->isMultiValue()) {
 			$this->value = array_map(function($value) use ($type_class, $options) {
@@ -77,7 +77,7 @@ class Property {
 			return;
 		}
 
-		$type_class = $this->type_class;
+		$type_class = $this->schema->getTypeClass();
 
 		if ($this->schema->isMultiValue()) {
 			$value = array_map(function($value) use ($type_class) {
@@ -95,7 +95,7 @@ class Property {
 			return;
 		}
 
-		$type_class = $this->type_class;
+		$type_class = $this->schema->getTypeClass();
 
 		if (!$this->schema->isMultiValue()) {
 			return $type_class::serialize($this->getValue());
@@ -107,7 +107,7 @@ class Property {
 	}
 
 	public function filterValue($value) {
-		$type_class = $this->type_class;
+		$type_class = $this->schema->getTypeClass();
 
 		if (!$this->schema->isMultiValue()) {
 			if (!$type_class::isEmpty($value)) {

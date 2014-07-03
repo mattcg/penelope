@@ -44,4 +44,8 @@ class PropertySchema extends OptionContainer {
 	public function getType() {
 		return $this->type;
 	}
+
+	public function getTypeClass() {
+		return __NAMESPACE__ . '\\Types\\' . ucfirst($this->type);
+	}
 }

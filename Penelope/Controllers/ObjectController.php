@@ -61,6 +61,13 @@ abstract class ObjectController extends Controller {
 			$transient_properties[$name] = $transient_property;
 			$transient_property->setSerializedValue($value);
 
+			// Check if the property schema requires that the property have a value.
+			if (!$transient_property->hasValue() and $transient_property->getSchema()->getOption('required')) {
+				$transient_property->setError(new Exceptions\TypeException('A value is required.'));
+				$has_errors = true;
+				continue;
+			}
+
 			try {
 				$object->setProperty($name, $transient_property->getValue());
 			} catch (Exceptions\TypeException $e) {
