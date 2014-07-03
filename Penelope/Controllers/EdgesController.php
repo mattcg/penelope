@@ -13,9 +13,10 @@
 
 namespace Karwana\Penelope\Controllers;
 
+use Karwana\Penelope\Edge;
 use Karwana\Penelope\Exceptions;
 
-abstract class EdgesController extends ObjectController {
+class EdgesController extends ObjectController {
 
 	public function getSchemaBySlugs($node_schema_slug, $edge_schema_slug) {
 

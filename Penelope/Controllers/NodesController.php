@@ -13,9 +13,10 @@
 
 namespace Karwana\Penelope\Controllers;
 
+use Karwana\Penelope\Node;
 use Karwana\Penelope\TransientProperty;
 
-abstract class NodesController extends ObjectController {
+class NodesController extends ObjectController {
 
 	public function getSchemaBySlug($schema_slug) {
 		try {

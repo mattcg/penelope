@@ -11,7 +11,7 @@
  * @since      File available since Release 1.0.0
  */
 
-namespace Karwana\Penelope;
+namespace Karwana\Penelope\Exceptions;
 
 class UploadException extends Exception {
 

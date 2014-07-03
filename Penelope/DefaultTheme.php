@@ -53,8 +53,12 @@ class DefaultTheme extends Slim\View {
 		return $path;
 	}
 
+	public function getTemplatePathname($file) {
+		return $this->getTemplatePath($file);
+	}
+
 	public function getResourceUrl($resource_type, $file) {
-		return $this->app->urlFor(static::ROUTE_NAME, array('resource_type' => $resource_type, 'file' => $file));
+		return $this->app->urlFor(static::ROUTE_NAME, array('resource_type' => $resource_type, 'file_name' => $file));
 	}
 
 	public function render($template, $data = null) {

@@ -44,13 +44,13 @@ class Penelope extends OptionContainer {
 
 		// Set up the home route.
 		$app->get('/', Closure::bind(function() {
-			$controller = new Controllers\Home($this->app, $this->schema, $this->client);
+			$controller = new Controllers\HomeController($this->app, $this->schema);
 			$controller->read();
 		}, $this));
 
 		// Set up the uploads route.
 		$app->get('/uploads/:file_name', function($file_name) {
-			$controller = new Controllers\Upload($this->app);
+			$controller = new Controllers\UploadController($this->app);
 			$controller->read($file_name);
 		});
 	}
@@ -91,7 +91,7 @@ class Penelope extends OptionContainer {
 			}
 
 			$controller = new Controllers\FileController($this->app);
-			$controller->read($theme->getResourcePath($resource_type, $file));
+			$controller->read($theme->getResourcePath($resource_type, $file_name));
 
 		}, $this))->name($theme::ROUTE_NAME);
 	}
@@ -157,7 +157,7 @@ class Penelope extends OptionContainer {
 		$nodes_path = $node_schema->getCollectionPath();
 
 		$app->get($nodes_path, $nodes_middleware, Closure::bind(function() use ($node_slug) {
-			$this->app->controller->read($nodes_slug);
+			$this->app->controller->read($node_slug);
 		}, $this));
 
 		$app->post($nodes_path, $nodes_middleware, Closure::bind(function() use ($node_slug) {

@@ -78,7 +78,7 @@ class EdgeSchema extends ObjectSchema {
 
 	public function getPath() {
 		$node_slug = $this->from_schema->getSlug();
-		sprintf($node_schema->getPathFormat(), $node_slug, ':node_id',  $this->getSlug(), ':edge_id');
+		return sprintf($node_schema->getPathFormat(), $node_slug, ':node_id',  $this->getSlug(), ':edge_id');
 	}
 
 	public function getCollectionPath() {

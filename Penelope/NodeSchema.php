@@ -43,7 +43,7 @@ class NodeSchema extends ObjectSchema {
 	}
 
 	public function getPath() {
-		sprintf($node_schema->getPathFormat(), $this->getSlug(), ':node_id');
+		return sprintf($this->getPathFormat(), $this->getSlug(), ':node_id');
 	}
 
 	public function getCollectionPath() {

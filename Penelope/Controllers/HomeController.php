@@ -13,7 +13,18 @@
 
 namespace Karwana\Penelope\Controllers;
 
-class Home extends Crud {
+use Slim;
+
+use Karwana\Penelope\Schema;
+
+class HomeController extends Controller {
+
+	protected $schema;
+
+	public function __construct(Slim\Slim $app, Schema $schema) {
+		parent::__construct($app);
+		$this->schema = $schema;
+	}
 
 	public function read() {
 		$view_data = array('title' => 'Welcome', 'node_schemas' => $this->schema->getNodes());

@@ -49,7 +49,7 @@ class Country extends Type {
 			$value = strtoupper($value);
 		}
 
-		parent::setValue($value);
+		return $value;
 	}
 
 	public static function isValid($value, &$message = null) {

@@ -19,10 +19,6 @@ use Karwana\Penelope\Exceptions;
 class FileController extends Controller {
 
 	public function read($system_path) {
-		if (0 !== ob_get_level()) {
-			trigger_error('Output buffering is turned on and files will not be streamed to the client. This might cause memory issues with large files.');
-		}
-
 		if (!is_readable($system_path)) {
 			$this->render404(new Exceptions\Exception('The requested file is unreadable or does not exist.'));
 			return;

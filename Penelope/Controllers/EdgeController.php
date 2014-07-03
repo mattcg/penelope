@@ -15,7 +15,7 @@ namespace Karwana\Penelope\Controllers;
 
 use Karwana\Penelope\Exceptions;
 
-abstract class EdgeController extends ObjectController {
+class EdgeController extends ObjectController {
 
 	private function getSchemaBySlugs($node_schema_slug, $edge_schema_slug) {
 		return (new EdgesController($this->app, $this->schema, $this->client))->getSchemaBySlugs($node_schema_slug, $edge_schema_slug);

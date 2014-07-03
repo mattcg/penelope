@@ -15,7 +15,7 @@ namespace Karwana\Penelope\Controllers;
 
 use Karwana\Penelope\Exceptions;
 
-abstract class NodeController extends ObjectController {
+class NodeController extends ObjectController {
 
 	private function getSchemaBySlug($schema_slug) {
 		return (new NodesController($this->app, $this->schema, $this->client))->getSchemaBySlug($schema_slug);
