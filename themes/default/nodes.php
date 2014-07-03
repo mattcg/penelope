@@ -18,17 +18,17 @@
 		?>
 		<nav class="nodes">
 			<ul>
-			<?php
+				<?php
 
-			foreach ($nodes as $node) {
+				foreach ($nodes as $node) {
 
-			?>
+				?>
 				<li><a href="<?php __($node->getPath()); ?>" title="<?php __($node->getTitle()); ?>"><?php __($node->getTitle()); ?></a></li>
-			<?php
+				<?php
 
-			}
+				}
 
-			?>
+				?>
 			</ul>
 		</nav>
 		<?php
