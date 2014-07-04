@@ -19,40 +19,13 @@ use Karwana\Penelope\TransientProperty;
 
 class EdgesController extends ObjectController {
 
-	public function getSchemaBySlugs($node_schema_slug, $edge_schema_slug) {
-
-		try {
-			$edge_schema = $this->schema->getEdgeBySlug($edge_schema_slug);
-
-		// If the edge schema with the given slug doesn't exist.
-		} catch (\InvalidArgumentException $e) {
-			$this->render404($e);
-			$this->app->stop();
-		}
-
-		$from_node_schema = $edge_schema->getOutSchema();
-
-		// If the edge's schema defines relationships from nodes of a different schema.
-		if ($from_node_schema->getSlug() !== $node_schema_slug) {
-			$this->render404(new Exceptions\SchemaException('The schema for edges of type "' . $edge_schema->getName() . '" does not permit relationships with nodes of the given type.'));
-			$this->app->stop();
-		}
-
-		return $edge_schema;
-	}
-
-	public function getByParams($node_schema_slug, $node_id, $edge_schema_slug) {
+	public function getEdgesByParams($node_schema_slug, $node_id, $edge_schema_slug) {
+		$node = $this->getNodeByParams($node_schema_slug, $node_id);
 
 		// Check that:
 		// - the edge schema with the given slug exists
 		// - the edge schema defines relationships with nodes of the given node schema
-		$edge_schema = $this->getSchemaBySlugs($node_schema_slug, $edge_schema_slug);
-
-		// Check that:
-		// - the node schema with the given slug exists
-		// - the node with the given ID exists
-		$controller = new NodeController($this->app, $this->schema, $this->client);
-		$node = $controller->getByParams($node_schema_slug, $node_id);
+		$edge_schema = $this->getEdgeSchemaBySlugs($node_schema_slug, $edge_schema_slug);
 
 		try {
 			$edges = $node->getOutEdges($edge_schema);
@@ -67,7 +40,7 @@ class EdgesController extends ObjectController {
 	}
 
 	public function create($node_schema_slug, $node_id, $edge_schema_slug) {
-		$edge_schema = $this->getSchemaBySlugs($node_schema_slug, $edge_schema_slug);
+		$edge_schema = $this->getEdgeSchemaBySlugs($node_schema_slug, $edge_schema_slug);
 		$edge = new Edge($edge_schema, $this->client);
 
 		$transient_properties = array();
@@ -110,10 +83,15 @@ class EdgesController extends ObjectController {
 	}
 
 	public function read($node_schema_slug, $node_id, $edge_schema_slug) {
-		$edge_schema = $this->getSchemaBySlugs($node_schema_slug, $edge_schema_slug);
-		$edges = $this->getByParams($node_schema_slug, $node_id, $edge_schema_slug);
+		$node = $this->getNodeByParams($node_schema_slug, $node_id);
 
-		$view_data = array('title' => $edge_schema->getName() . ' Edges from node #' . $node->getId());
+		$edge_schema = $this->getEdgeSchemaBySlugs($node_schema_slug, $edge_schema_slug);
+		$edges = $this->getEdgesByParams($node_schema_slug, $node_id, $edge_schema_slug);
+
+		$view_data = array('title' => $edge_schema->getName() . ' relationships from ' . $node->getTitle());
+		$view_data['node'] = $node;
+		$view_data['edge_schema'] = $edge_schema;
+
 		$this->app->render('edges', $view_data);
 	}
 
@@ -122,7 +100,7 @@ class EdgesController extends ObjectController {
 		// TODO: View.
 		throw \BadMethodCallException('Not implemented.');
 
-		$edges = $this->getByParams($node_schema_slug, $node_id, $edge_schema_slug);
+		$edges = $this->getEdgesByParams($node_schema_slug, $node_id, $edge_schema_slug);
 
 		// Delete the entire collection.
 		foreach ($edges as $edge) {
@@ -131,9 +109,11 @@ class EdgesController extends ObjectController {
 	}
 
 	public function renderNewForm($node_schema_slug, $node_id, $edge_schema_slug, array $transient_properties = null, \Exception $e = null) {
-		$edge_schema = $this->getSchemaBySlugs($node_schema_slug, $edge_schema_slug);
+		$edge_schema = $this->getEdgeSchemaBySlugs($node_schema_slug, $edge_schema_slug);
+		$node = $this->getNodeByParams($node_schema_slug, $node_id);
 
-		$view_data = array('title' => 'New ' . $edge_schema->getName(), 'error' => $e);
+		$view_data = array('title' => 'New ' . $edge_schema->getName() . ' relationship from ' . $node->getTitle(), 'error' => $e);
+		$view_data['node'] = $node;
 		$view_data['properties'] = array();
 
 		foreach ($edge_schema->getProperties() as $property_schema) {

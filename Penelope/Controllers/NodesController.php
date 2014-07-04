@@ -18,21 +18,8 @@ use Karwana\Penelope\TransientProperty;
 
 class NodesController extends ObjectController {
 
-	public function getSchemaBySlug($schema_slug) {
-		try {
-			$node_schema = $this->schema->getNodeBySlug($schema_slug);
-
-		// If the node schema with the given slug doesn't exist.
-		} catch (\InvalidArgumentException $e) {
-			$this->render404($e);
-			$this->app->stop();
-		}
-
-		return $node_schema;
-	}
-
 	public function read($schema_slug) {
-		$node_schema = $this->getSchemaBySlug($schema_slug);
+		$node_schema = $this->getNodeSchemaBySlug($schema_slug);
 
 		$view_data = array('title' => $node_schema->getName() . ' list', 'node_schema' => $node_schema);
 
@@ -48,7 +35,7 @@ class NodesController extends ObjectController {
 	}
 
 	public function create($schema_slug) {
-		$node_schema = $this->getSchemaBySlug($schema_slug);
+		$node_schema = $this->getNodeSchemaBySlug($schema_slug);
 		$node = new Node($node_schema, $this->client);
 
 		$transient_properties = array();
@@ -77,7 +64,7 @@ class NodesController extends ObjectController {
 	}
 
 	public function renderNewForm($schema_slug, array $transient_properties = null, \Exception $e = null) {
-		$node_schema = $this->getSchemaBySlug($schema_slug);
+		$node_schema = $this->getNodeSchemaBySlug($schema_slug);
 
 		$view_data = array('title' => 'New ' . $node_schema->getName(), 'error' => $e);
 		$view_data['properties'] = array();

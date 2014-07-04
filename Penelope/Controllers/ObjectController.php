@@ -32,6 +32,99 @@ abstract class ObjectController extends Controller {
 		$this->schema = $schema;
 	}
 
+	public function getNodeByParams($schema_slug, $node_id) {
+		$node_schema = $this->getNodeSchemaBySlug($schema_slug);
+
+		try {
+			$node = $node_schema->get($this->client, $node_id);
+
+		// If the node with the given ID doesn't exist.
+		} catch (Exceptions\NotFoundException $e) {
+			$this->render404($e);
+			$this->app->stop();
+
+		// If the node with the given ID exists, but doesn't match the given schema.
+		} catch (Exceptions\SchemaException $e) {
+			$this->render404($e);
+			$this->app->stop();
+		}
+
+		return $node;
+	}
+
+	public function getNodeSchemaBySlug($schema_slug) {
+		try {
+			$node_schema = $this->schema->getNodeBySlug($schema_slug);
+
+		// If the node schema with the given slug doesn't exist.
+		} catch (\InvalidArgumentException $e) {
+			$this->render404($e);
+			$this->app->stop();
+		}
+
+		return $node_schema;
+	}
+
+	public function getEdgeByParams($node_schema_slug, $node_id, $edge_schema_slug, $edge_id) {
+		$edge_schema = $this->getSchemaBySlugs($node_schema_slug, $edge_schema_slug);
+
+		// Check that:
+		// - the edge schema with the given slug exists
+		// - the edge's schema defines relationships from nodes of the same schema
+		$edge_schema = $this->getEdgeSchemaBySlugs($node_schema_slug, $edge_schema_slug);
+
+		// Check that:
+		// - the node schema with the given slug exists
+		// - the node with the given ID exists
+		$node = $this->getNodeByParams($node_schema_slug, $node_id);
+
+		try {
+			$edge = $edge_schema->get($this->client, $edge_id);
+
+		// If the edge with the given ID doesn't exist.
+		} catch (Exceptions\NotFoundException $e) {
+			$this->render404($e);
+			$this->app->stop();
+
+		// If the edge with the given ID exists, but:
+		//  - it doesn't match the given schema
+		//  - its related nodes don't match its own schema
+		} catch (Exceptions\SchemaException $e) {
+			$this->render404($e);
+			$this->app->stop();
+		}
+
+		// If the node with the given ID is not the start node of the edge with the given ID.
+		if ($edge->getFromNode()->getId() !== $node->getId()) {
+			$this->render404(new Exceptions\NotFoundException('There is no edge from the given node.'));
+			$this->app->stop();
+		}
+
+		return $edge;
+	}
+
+	public function getEdgeSchemaBySlugs($node_schema_slug, $edge_schema_slug) {
+
+		try {
+			$edge_schema = $this->schema->getEdgeBySlug($edge_schema_slug);
+
+		// If the edge schema with the given slug doesn't exist.
+		} catch (\InvalidArgumentException $e) {
+			$this->render404($e);
+			$this->app->stop();
+		}
+
+		$from_node_schema = $edge_schema->getOutSchema();
+
+		// If the edge's schema defines relationships from nodes of a different schema.
+		if ($from_node_schema->getSlug() !== $node_schema_slug) {
+			$this->render404(new Exceptions\SchemaException('The schema for edges of type "' . $edge_schema->getName() . '" does not permit relationships with nodes of the given type.'));
+			$this->app->stop();
+		}
+
+		return $edge_schema;
+	}
+
 	protected function processProperties(Object $object, $data, array &$transient_properties, &$has_errors) {
 		$object_schema = $object->getSchema();
 
