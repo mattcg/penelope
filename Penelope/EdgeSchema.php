@@ -17,7 +17,7 @@ class EdgeSchema extends ObjectSchema {
 
 	private $in_schema, $out_schema;
 
-	protected $path_formats = array('collection' => '/%/%s/%s/', 'new' => '/%s/%s/%s/new', 'edit' => '/%s/%s/%s/%s/edit', 'object' => '/%s/%s/%s/%s');
+	protected $path_formats = array('collection' => '/%s/%s/%s/', 'new' => '/%s/%s/%s/new', 'edit' => '/%s/%s/%s/%s/edit', 'object' => '/%s/%s/%s/%s');
 
 	public function __construct($name, $slug, NodeSchema $out_schema, NodeSchema $in_schema, array $properties, array $options = null) {
 		$this->in_schema = $in_schema;
