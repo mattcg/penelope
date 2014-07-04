@@ -111,6 +111,10 @@ header.object > nav.crud > ul > li.view {
   display: none;
 }
 
+main.collection header.object > nav.crud > ul > li.collection {
+  display: none;
+}
+
 main.object.new header.object > nav.crud > ul > li.new {
   display: none;
 }
