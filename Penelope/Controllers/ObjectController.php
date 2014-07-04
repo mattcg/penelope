@@ -35,6 +35,12 @@ abstract class ObjectController extends Controller {
 	public function getNodeByParams($schema_slug, $node_id) {
 		$node_schema = $this->getNodeSchemaBySlug($schema_slug);
 
+		// Validate the format of the given node ID.
+		if (!ctype_digit($node_id)) {
+			$this->render404(new \InvalidArgumentException('Invalid node ID "' . $node_id . '".'));
+			$this->app->stop();
+		}
+
 		try {
 			$node = $node_schema->get($this->client, $node_id);
 
@@ -66,6 +72,13 @@ abstract class ObjectController extends Controller {
 	}
 
 	public function getEdgeByParams($node_schema_slug, $node_id, $edge_schema_slug, $edge_id) {
+
+		// Validate the format of the given edge ID.
+		if (!ctype_digit($edge_id)) {
+			$this->render404(new \InvalidArgumentException('Invalid edge ID "' . $edge_id . '".'));
+			$this->app->stop();
+		}
+
 		$edge_schema = $this->getSchemaBySlugs($node_schema_slug, $edge_schema_slug);
 
 		// Check that:
