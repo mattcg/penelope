@@ -38,6 +38,10 @@ class Node extends Object {
 			throw new \LogicException('Cannot create new edge path for node with no ID.');
 		}
 
+		if (!$edge_schema->canRelateFrom($this->getSchema()->getName())) {
+			throw new \LogicException('Cannot create new edge path for unrelatable node.');
+		}
+
 		return preg_replace('/:node_id/', $this->getId(), $edge_schema->getNewPath());
 	}
 
