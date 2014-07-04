@@ -77,9 +77,8 @@ class Edge extends Object {
 			throw new Exceptions\NotFoundException('No edge with ID "' . $this->id . '".');
 		}
 
-		$schema_name = $this->schema->getName();
-		if ($edge->getType() !== $schema_name) {
-			throw new Exceptions\SchemaException('Edge with ID "' . $this->id . '" exists, but does not match schema "' . $schema_name . '".');
+		if (!$this->schema->envelopes($edge)) {
+			throw new Exceptions\SchemaException('Edge with ID "' . $this->id . '" exists, but does not match schema "' . $this->schema->getName() . '".');
 		}
 
 		// Preload the start and end nodes.

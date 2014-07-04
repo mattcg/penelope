@@ -50,6 +50,10 @@ class EdgeSchema extends ObjectSchema {
 		return $this->in_schema;
 	}
 
+	public function envelopes(Neo4j\Relationship $client_edge) {
+		return $edge->getType() === $this->getName();
+	}
+
 	public function canRelate($from_name, $to_name) {
 		if ($this->canRelateFrom($from_name) and $this->canRelateTo($to_name)) {
 			return true;
