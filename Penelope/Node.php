@@ -33,6 +33,14 @@ class Node extends Object {
 		return preg_replace('/:node_id/', $this->getId(), $this->schema->getEditPath());
 	}
 
+	public function getNewEdgePath(EdgeSchema $edge_schema) {
+		if (!$this->hasId()) {
+			throw new \LogicException('Cannot create new edge path for node with no ID.');
+		}
+
+		return preg_replace('/:node_id/', $this->getId(), $edge_schema->getNewPath());
+	}
+
 	public function fetch() {
 		if (is_null($this->id)) {
 			throw new \LogicException('Cannot fetch without ID.');

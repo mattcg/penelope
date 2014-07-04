@@ -55,8 +55,18 @@ class EdgeController extends ObjectController {
 		return $edge;
 	}
 
+	private function getByParamsArray($params) {
+		return call_user_func_array(array($this, 'getByParams'), $params);
+	}
+
+	public function read($node_schema_slug, $node_id, $edge_schema_slug, $edge_id) {
+		$edge = $this->getByParamsArray(func_get_args());
+		$edge->delete();
+		$this->app->render('edge', array('title' => $edge->getTitle()));
+	}
+
 	public function delete($node_schema_slug, $node_id, $edge_schema_slug, $edge_id) {
-		$edge->getByParams($node_schema_slug, $node_id, $edge_schema_slug, $edge_id);
+		$edge = $this->getByParamsArray(func_get_args());
 		$edge->delete();
 		$this->app->render('edge_deleted', array('title' => 'Deleted ' . $edge->getTitle()));
 	}

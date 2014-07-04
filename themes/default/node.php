@@ -20,11 +20,12 @@
 			<section class="edges">
 					<?php
 
-					foreach ($app->getSchema()->getOutEdges($node->getSchema()->getName()) as $edge_schema) {
+					foreach ($edge_schemas as $edge_schema) {
 
 					?>
 					<nav class="edges <?php __class('edges-' . $edge_schema->getName()); ?>"
 						<ul>
+							<li class="new"><a class="new" href="<?php __($node->getNewEdgePath($edge_schema)); ?>" title="Create a new <?php __($edge_schema->getName()); ?> relationship from <?php __($node->getTitle()); ?>">New</a></li>
 							<?php
 
 							foreach ($node->getOutEdges($edge_schema) as $edge) {

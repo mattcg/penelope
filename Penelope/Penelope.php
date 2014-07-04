@@ -126,6 +126,11 @@ class Penelope extends OptionContainer {
 			$this->app->controller->read($from_slug, $node_id, $edge_slug);
 		}, $this));
 
+		// Get the form for creating a new edge within the collection.
+		$app->get($edge_schema->getNewPath(), $edges_middleware, Closure::bind(function($node_id) use ($from_slug, $edge_slug) {
+			$this->app->controller->renderNewForm($from_slug, $node_id, $edge_slug);
+		}, $this));
+
 		// Create a new edge within a collection of edges from a node, with the schema name given in the path.
 		$app->post($edges_path, $edges_middleware, Closure::bind(function($node_id) use ($from_slug, $edge_slug) {
 			$this->app->controller->create($from_slug, $node_id, $edge_slug);
@@ -138,6 +143,11 @@ class Penelope extends OptionContainer {
 		}, $this);
 
 		$edge_path = $edge_schema->getPath();
+
+		// Read the edge, with the given schema name ID, coming from the node with the given schema name and ID.
+		$app->get($edge_path, $edge_middleware, Closure::bind(function($node_id, $edge_id) use ($from_slug, $edge_slug) {
+			$this->app->controller->read($from_slug, $node_id, $edge_slug, $edge_id);
+		}, $this));
 
 		// Delete the edge, with the given schema name ID, coming from the node with the given schema name and ID.
 		$app->delete($edge_path, $edge_middleware, Closure::bind(function($node_id, $edge_id) use ($from_slug, $edge_slug) {

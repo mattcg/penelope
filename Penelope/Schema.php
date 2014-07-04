@@ -46,7 +46,7 @@ class Schema {
 	}
 
 	public function getOutEdges($node_name) {
-		$node_schema = $this->getNode($name);
+		$node_schema = $this->getNode($node_name);
 
 		return array_filter($this->getEdges(), function($edge_schema) use ($node_schema) {
 			return $edge_schema->canRelateFrom($node_schema->getName());

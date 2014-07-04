@@ -15,6 +15,7 @@ namespace Karwana\Penelope\Controllers;
 
 use Karwana\Penelope\Edge;
 use Karwana\Penelope\Exceptions;
+use Karwana\Penelope\TransientProperty;
 
 class EdgesController extends ObjectController {
 
@@ -66,7 +67,7 @@ class EdgesController extends ObjectController {
 	}
 
 	public function create($node_schema_slug, $node_id, $edge_schema_slug) {
-		$edge_schema = $this->getSchemaBySlug($edge_schema_slug);
+		$edge_schema = $this->getSchemaBySlugs($node_schema_slug, $edge_schema_slug);
 		$edge = new Edge($edge_schema, $this->client);
 
 		$transient_properties = array();
@@ -109,8 +110,8 @@ class EdgesController extends ObjectController {
 	}
 
 	public function read($node_schema_slug, $node_id, $edge_schema_slug) {
+		$edge_schema = $this->getSchemaBySlugs($node_schema_slug, $edge_schema_slug);
 		$edges = $this->getByParams($node_schema_slug, $node_id, $edge_schema_slug);
-		$edge_schema = $this->getSchemaBySlug();
 
 		$view_data = array('title' => $edge_schema->getName() . ' Edges from node #' . $node->getId());
 		$this->app->render('edges', $view_data);
@@ -127,5 +128,33 @@ class EdgesController extends ObjectController {
 		foreach ($edges as $edge) {
 			$edge->delete();
 		}
+	}
+
+	public function renderNewForm($node_schema_slug, $node_id, $edge_schema_slug, array $transient_properties = null, \Exception $e = null) {
+		$edge_schema = $this->getSchemaBySlugs($node_schema_slug, $edge_schema_slug);
+
+		$view_data = array('title' => 'New ' . $edge_schema->getName(), 'error' => $e);
+		$view_data['properties'] = array();
+
+		foreach ($edge_schema->getProperties() as $property_schema) {
+			$property_name = $property_schema->getName();
+
+			if (isset($transient_properties[$property_name])) {
+				$transient_property = $transient_properties[$property_name];
+			} else {
+				$transient_property = new TransientProperty($property_schema);
+			}
+
+			$view_data['properties'][] = $transient_property;
+		}
+
+		if ($e) {
+			$this->app->response->setStatus(500);
+		} else if (!empty($transient_properties)) {
+			$this->app->response->setStatus(422);
+		}
+
+		$view_data['edge_schema'] = $edge_schema;
+		$this->app->render('edge_new', $view_data);
 	}
 }

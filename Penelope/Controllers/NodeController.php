@@ -46,6 +46,7 @@ class NodeController extends ObjectController {
 		$node_schema = $node->getSchema();
 
 		$view_data = array('title' => $node->getTitle(), 'node' => $node, 'node_schema' => $node_schema);
+		$view_data['edge_schemas'] = $this->schema->getOutEdges($node->getSchema()->getName());
 		$this->app->render('node', $view_data);
 	}
 
