@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Penelope" default="cs">
+
+	<!-- Target: cs -->
+	<target name="cs" description="Verify that coding style guidelines are met; fail if not">
+		<exec executable="vendor/bin/phpcs" passthru="true" checkreturn="true">
+			<arg line="--standard=./tests/cs/ruleset.xml" />
+			<arg line="-s" />
+			<arg line="Penelope" />
+		</exec>
+	</target>
+</project>
