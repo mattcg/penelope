@@ -22,14 +22,7 @@ class NodesController extends ObjectController {
 		$node_schema = $this->getNodeSchemaBySlug($schema_slug);
 
 		$view_data = array('title' => $node_schema->getName() . ' list', 'node_schema' => $node_schema);
-
-		$label = $this->client->makeLabel($node_schema->getName());
-		$view_data['nodes'] = array();
-
-		// TODO: Use a NodeList that lazy loads objects.
-		foreach ($label->getNodes() as $node) {
-			$view_data['nodes'][] = new Node($node_schema, $this->client, $node);
-		}
+		$view_data['nodes'] = $node_schema->getCollection($this->client);
 
 		$this->app->render('nodes', $view_data);
 	}
