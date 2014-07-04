@@ -44,17 +44,8 @@ class Node extends Object {
 		}
 
 		// Check that the node given by the ID matches the schema.
-		$schema_name = $this->schema->getName();
-		$found_schema = false;
-		foreach ($node->getLabels() as $label) {
-			if ($label->getName() === $schema_name) {
-				$found_schema = true;
-				break;
-			}
-		}
-
-		if (!$found_schema) {
-			throw new Exceptions\SchemaException('Node with ID "' . $this->id . '" exists, but does not match schema "' . $schema_name . '".');
+		if (!$this->schema->envelopes($node)) {
+			throw new Exceptions\SchemaException('Node with ID "' . $this->id . '" exists, but does not match schema "' . $$this->schema->getName() . '".');
 		}
 
 		$this->object = $node;
@@ -78,13 +69,12 @@ class Node extends Object {
 		foreach ($relationships as $relationship) {
 
 			// Only include edges permitted by the schema.
-			foreach ($relationship->getEndNode()->getLabels() as $to_name) {
-				if ($edge_schema->canRelate($this->schema->getName(), $to_name)) {
-					$edge = new Edge($edge_schema, $this->client, $relationship->getId());
-					$edge->fetch();
-					$edges[] = $edge;
-					break;
-				}
+			// Note that if one of the edges doesn't match the schema, this probably indicates that the database is in an error state.
+			// In that case, trigger a notice.
+			if ($edge_schema->getOutSchema()->envelopes($relationship->getEndNode())) {
+				$edges[] = $edge_schema->get($this->client, $relationship->getId());
+			} else {
+				trigger_error('Edge with ID "' . $relationship->getId() . '" has non-confirming relationship.');
 			}
 		}
 

@@ -15,13 +15,13 @@ namespace Karwana\Penelope;
 
 class EdgeSchema extends ObjectSchema {
 
-	private $to_node_schema, $from_node_schema;
+	private $in_schema, $out_schema;
 
 	protected $path_formats = array('collection' => '/%/%s/%s/', 'new' => '/%s/%s/%s/new', 'edit' => '/%s/%s/%s/%s/edit', 'object' => '/%s/%s/%s/%s');
 
-	public function __construct($name, $slug, NodeSchema $from_schema, NodeSchema $to_schema, array $properties, array $options = null) {
-		$this->to_schema = $to_schema;
-		$this->from_schema = $from_schema;
+	public function __construct($name, $slug, NodeSchema $out_schema, NodeSchema $in_schema, array $properties, array $options = null) {
+		$this->in_schema = $in_schema;
+		$this->out_schema = $out_schema;
 		parent::__construct($name, $slug, $properties, $options);
 	}
 
@@ -42,12 +42,12 @@ class EdgeSchema extends ObjectSchema {
 		return $edge;
 	}
 
-	public function getFromSchema() {
-		return $this->from_schema;
+	public function getOutSchema() {
+		return $this->out_schema;
 	}
 
-	public function getToSchema() {
-		return $this->to_schema;
+	public function getInSchema() {
+		return $this->in_schema;
 	}
 
 	public function canRelate($from_name, $to_name) {
@@ -59,30 +59,30 @@ class EdgeSchema extends ObjectSchema {
 	}
 
 	public function canRelateFrom($from_name) {
-		return $this->from_schema->getName() === $from_name;
+		return $this->out_schema->getName() === $from_name;
 	}
 
 	public function canRelateTo($to_name) {
-		return $this->to_schema->getName() === $to_name;
+		return $this->in_schema->getName() === $to_name;
 	}
 
 	public function getNewPath() {
-		$node_slug = $this->from_schema->getSlug();
+		$node_slug = $this->out_schema->getSlug();
 		return sprintf($this->getPathFormat('new'), $node_slug, ':node_id',  $this->getSlug());
 	}
 
 	public function getEditPath() {
-		$node_slug = $this->from_schema->getSlug();
+		$node_slug = $this->out_schema->getSlug();
 		return sprintf($this->getPathFormat('edit'), $node_slug, ':node_id',  $this->getSlug(), ':edge_id');
 	}
 
 	public function getPath() {
-		$node_slug = $this->from_schema->getSlug();
+		$node_slug = $this->out_schema->getSlug();
 		return sprintf($this->getPathFormat(), $node_slug, ':node_id',  $this->getSlug(), ':edge_id');
 	}
 
 	public function getCollectionPath() {
-		$node_slug = $this->from_schema->getSlug();
+		$node_slug = $this->out_schema->getSlug();
 		return sprintf($this->getPathFormat('collection'), $node_slug, ':node_id', $this->getSlug());
 	}
 }

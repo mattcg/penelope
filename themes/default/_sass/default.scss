@@ -73,9 +73,9 @@ main > article > header {
 	}
 }
 
-main.nodes > header.node,
-main.node > header.node,
-article.node > header.node {
+main.collection > header.object,
+main.object > header.object,
+article.object > header.object {
 	text-align: right;
 
 	h1 {
@@ -83,7 +83,7 @@ article.node > header.node {
 	}
 }
 
-header.node > nav.crud {
+header.object > nav.crud {
 	> ul,
 	> ul > li {
 		display: inline;
@@ -122,13 +122,13 @@ header.node > nav.crud {
 	}
 }
 
-main.node.new header.node > nav.crud {
+main.object.new header.object > nav.crud {
 	> ul > li.new {
 		display: none;
 	}
 }
 
-main.node.edit header.node > nav.crud {
+main.object.edit header.object > nav.crud {
 	> ul > li.edit {
 		display: none;
 	}
@@ -138,7 +138,7 @@ main.node.edit header.node > nav.crud {
 	}
 }
 
-dl.node-properties {
+dl.object-properties {
 	> dt {
 		text-transform: uppercase;
 		font-size: 0.8rem;
@@ -174,12 +174,12 @@ dd.multivalue > ul.multivalue {
 }
 
 dd.type-image > img,
-form.node > img {
+form.object > img {
 	max-height: 10rem;
 	width: auto;
 }
 
-main > nav.nodes {
+main > nav.collect {
 	> ul {
 		padding-left: 1rem;
 	}
@@ -189,7 +189,7 @@ main > nav.nodes {
 	}
 }
 
-form.node {
+form.object {
 	> label {
 		display: block;
 		text-transform: uppercase;
@@ -208,40 +208,40 @@ form.node {
 	}
 }
 
-form.node > img {
+form.object > img {
 	vertical-align: middle;
 }
 
-form.node.delete {
+form.object.delete {
 	> input[type=submit] {
 		background-color: $button-red;
 	}
 }
 
-form.node.update {
+form.object.update {
 	margin-bottom: 0;
 }
 
-form.node.update + form.node.delete {
+form.object.update + form.object.delete {
 	margin: 0 inherit;
 }
 
-form.node.update,
-form.node.update + form.node.delete {
+form.object.update,
+form.object.update + form.object.delete {
 	> input[type=submit] {
 		vertical-align: middle;
 	}
 }
 
-form.node.update + form.node.delete {
+form.object.update + form.object.delete {
 	> input[type=submit] {
 		margin-right: 1rem;
 	}
 }
 
-form.node.update,
-form.node.update + form.node.delete,
-form.node.create {
+form.object.update,
+form.object.update + form.object.delete,
+form.object.create {
 	> input[type=submit] {
 		float: right;
 		margin-bottom: 6rem;

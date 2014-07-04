@@ -1,4 +1,4 @@
-<header class="node">
+<header class="object node">
 	<h1><?php __($title); ?></h1>
 	<nav class="crud">
 		<ul>

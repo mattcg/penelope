@@ -1,4 +1,4 @@
-<main class="nodes">
+<main class="collection nodes">
 	<?php
 
 	require __path('node_header.php');
@@ -16,7 +16,7 @@
 		} else {
 
 		?>
-		<nav class="nodes">
+		<nav class="collection nodes">
 			<ul>
 				<?php
 

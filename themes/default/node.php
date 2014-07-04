@@ -1,38 +1,49 @@
-<main class="node">
-	<article class="node node-<?php __class($node->getSchema()->getName()); ?>">
+<main class="object node">
+	<article class="object node <?php __class('node-' . $node->getSchema()->getName()); ?>">
 		<?php
 
 		require __path('node_header.php');
 
 		?>
 		<div class="body">
-			<dl class="node-properties">
+			<dl class="object-properties node-properties">
 			<?php
 
 			foreach ($node->getProperties() as $property) {
-				if (!$property->hasValue()) {
-					continue;
-				}
-
-				$type_class = 'type-' . $property->getSchema()->getType();
-				if ($property->getSchema()->isMultiValue()) {
-					$type_class .= ' multivalue';
-				}
-
-				?>
-				<dt class="<?php __($type_class); ?>"><?php __label($property); ?></dt>
-				<dd class="<?php __($type_class); ?>">
-				<?php
-
-				require __path('types/' . $property->getSchema()->getType() . '.php');
-
-				?>
-				</dd>
-				<?php
+				require 'property.php';
 			}
 
 			?>
 			</dl>
 		</div>
+		<footer class="object node">
+			<section class="edges">
+					<?php
+
+					foreach ($app->getSchema()->getOutEdges($node->getSchema()->getName()) as $edge_schema) {
+
+					?>
+					<nav class="edges <?php __class('edges-' . $edge_schema->getName()); ?>"
+						<ul>
+							<?php
+
+							foreach ($node->getOutEdges($edge_schema) as $edge) {
+
+							?>
+							<li><a href="<?php __($edge->getPath()); ?>" title="<?php __($edge->getTitle()); ?>"><?php __($edge->getTitle()); ?></a></li>
+							<?php
+
+							}
+
+							?>
+						</ul>
+					</nav>
+					<?php
+
+					}
+
+					?>
+			</section>
+		</footer>
 	</article>
 </main>

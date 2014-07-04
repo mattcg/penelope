@@ -64,24 +64,24 @@ main > article > header > h1 {
   text-transform: uppercase;
 }
 
-main.nodes > header.node,
-main.node > header.node,
-article.node > header.node {
+main.collection > header.object,
+main.object > header.object,
+article.object > header.object {
   text-align: right;
 }
-main.nodes > header.node h1,
-main.node > header.node h1,
-article.node > header.node h1 {
+main.collection > header.object h1,
+main.object > header.object h1,
+article.object > header.object h1 {
   float: left;
 }
 
-header.node > nav.crud > ul,
-header.node > nav.crud > ul > li {
+header.object > nav.crud > ul,
+header.object > nav.crud > ul > li {
   display: inline;
   margin: 0;
   padding: 0;
 }
-header.node > nav.crud > ul > li > a {
+header.object > nav.crud > ul > li > a {
   text-decoration: none;
   text-transform: uppercase;
   color: white;
@@ -98,45 +98,45 @@ header.node > nav.crud > ul > li > a {
   -o-border-radius: 0.2em;
   border-radius: 0.2em;
 }
-header.node > nav.crud > ul > li + li {
+header.object > nav.crud > ul > li + li {
   margin-left: 0.4rem;
 }
-header.node > nav.crud > ul > li > a.new {
+header.object > nav.crud > ul > li > a.new {
   background-color: #428bca;
 }
-header.node > nav.crud > ul > li > a.edit {
+header.object > nav.crud > ul > li > a.edit {
   background-color: #d9534f;
 }
-header.node > nav.crud > ul > li.view {
+header.object > nav.crud > ul > li.view {
   display: none;
 }
 
-main.node.new header.node > nav.crud > ul > li.new {
+main.object.new header.object > nav.crud > ul > li.new {
   display: none;
 }
 
-main.node.edit header.node > nav.crud > ul > li.edit {
+main.object.edit header.object > nav.crud > ul > li.edit {
   display: none;
 }
-main.node.edit header.node > nav.crud > ul > li.view {
+main.object.edit header.object > nav.crud > ul > li.view {
   display: inherit;
 }
 
-dl.node-properties > dt {
+dl.object-properties > dt {
   text-transform: uppercase;
   font-size: 0.8rem;
   font-weight: bold;
   border-bottom: 1px solid #ddd;
   padding-bottom: 0.4em;
 }
-dl.node-properties > dd {
+dl.object-properties > dd {
   margin: 1em 0;
   max-width: 40rem;
 }
-dl.node-properties > dd > div.format-long {
+dl.object-properties > dd > div.format-long {
   white-space: pre-line;
 }
-dl.node-properties > dd + dt {
+dl.object-properties > dd + dt {
   margin-top: 2em;
 }
 
@@ -152,19 +152,19 @@ dd.multivalue > ul.multivalue > li {
 }
 
 dd.type-image > img,
-form.node > img {
+form.object > img {
   max-height: 10rem;
   width: auto;
 }
 
-main > nav.nodes > ul {
+main > nav.collect > ul {
   padding-left: 1rem;
 }
-main > nav.nodes > ul > li + li {
+main > nav.collect > ul > li + li {
   margin-top: 1em;
 }
 
-form.node > label {
+form.object > label {
   display: block;
   text-transform: uppercase;
   font-size: 0.8rem;
@@ -173,41 +173,41 @@ form.node > label {
   padding-bottom: 0.4em;
   margin: 2rem 0 1rem 0;
 }
-form.node > hr {
+form.object > hr {
   border-width: 1px;
   border-style: solid none none none;
   border-color: #eee;
   margin: 1rem 0;
 }
 
-form.node > img {
+form.object > img {
   vertical-align: middle;
 }
 
-form.node.delete > input[type=submit] {
+form.object.delete > input[type=submit] {
   background-color: #d9534f;
 }
 
-form.node.update {
+form.object.update {
   margin-bottom: 0;
 }
 
-form.node.update + form.node.delete {
+form.object.update + form.object.delete {
   margin: 0 inherit;
 }
 
-form.node.update > input[type=submit],
-form.node.update + form.node.delete > input[type=submit] {
+form.object.update > input[type=submit],
+form.object.update + form.object.delete > input[type=submit] {
   vertical-align: middle;
 }
 
-form.node.update + form.node.delete > input[type=submit] {
+form.object.update + form.object.delete > input[type=submit] {
   margin-right: 1rem;
 }
 
-form.node.update > input[type=submit],
-form.node.update + form.node.delete > input[type=submit],
-form.node.create > input[type=submit] {
+form.object.update > input[type=submit],
+form.object.update + form.object.delete > input[type=submit],
+form.object.create > input[type=submit] {
   float: right;
   margin-bottom: 6rem;
 }

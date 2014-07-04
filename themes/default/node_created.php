@@ -1,5 +1,5 @@
-<main class="node created">
-	<article class="node node-<?php __class($node->getSchema()->getName()); ?>">
+<main class="object node created">
+	<article class="object node <?php __class('node-' . $node->getSchema()->getName()); ?>">
 		<?php
 
 		require __path('node_header.php');

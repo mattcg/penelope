@@ -22,6 +22,10 @@ class Edge extends Object {
 			throw new \LogicException('Cannot create path for edge with no ID.');
 		}
 
+		if (!$this->getFromNode()->hasId()) {
+			throw new \LogicException('Cannot create path from node with no ID.');
+		}
+
 		$path = $this->schema->getPath();
 		$path = preg_replace('/:edge_id/', $this->getId(), $path);
 		$path = preg_replace('/:node_id/', $this->getFromNode()->getId(), $path);
@@ -34,8 +38,23 @@ class Edge extends Object {
 			throw new \LogicException('Cannot create edit path for edge with no ID.');
 		}
 
+		if (!$this->getFromNode()->hasId()) {
+			throw new \LogicException('Cannot create edit path from node with no ID.');
+		}
+
 		$path = $this->schema->getEditPath();
 		$path = preg_replace('/:edge_id/', $this->getId(), $path);
+		$path = preg_replace('/:node_id/', $this->getFromNode()->getId(), $path);
+
+		return $path;
+	}
+
+	public function getCollectionPath() {
+		if (!$this->getFromNode()->hasId()) {
+			throw new \LogicException('Cannot create collection path from node with no ID.');
+		}
+
+		$path = $this->schema->getCollectionPath();
 		$path = preg_replace('/:node_id/', $this->getFromNode()->getId(), $path);
 
 		return $path;
@@ -59,8 +78,8 @@ class Edge extends Object {
 		// Preload the start and end nodes.
 		// Implicitly checks that the edge's relationships are permitted by the schema.
 		$edge_schema = $this->getSchema();
-		$this->to_node = $edge_schema->getToSchema()->get($this->client, $edge->getEndNode()->getId());
-		$this->from_node = $edge_schema->getFromSchema()->get($this->client, $edge->getStartNode()->getId());
+		$this->to_node = $edge_schema->getInSchema()->get($this->client, $edge->getEndNode()->getId());
+		$this->from_node = $edge_schema->getOutSchema()->get($this->client, $edge->getStartNode()->getId());
 
 		$this->object = $edge;
 

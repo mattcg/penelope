@@ -29,7 +29,7 @@ class EdgesController extends ObjectController {
 			$this->app->stop();
 		}
 
-		$from_node_schema = $edge_schema->getFromSchema();
+		$from_node_schema = $edge_schema->getOutSchema();
 
 		// If the edge's schema defines relationships from nodes of a different schema.
 		if ($from_node_schema->getSlug() !== $node_schema_slug) {
@@ -76,7 +76,7 @@ class EdgesController extends ObjectController {
 
 		$from_node_id = $app->request->post('from_node_id');
 
-		$from_schema = $edge_schema->getFromSchema();
+		$from_schema = $edge_schema->getOutSchema();
 
 		try {
 			$edge = $edge_schema->get($this->client, $edge_id);

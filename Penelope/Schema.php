@@ -45,6 +45,14 @@ class Schema {
 		return array_values($this->nodes);
 	}
 
+	public function getOutEdges($node_name) {
+		$node_schema = $this->getNode($name);
+
+		return array_filter($this->getEdges(), function($edge_schema) use ($node_schema) {
+			return $edge_schema->canRelateFrom($node_schema->getName());
+		});
+	}
+
 	public function addEdge($name, $slug, $from_name, $to_name, array $properties, array $options = null) {
 		$schema = new EdgeSchema($name, $slug, $this->getNode($from_name), $this->getNode($to_name), $properties, $options);
 		$this->edges[$name] = $schema;

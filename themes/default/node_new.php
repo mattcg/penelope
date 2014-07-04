@@ -1,5 +1,5 @@
-<main class="node new">
-	<article class="node node-<?php __class($node_schema->getName()); ?>">
+<main class="new object node">
+	<article class="object node <?php __class('node-' . $node_schema->getName()); ?>">
 		<?php
 
 		require __path('node_header.php');
@@ -17,7 +17,7 @@
 			}
 
 			?>
-			<form enctype="<?php __formenc($node_schema); ?>" class="create node node-<?php __class($node_schema->getName()); ?>" action="<?php __($node_schema->getCollectionPath()); ?>" method="POST">
+			<form enctype="<?php __formenc($node_schema); ?>" class="create object node <?php __class('node-' . $node_schema->getName()); ?>" action="<?php __($node_schema->getCollectionPath()); ?>" method="POST">
 				<?php
 
 				foreach ($properties as $property) {

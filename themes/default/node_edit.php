@@ -1,5 +1,5 @@
-<main class="node edit">
-	<article class="node node-<?php __class($node_schema->getName()); ?>">
+<main class="edit object node">
+	<article class="object node <?php __class('node-' . $node_schema->getName()); ?>">
 		<?php
 
 		require __path('node_header.php');
@@ -17,7 +17,7 @@
 			}
 
 			?>
-			<form enctype="<?php __formenc($node_schema); ?>" class="update node node-<?php __class($node_schema->getName()); ?>" action="<?php __($node->getPath()); ?>" method="POST">
+			<form enctype="<?php __formenc($node_schema); ?>" class="update object node <?php __class('node-' . $node_schema->getName()); ?>" action="<?php __($node->getPath()); ?>" method="POST">
 				<?php
 
 				foreach ($properties as $property) {
@@ -34,7 +34,7 @@
 				<input type="submit" value="Update">
 			</form>
 
-			<form class="delete node node-<?php __class($node_schema->getName()); ?>" action="<?php __($node->getPath()); ?>" method="POST">
+			<form class="delete object node <?php __class('node-' . $node_schema->getName()); ?>" action="<?php __($node->getPath()); ?>" method="POST">
 				<input type="hidden" name="_METHOD" value="DELETE">
 				<input type="submit" value="Delete">
 			</form>

@@ -34,6 +34,19 @@ class NodeSchema extends ObjectSchema {
 		return $node;
 	}
 
+	public function envelopes(Neo4j\Node $client_node) {
+		$schema_name = $this->getName();
+
+		// Check that the client node matches the schema.
+		foreach ($client_node->getLabels() as $label) {
+			if ($label->getName() === $schema_name) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	public function getNewPath() {
 		return sprintf($this->getPathFormat('new'), $this->getSlug());
 	}
