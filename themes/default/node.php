@@ -18,32 +18,34 @@
 		</div>
 		<footer class="object node">
 			<section class="edges">
-					<?php
+				<h1>Relationships</h1>
+				<?php
 
-					foreach ($edge_schemas as $edge_schema) {
+				foreach ($edge_schemas as $edge_schema) {
 
-					?>
-					<nav class="edges <?php __class('edges-' . $edge_schema->getName()); ?>"
-						<ul>
-							<li class="new"><a class="new" href="<?php __($node->getNewEdgePath($edge_schema)); ?>" title="Create a new <?php __($edge_schema->getName()); ?> relationship from <?php __($node->getTitle()); ?>">New</a></li>
-							<?php
+				?>
+				<h2><?php __($edge_schema->getName()); ?></h2>
+				<nav class="edges <?php __class('edges-' . $edge_schema->getName()); ?>"
+					<ul>
+						<li class="new"><a class="new" href="<?php __($node->getNewEdgePath($edge_schema)); ?>" title="Create a new <?php __($edge_schema->getName()); ?> relationship from <?php __($node->getTitle()); ?>">New</a></li>
+						<?php
 
-							foreach ($node->getOutEdges($edge_schema) as $edge) {
+						foreach ($node->getOutEdges($edge_schema) as $edge) {
 
-							?>
-							<li><a href="<?php __($edge->getPath()); ?>" title="<?php __($edge->getTitle()); ?>"><?php __($edge->getTitle()); ?></a></li>
-							<?php
+						?>
+						<li><a href="<?php __($edge->getPath()); ?>" title="<?php __($edge->getTitle()); ?>"><?php __($edge->getTitle()); ?></a></li>
+						<?php
 
-							}
+						}
 
-							?>
-						</ul>
-					</nav>
-					<?php
+						?>
+					</ul>
+				</nav>
+				<?php
 
-					}
+				}
 
-					?>
+				?>
 			</section>
 		</footer>
 	</article>
