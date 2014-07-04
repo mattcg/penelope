@@ -2,6 +2,7 @@
 <html lang="en-US">
 	<head>
 		<meta charset="utf-8">
+		<meta name="generator" content="Penelope v<?php __(Karwana\Penelope\VERSION); ?>">
 		<title><?php __($title); ?></title>
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 		<?php
