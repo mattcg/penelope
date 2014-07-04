@@ -50,12 +50,19 @@ class Edge extends Object {
 	}
 
 	public function getCollectionPath() {
-		if (!$this->getFromNode()->hasId()) {
+		$from_node = $this->getFromNode();
+
+		if (!$from_node->hasId()) {
 			throw new \LogicException('Cannot create collection path from node with no ID.');
 		}
 
+		// Sanity check. Perhaps assert() is more appropriate here.
+		if (!$this->schema->canRelateFrom($from_node->getSchema()->getName())) {
+			throw new \LogicException('Cannot create collection path from unrelatable node.');
+		}
+
 		$path = $this->schema->getCollectionPath();
-		$path = preg_replace('/:node_id/', $this->getFromNode()->getId(), $path);
+		$path = preg_replace('/:node_id/', $from_node->getId(), $path);
 
 		return $path;
 	}
