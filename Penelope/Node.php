@@ -45,6 +45,18 @@ class Node extends Object {
 		return preg_replace('/:node_id/', $this->getId(), $edge_schema->getNewPath());
 	}
 
+	public function getEdgeCollectionPath(EdgeSchema $edge_schema) {
+		if (!$this->hasId()) {
+			throw new \LogicException('Cannot create edge collection path for node with no ID.');
+		}
+
+		if (!$edge_schema->canRelateFrom($this->getSchema()->getName())) {
+			throw new \LogicException('Cannot create edge collection path for unrelatable node.');
+		}
+
+		return preg_replace('/:node_id/', $this->getId(), $edge_schema->getCollectionPath());
+	}
+
 	public function fetch() {
 		if (is_null($this->id)) {
 			throw new \LogicException('Cannot fetch without ID.');
