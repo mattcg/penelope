@@ -105,6 +105,12 @@ class Node extends Object {
 		return $edges;
 	}
 
+	public function getCollection() {
+
+		// Get the parent collection.
+		return $this->schema->getCollection($this->client);
+	}
+
 	public function save() {
 
 		// Make a node if this node is new.

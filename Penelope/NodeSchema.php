@@ -35,7 +35,7 @@ class NodeSchema extends ObjectSchema {
 	}
 
 	public function getCollection(Neo4j\Client $client) {
-		$label = $lient->makeLabel($this->getName());
+		$label = $client->makeLabel($this->getName());
 		$nodes = array();
 
 		foreach ($label->getNodes() as $client_node) {

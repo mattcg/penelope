@@ -46,40 +46,35 @@ class EdgesController extends ObjectController {
 		$transient_properties = array();
 		$has_errors = false;
 
-		$app = $this->app;
-
-		$from_node_id = $app->request->post('from_node_id');
-
-		$from_schema = $edge_schema->getOutSchema();
+		$from_node = $this->getNodeByParams($node_schema_slug, $node_id);
+		$to_node = $this->getNodeByParams($edge->getOutSchema()->getSlug(), $to_node_id);
 
 		try {
-			$edge = $edge_schema->get($this->client, $edge_id);
-		} catch (Exceptions\Exception $e) {
-			$this->render404($e);
-			$this->app->stop();
+			$edge->setRelationShip($from_node, $to_node);
 		} catch (Exceptions\SchemaException $e) {
-			$this->render404($e);
-			$this->app->stop();
+			$this->renderNewForm($node_schema_slug, $node_id, $edge_schema_slug, $transient_properties, $e);
+			return;
 		}
 
+		$app = $this->app;
 		$this->processProperties($edge, $app->request->post(), $transient_properties, $has_errors);
 
 		if ($has_errors) {
-			$this->renderNewForm($schema_slug, $transient_properties);
+			$this->renderNewForm($node_schema_slug, $node_id, $edge_schema_slug, $transient_properties);
 			return;
 		}
 
 		try {
-			$node->save();
+			$edge->save();
 		} catch (\Exception $e) {
-			$this->renderNewForm($schema_slug, $transient_properties, $e);
+			$this->renderNewForm($node_schema_slug, $node_id, $edge_schema_slug, $transient_properties, $e);
 			return;
 		}
 
-		$view_data = array('title' => $node_schema->getName() . ' #' . $node->getId() . ' created', 'node' => $node);
+		$view_data = array('title' => $edge->getTitle() . ' created', 'edge' => $edge);
 		$app->response->setStatus(201);
-		$app->response->headers->set('Location', $node->getPath());
-		$app->render('node_created', $view_data);
+		$app->response->headers->set('Location', $edge->getPath());
+		$app->render('edge_created', $view_data);
 	}
 
 	public function read($node_schema_slug, $node_id, $edge_schema_slug) {

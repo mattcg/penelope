@@ -29,6 +29,20 @@
 				}
 
 				?>
+				<label for="node-collection">To</label>
+				<select name="to_node">
+					<?php
+
+					foreach ($node->getCollection() as $to_node) {
+
+					?>
+					<option value="<?php __($to_node->getId()); ?>"><?php __($node->getTitle()); ?></option>
+					<?php
+
+					}
+
+					?>
+				</select>
 				<hr>
 				<input type="submit" value="Create">
 			</form>
