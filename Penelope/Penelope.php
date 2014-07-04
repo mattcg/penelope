@@ -121,10 +121,12 @@ class Penelope extends OptionContainer {
 
 		$edges_path = $edge_schema->getCollectionPath();
 
+		// Read a collection of edges coming from a node, by schema name.
 		$app->get($edges_path, $edges_middleware, Closure::bind(function($node_id) use ($from_slug, $edge_slug) {
 			$this->app->controller->read($from_slug, $node_id, $edge_slug);
 		}, $this));
 
+		// Create a new edge within a collection of edges from a node, with the schema name given in the path.
 		$app->post($edges_path, $edges_middleware, Closure::bind(function($node_id) use ($from_slug, $edge_slug) {
 			$this->app->controller->create($from_slug, $node_id, $edge_slug);
 		}, $this));
@@ -137,6 +139,7 @@ class Penelope extends OptionContainer {
 
 		$edge_path = $edge_schema->getPath();
 
+		// Delete the edge, with the given schema name ID, coming from the node with the given schema name and ID.
 		$app->delete($edge_path, $edge_middleware, Closure::bind(function($node_id, $edge_id) use ($from_slug, $edge_slug) {
 			$this->app->controller->delete($from_slug, $node_id, $edge_slug, $edge_id);
 		}, $this));
@@ -156,14 +159,17 @@ class Penelope extends OptionContainer {
 		$node_slug = $node_schema->getSlug();
 		$nodes_path = $node_schema->getCollectionPath();
 
+		// Read a collection of nodes by schema name.
 		$app->get($nodes_path, $nodes_middleware, Closure::bind(function() use ($node_slug) {
 			$this->app->controller->read($node_slug);
 		}, $this));
 
+		// Create a new node within the collection.
 		$app->post($nodes_path, $nodes_middleware, Closure::bind(function() use ($node_slug) {
 			$this->app->controller->create($node_slug);
 		}, $this));
 
+		// Get the form for creating a new node within the collection.
 		$app->get($node_schema->getNewPath(), $nodes_middleware, Closure::bind(function() use ($node_slug) {
 			$this->app->controller->renderNewForm($node_slug);
 		}, $this));
@@ -176,18 +182,22 @@ class Penelope extends OptionContainer {
 
 		$node_path = $node_schema->getPath();
 
+		// Read a node by schema name and ID.
 		$app->get($node_path, $node_middleware, Closure::bind(function($node_id) use ($node_slug) {
 			$this->app->controller->read($node_slug, $node_id);
 		}, $this));
 
+		// Update a node by schema name and ID.
 		$app->put($node_path, $node_middleware, Closure::bind(function($node_id) use ($node_slug) {
 			$this->app->controller->update($node_slug, $node_id);
 		}, $this));
 
+		// Delete a node by schema name and ID.
 		$app->delete($node_path, $node_middleware, Closure::bind(function($node_id) use ($node_slug) {
 			$this->app->controller->delete($node_slug, $node_id);
 		}, $this));
 
+		// Get the form for editing a node by schema name and ID.
 		$app->get($node_schema->getEditPath(), $node_middleware, Closure::bind(function($node_id) use ($node_slug) {
 			$this->app->controller->renderEditForm($node_slug, $node_id);
 		}, $this));
