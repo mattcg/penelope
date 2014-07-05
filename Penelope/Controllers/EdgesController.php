@@ -40,6 +40,8 @@ class EdgesController extends ObjectController {
 	}
 
 	public function create($node_schema_slug, $node_id, $edge_schema_slug) {
+		$app = $this->app;
+
 		$edge_schema = $this->getEdgeSchemaBySlugs($node_schema_slug, $edge_schema_slug);
 		$edge = new Edge($edge_schema, $this->client);
 
@@ -47,7 +49,7 @@ class EdgesController extends ObjectController {
 		$has_errors = false;
 
 		$from_node = $this->getNodeByParams($node_schema_slug, $node_id);
-		$to_node = $this->getNodeByParams($edge->getOutSchema()->getSlug(), $to_node_id);
+		$to_node = $this->getNodeByParams($edge_schema->getOutSchema()->getSlug(), $app->request->post('to_node'));
 
 		try {
 			$edge->setRelationShip($from_node, $to_node);
@@ -56,7 +58,6 @@ class EdgesController extends ObjectController {
 			return;
 		}
 
-		$app = $this->app;
 		$this->processProperties($edge, $app->request->post(), $transient_properties, $has_errors);
 
 		if ($has_errors) {
