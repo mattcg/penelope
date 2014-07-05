@@ -17,7 +17,7 @@
 			}
 
 			?>
-			<form enctype="<?php __formenc($edge_schema); ?>" class="create object edge <?php __class('edge-' . $edge_schema->getName()); ?>" action="<?php __($edge_schema->getCollectionPath()); ?>" method="POST">
+			<form enctype="<?php __formenc($edge_schema); ?>" class="create object edge <?php __class('edge-' . $edge_schema->getName()); ?>" action="<?php __($node->getEdgeCollectionPath($edge_schema)); ?>" method="POST">
 				<?php
 
 				foreach ($properties as $property) {
