@@ -79,8 +79,6 @@ abstract class ObjectController extends Controller {
 			$this->app->stop();
 		}
 
-		$edge_schema = $this->getSchemaBySlugs($node_schema_slug, $edge_schema_slug);
-
 		// Check that:
 		// - the edge schema with the given slug exists
 		// - the edge's schema defines relationships from nodes of the same schema

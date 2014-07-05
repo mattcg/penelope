@@ -13,6 +13,8 @@
 
 namespace Karwana\Penelope;
 
+use Everyman\Neo4j;
+
 class EdgeSchema extends ObjectSchema {
 
 	private $in_schema, $out_schema;
@@ -51,7 +53,7 @@ class EdgeSchema extends ObjectSchema {
 	}
 
 	public function envelopes(Neo4j\Relationship $client_edge) {
-		return $edge->getType() === $this->getName();
+		return $client_edge->getType() === $this->getName();
 	}
 
 	public function canRelate($from_name, $to_name) {

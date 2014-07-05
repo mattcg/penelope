@@ -49,6 +49,14 @@ abstract class Object {
 		return $this->client;
 	}
 
+	public function getClientObject() {
+		if (!$this->object) {
+			$this->fetch();
+		}
+
+		return $this->object;
+	}
+
 	public function getTitle() {
 		$option = $this->schema->getOption('format.title');
 		if (!$option) {

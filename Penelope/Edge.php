@@ -133,8 +133,8 @@ class Edge extends Object {
 
 		$edge = $this->object;
 		if ($this->from_node and $this->to_node) {
-			$edge->setStartNode($this->from_node);
-			$edge->setEndNode($this->to_node);
+			$edge->setStartNode($this->from_node->getClientObject());
+			$edge->setEndNode($this->to_node->getClientObject());
 		}
 
 		parent::save();
