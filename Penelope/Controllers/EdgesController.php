@@ -76,7 +76,7 @@ class EdgesController extends ObjectController {
 			return;
 		}
 
-		$view_data = array('title' => $edge->getTitle() . ' created', 'edge' => $edge);
+		$view_data = array('title' => $edge->getTitle() . ' created', 'edge' => $edge, 'node' => $from_node);
 		$app->response->setStatus(201);
 		$app->response->headers->set('Location', $edge->getPath());
 		$app->render('edge_created', $view_data);
