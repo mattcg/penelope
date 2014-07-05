@@ -36,7 +36,7 @@
 					foreach ($node->getCollection() as $to_node) {
 
 					?>
-					<option value="<?php __($to_node->getId()); ?>"><?php __($node->getTitle()); ?></option>
+					<option value="<?php __($to_node->getId()); ?>"><?php __($to_node->getTitle()); ?></option>
 					<?php
 
 					}
