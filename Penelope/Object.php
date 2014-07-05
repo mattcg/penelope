@@ -27,10 +27,10 @@ abstract class Object {
 
 		if ($id instanceof Neo4j\PropertyContainer) {
 			$this->object = $id;
-			$id = $this->object->getId();
+			$this->id = $this->object->getId();
+		} else if (is_int($id) or ctype_digit($id)) {
+			$this->id = (int) $id;
 		}
-
-		$this->id = $id;
 	}
 
 	public function getId() {
