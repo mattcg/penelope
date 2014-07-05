@@ -35,6 +35,11 @@
 
 					foreach ($node->getCollection() as $to_node) {
 
+						// A relationship to itself would be pointless.
+						if ($to_node->getId() === $node->getId()) {
+							continue;
+						}
+
 					?>
 					<option value="<?php __($to_node->getId()); ?>"><?php __($to_node->getTitle()); ?></option>
 					<?php
