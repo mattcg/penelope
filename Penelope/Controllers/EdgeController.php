@@ -24,7 +24,7 @@ class EdgeController extends ObjectController {
 	public function read($node_schema_slug, $node_id, $edge_schema_slug, $edge_id) {
 		$edge = $this->getByParamsArray(func_get_args());
 		$edge->delete();
-		$this->app->render('edge', array('title' => $edge->getTitle()));
+		$this->app->render('edge', array('title' => $edge->getTitle(), 'edge' => $edge));
 	}
 
 	public function delete($node_schema_slug, $node_id, $edge_schema_slug, $edge_id) {
