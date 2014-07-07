@@ -25,7 +25,7 @@
 
 				?>
 				<h2><?php __($edge_schema->getName()); ?></h2>
-				<nav class="edges <?php __class('edges-' . $edge_schema->getName()); ?>">
+				<nav class="collection edges <?php __class('edges-' . $edge_schema->getName()); ?>">
 					<ul>
 						<li class="new"><a class="new" href="<?php __($node->getNewEdgePath($edge_schema)); ?>" title="Create a new <?php __($edge_schema->getName()); ?> relationship from <?php __($node->getTitle()); ?>">New</a></li>
 						<?php

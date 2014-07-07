@@ -177,13 +177,19 @@ form.object > img {
 	width: auto;
 }
 
-main > nav.collect {
+nav.collection {
 	> ul {
-		padding-left: 1rem;
+		padding: 0;
 	}
 
-	> ul > li + li {
-		margin-top: 1em;
+	> ul > li {
+		margin: 1em 0;
+	}
+}
+
+.body > nav.collection {
+	> ul {
+		padding-left: 1rem;
 	}
 }
 
@@ -321,10 +327,6 @@ article.node > footer.node > section.edges {
 		> li.new > a.new {
 			@include button();
 			background-color: $button-blue;
-		}
-
-		> li {
-			margin: 1em 0;
 		}
 	}
 }

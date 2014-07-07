@@ -14,7 +14,7 @@
 		} else {
 
 		?>
-		<nav>
+		<nav class="collection">
 			<ul>
 			<?php
 

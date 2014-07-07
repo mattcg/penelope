@@ -162,11 +162,15 @@ form.object > img {
   width: auto;
 }
 
-main > nav.collect > ul {
-  padding-left: 1rem;
+nav.collection > ul {
+  padding: 0;
 }
-main > nav.collect > ul > li + li {
-  margin-top: 1em;
+nav.collection > ul > li {
+  margin: 1em 0;
+}
+
+.body > nav.collection > ul {
+  padding-left: 1rem;
 }
 
 form.object > label {
@@ -310,7 +314,4 @@ article.node > footer.node > section.edges > nav.edges > ul > li.new > a.new {
   -o-border-radius: 0.2em;
   border-radius: 0.2em;
   background-color: #428bca;
-}
-article.node > footer.node > section.edges > nav.edges > ul > li {
-  margin: 1em 0;
 }
