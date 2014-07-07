@@ -38,6 +38,7 @@ class EdgeController extends ObjectController {
 
 		$viewdata = array('title' => 'Deleted ' . $edge->getTitle());
 		$viewdata['node'] = $this->getNodeByParams($node_schema_slug, $node_id);
+		$viewdata['edge_schema'] = $edge->getSchema();
 
 		$this->app->render('edge_deleted', $viewdata);
 	}

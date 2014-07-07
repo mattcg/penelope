@@ -6,7 +6,7 @@
 
 		?>
 		<div class="body">
-			<p>See all <a href="<?php __($edge->getCollectionPath()); ?>"><?php __($edge_schema->getName()); ?></a> relationships.</p>
+			<p>See all <a href="<?php __($node->getEdgeCollectionPath($edge_schema)); ?>"><?php __($edge_schema->getName()); ?></a> relationships.</p>
 		</div>
 	</article>
 </main>
