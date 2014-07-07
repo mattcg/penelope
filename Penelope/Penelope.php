@@ -153,6 +153,11 @@ class Penelope extends OptionContainer {
 		$app->delete($edge_path, $edge_middleware, Closure::bind(function($node_id, $edge_id) use ($from_slug, $edge_slug) {
 			$this->app->controller->delete($from_slug, $node_id, $edge_slug, $edge_id);
 		}, $this));
+
+		// Get the form for editing an edge.
+		$app->get($edge_schema->getEditPath(), $edge_middleware, Closure::bind(function($node_id, $edge_id) use ($from_slug, $edge_slug) {
+			$this->app->controller->renderEditForm($from_slug, $node_id, $edge_slug, $edge_id);
+		}, $this));
 	}
 
 	public function defineNode($name, $slug, array $properties = array(), array $options = null) {

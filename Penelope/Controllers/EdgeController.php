@@ -41,4 +41,36 @@ class EdgeController extends ObjectController {
 
 		$this->app->render('edge_deleted', $viewdata);
 	}
+
+	public function renderEditForm($node_schema_slug, $node_id, $edge_schema_slug, $edge_id, array $transient_properties = null, \Exception $e = null) {
+		$edge = $this->getEdgeByParams($node_schema_slug, $node_id, $edge_schema_slug, $edge_id);
+		$edge_schema = $edge->getSchema();
+
+		$view_data = array('title' => 'Edit ' . $edge->getDefaultTitle(), 'error' => $e);
+		$view_data['edge_schema'] = $edge_schema;
+		$view_data['edge'] = $edge;
+		$view_data['node'] = $this->getNodeByParams($node_schema_slug, $node_id);
+
+		$view_data['properties'] = array();
+
+		foreach ($edge_schema->getProperties() as $property_schema) {
+			$property_name = $property_schema->getName();
+
+			if (isset($transient_properties[$property_name])) {
+				$property = $transient_properties[$property_name];
+			} else {
+				$property = $edge->getProperty($property_name);
+			}
+
+			$view_data['properties'][] = $property;
+		}
+
+		if ($e) {
+			$this->app->response->setStatus(500);
+		} else if (!empty($transient_properties)) {
+			$this->app->response->setStatus(422);
+		}
+
+		$this->app->render('edge_edit', $view_data);
+	}
 }
