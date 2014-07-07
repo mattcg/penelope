@@ -23,13 +23,22 @@ class EdgeController extends ObjectController {
 
 	public function read($node_schema_slug, $node_id, $edge_schema_slug, $edge_id) {
 		$edge = $this->getByParamsArray(func_get_args());
-		$edge->delete();
-		$this->app->render('edge', array('title' => $edge->getTitle(), 'edge' => $edge));
+
+		$viewdata = array('title' => $edge->getTitle());
+
+		$viewdata['edge'] = $edge;
+		$viewdata['node'] = $this->getNodeByParams($node_schema_slug, $node_id);
+
+		$this->app->render('edge', $viewdata);
 	}
 
 	public function delete($node_schema_slug, $node_id, $edge_schema_slug, $edge_id) {
 		$edge = $this->getByParamsArray(func_get_args());
 		$edge->delete();
-		$this->app->render('edge_deleted', array('title' => 'Deleted ' . $edge->getTitle()));
+
+		$viewdata = array('title' => 'Deleted ' . $edge->getTitle());
+		$viewdata['node'] = $this->getNodeByParams($node_schema_slug, $node_id);
+
+		$this->app->render('edge_deleted', $viewdata);
 	}
 }
