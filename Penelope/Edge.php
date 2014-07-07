@@ -19,11 +19,11 @@ class Edge extends Object {
 
 	public function getPath() {
 		if (!$this->hasId()) {
-			throw new \LogicException('Cannot create path for edge with no ID.');
+			throw new \LogicException('Cannot get path for edge with no ID.');
 		}
 
 		if (!$this->getFromNode()->hasId()) {
-			throw new \LogicException('Cannot create path from node with no ID.');
+			throw new \LogicException('Cannot get path from node with no ID.');
 		}
 
 		$path = $this->schema->getPath();
