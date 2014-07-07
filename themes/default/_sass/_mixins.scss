@@ -1,0 +1,12 @@
+@mixin button() {
+	text-transform: uppercase;
+	color: white;
+	font-size: 0.7rem;
+	font-weight: bold;
+	line-height: 1.6rem;
+	min-width: 5em;
+	padding: 0 1em;
+	text-align: center;
+	display: inline-block;
+	@include border-radius(0.2em);
+}

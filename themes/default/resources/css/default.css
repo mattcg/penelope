@@ -10,14 +10,12 @@ body {
 
 a {
   color: #428bca;
+  text-decoration: none;
 }
 
 body > header {
   background-color: #a9ba9d;
   padding: 1rem;
-}
-body > header > a {
-  text-decoration: none;
 }
 body > header > a > h1 {
   margin: 0;
@@ -46,8 +44,11 @@ main {
   margin-bottom: 6rem;
 }
 main > .body,
-main > article > .body {
-  margin: 1em;
+main > article > .body,
+main > footer,
+main > article > footer {
+  margin: 1em 0;
+  padding: 0 1em;
 }
 
 main > header,
@@ -82,7 +83,7 @@ header.object > nav.crud > ul > li {
   padding: 0;
 }
 header.object > nav.crud > ul > li > a {
-  text-decoration: none;
+  background-color: #646464;
   text-transform: uppercase;
   color: white;
   font-size: 0.7rem;
@@ -92,7 +93,6 @@ header.object > nav.crud > ul > li > a {
   padding: 0 1em;
   text-align: center;
   display: inline-block;
-  background-color: #646464;
   -webkit-border-radius: 0.2em;
   -moz-border-radius: 0.2em;
   -ms-border-radius: 0.2em;
@@ -265,4 +265,52 @@ select {
 
 p.error {
   color: #d9534f;
+}
+
+article.node > .body,
+article.node > footer.node {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+article.node > .body {
+  float: left;
+  width: 70%;
+}
+article.node > footer.node {
+  float: right;
+  width: 30%;
+}
+
+article.node > footer.node > section.edges > h1 {
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+article.node > footer.node > section.edges > h2 {
+  font-size: 0.9rem;
+}
+article.node > footer.node > section.edges > nav.edges > ul {
+  padding: 0;
+  list-style: none;
+}
+article.node > footer.node > section.edges > nav.edges > ul > li.new > a.new {
+  text-transform: uppercase;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: bold;
+  line-height: 1.6rem;
+  min-width: 5em;
+  padding: 0 1em;
+  text-align: center;
+  display: inline-block;
+  -webkit-border-radius: 0.2em;
+  -moz-border-radius: 0.2em;
+  -ms-border-radius: 0.2em;
+  -o-border-radius: 0.2em;
+  border-radius: 0.2em;
+  background-color: #428bca;
+}
+article.node > footer.node > section.edges > nav.edges > ul > li {
+  margin: 1em 0;
 }
