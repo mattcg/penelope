@@ -47,7 +47,7 @@ main > .body,
 main > article > .body,
 main > footer,
 main > article > footer {
-  margin: 1em 0;
+  margin: 2em 0;
   padding: 0 1em;
 }
 
@@ -127,6 +127,9 @@ main.object.edit header.object > nav.crud > ul > li.view {
   display: inherit;
 }
 
+dl.object-properties {
+  margin: 0;
+}
 dl.object-properties > dt {
   text-transform: uppercase;
   font-size: 0.8rem;
@@ -287,6 +290,7 @@ article.node > footer.node {
 }
 
 article.node > footer.node > section.edges > h1 {
+  margin: 0;
   text-transform: uppercase;
   font-size: 0.8rem;
   font-weight: bold;

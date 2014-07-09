@@ -55,7 +55,7 @@ main {
 	> article > .body,
 	> footer,
 	> article > footer {
-		margin: 1em 0;
+		margin: 2em 0;
 		padding: 0 1em;
 	}
 }
@@ -137,6 +137,8 @@ main.object.edit header.object > nav.crud {
 }
 
 dl.object-properties {
+	margin: 0;
+
 	> dt {
 		text-transform: uppercase;
 		font-size: 0.8rem;
@@ -311,6 +313,7 @@ article.node {
 
 article.node > footer.node > section.edges {
 	> h1 {
+		margin: 0;
 		text-transform: uppercase;
 		font-size: 0.8rem;
 		font-weight: bold;
