@@ -6,7 +6,7 @@
 
 		?>
 		<div class="body">
-			<p>View <a href="<?php __($edge->getPath()); ?>" title="<?php __($edge->getTitle()); ?>"><?php __($edge->getTitle()); ?></a>.</p>
+			<p><?php __(_m('penelope.view_edge_link', $edge->getPath(), $edge->getTitle())); ?></p>
 		</div>
 	</article>
 </main>

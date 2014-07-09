@@ -6,7 +6,7 @@
 
 		?>
 		<div class="body">
-			<p>See all <a href="<?php __($node_schema->getCollectionPath()); ?>"><?php __($node_schema->getName()); ?></a> nodes.</p>
+			<p><?php __(_m('view_nodes_link', $node_schema->getCollectionPath(), $node_schema->getName())); ?></p>
 		</div>
 	</article>
 </main>

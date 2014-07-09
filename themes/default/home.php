@@ -8,7 +8,7 @@
 		if (empty($node_schemas)) {
 
 		?>
-		<p>No nodes defined.</p>
+		<p><?php __(_m('home_empty')); ?></p>
 		<?php
 
 		} else {

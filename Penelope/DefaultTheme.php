@@ -15,20 +15,27 @@ namespace Karwana\Penelope;
 
 use Slim;
 use Negotiation\FormatNegotiator;
+use Karwana\MessageFormat\MessageFormat;
 
 class DefaultTheme extends Slim\View {
 
 	const ROUTE_NAME = 'resource';
 	const ROUTE_SLUG = 'resources';
 
-	protected $app, $resources = array();
+	protected $app, $resources = array(), $messageformat;
 
-	public function __construct(Slim\Slim $app) {
+	public function __construct(Slim\Slim $app, MessageFormat $messageformat = null) {
 		parent::__construct();
 
 		$this->app = $app;
 		$this->resources['css'] = array('default.css');
 		$this->resources['js'] = array('default.js');
+
+		if (!$messageformat) {
+			$messageformat = new MessageFormat($this->getDefaultTemplatesDirectory() . DIRECTORY_SEPARATOR . '_lang', 'en');
+		}
+
+		$this->messageformat = $messageformat;
 
 		$this->setTemplatesDirectory($this->getDefaultTemplatesDirectory());
 	}
@@ -92,14 +99,23 @@ class DefaultTheme extends Slim\View {
 		return $header . parent::render($template . '.php') . $footer;
 	}
 
-	public function __() {
-		$args = func_get_args();
+	public function _e($string) {
+		return htmlspecialchars($string, ENT_COMPAT | ENT_HTML5, 'UTF-8', false);
+	}
 
+	public function _m($message_key) {
+		$args = array_slice(func_get_args(), 1);
+
+		// Escape each of the message arguments before formatting.
 		foreach ($args as $i => $arg) {
-			$args[$i] = htmlspecialchars($arg, ENT_COMPAT | ENT_HTML5, 'UTF-8', false);
+			$args[$i] = $this->_e($arg);
 		}
 
-		echo implode('', $args);
+		return $this->messageformat->format($message_key, $args);
+	}
+
+	public function __($string) {
+		echo $string;
 	}
 
 }

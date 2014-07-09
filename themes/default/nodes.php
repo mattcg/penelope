@@ -10,7 +10,7 @@
 		if (empty($nodes)) {
 
 		?>
-		<p>There aren't any <?php __($node_schema->getName()); ?> nodes.</p>
+		<p><?php __(_m('node_collection_empty', $node_schema->getName())); ?></p>
 		<?php
 
 		} else {

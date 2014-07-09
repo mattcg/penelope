@@ -11,7 +11,7 @@
 			if (!empty($error)) {
 
 			?>
-			<p class="error">Error while updating relationship: <?php __($error->getMessage()); ?></p>
+			<p class="error"><?php __(_m('update_edge_error', $error->getMessage())); ?></p>
 			<?php
 
 			}

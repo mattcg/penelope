@@ -11,7 +11,7 @@
 			if (!empty($error)) {
 
 			?>
-			<p class="error">Error while creating relationship: <?php __($error->getMessage()); ?></p>
+			<p class="error"><?php __(_m('create_edge_error', $error->getMessage())); ?></p>
 			<?php
 
 			}
@@ -29,7 +29,7 @@
 				}
 
 				?>
-				<label for="node-collection">To</label>
+				<label for="node-collection"><?php __(_m('edge_to_label')); ?></label>
 				<select name="to_node">
 					<?php
 
@@ -49,7 +49,7 @@
 					?>
 				</select>
 				<hr>
-				<input type="submit" value="Create">
+				<input type="submit" value="<?php __(_m('create_edge_button_text')); ?>">
 			</form>
 		</div>
 	</article>

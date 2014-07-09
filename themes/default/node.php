@@ -18,7 +18,7 @@
 		</div>
 		<footer class="object node">
 			<section class="edges">
-				<h1>Relationships</h1>
+				<h1><?php __(_m('node_edges_title')); ?></h1>
 				<?php
 
 				foreach ($edge_schemas as $edge_schema) {
@@ -27,7 +27,7 @@
 				<h2><?php __($edge_schema->getName()); ?></h2>
 				<nav class="collection edges <?php __class('edges-' . $edge_schema->getName()); ?>">
 					<ul>
-						<li class="new"><a class="new" href="<?php __($node->getNewEdgePath($edge_schema)); ?>" title="Create a new <?php __($edge_schema->getName()); ?> relationship from <?php __($node->getTitle()); ?>">New</a></li>
+						<li class="new"><a class="new" href="<?php __($node->getNewEdgePath($edge_schema)); ?>" title="<?php __(_m('new_edge_link_title', $edge_schema->getName(), $node->getTitle())); ?> "><?php __(_m('new_edge_link_text')); ?></a></li>
 						<?php
 
 						foreach ($node->getOutEdges($edge_schema) as $edge) {

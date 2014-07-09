@@ -11,7 +11,7 @@
 			if (!empty($error)) {
 
 			?>
-			<p class="error">Error while creating node: <?php __($error->getMessage()); ?></p>
+			<p class="error"><?php __(_m('create_node_error', $error->getMessage())); ?></p>
 			<?php
 
 			}
@@ -30,7 +30,7 @@
 
 				?>
 				<hr>
-				<input type="submit" value="Create">
+				<input type="submit" value="<?php __(_m('create_node_button_text')); ?>">
 			</form>
 		</div>
 	</article>

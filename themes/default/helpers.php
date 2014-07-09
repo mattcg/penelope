@@ -2,10 +2,26 @@
 
 use Karwana\Penelope;
 
-function __() {
+function __($string) {
 	global $app;
 
-	call_user_func_array(array($app->view(), '__'), func_get_args());
+	$app->view()->__($string);
+}
+
+function _e($string) {
+	global $app;
+
+	return $app->view()->_e($string);
+}
+
+function _m() {
+	global $app;
+
+	// Prepend the namespace to avoid having to repeate it in templates.
+	$args = func_get_args();
+	$args[0] = 'penelope.' . $args[0];
+
+	return call_user_func_array(array($app->view(), '_m'), $args);
 }
 
 function __label(Penelope\Property $property) {
@@ -15,7 +31,7 @@ function __label(Penelope\Property $property) {
 		$label = ucfirst(str_replace('_', ' ', $property->getName()));
 	}
 
-	__($label);
+	__(_e($label));
 }
 
 function __class($string, $echo = true) {
@@ -39,7 +55,7 @@ function __datetime($value, $format = 'j M Y H:i:s e') {
 	if (ctype_digit($value)) {
 		__(date($format, $value));
 	} else {
-		__($value);
+		__(_e($value));
 	}
 }
 

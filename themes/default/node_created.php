@@ -6,7 +6,7 @@
 
 		?>
 		<div class="body">
-			<p>View <a href="<?php __($node->getPath()); ?>" title="<?php __($node->getTitle()); ?>"><?php __($node->getTitle()); ?></a>.</p>
+			<p><?php __(_m('view_node_link', $node->getPath(), $node->getTitle())); ?></p>
 		</div>
 	</article>
 </main>

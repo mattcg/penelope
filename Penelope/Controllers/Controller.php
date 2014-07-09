@@ -29,4 +29,14 @@ abstract class Controller {
 	public function render404(Exceptions\Exception $e) {
 		$this->app->render('error/404', array('title' => 'Not found', 'error' => $e), 404);
 	}
+
+	public function _e($string) {
+		$view = $this->app->view();
+
+		if ($view instanceof DefaultTheme) {
+			return $view->_e($string);
+		}
+
+		return htmlspecialchars($string, ENT_COMPAT | ENT_HTML5, 'UTF-8', false);
+	}
 }

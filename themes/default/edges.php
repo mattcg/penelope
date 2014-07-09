@@ -10,7 +10,7 @@
 		if (empty($edges)) {
 
 		?>
-		<p>There aren't any <?php __($edge_schema->getName()); ?> relationships.</p>
+		<p><?php __(_m('edge_collection_empty', $edge_schema->getName())); ?></p>
 		<?php
 
 		} else {
@@ -23,7 +23,7 @@
 				foreach ($edges as $edge) {
 
 				?>
-				<li><a href="<?php __($edge->getPath()); ?>" title="<?php __($edge->getTitle()); ?>"><?php __($edge->getTitle()); ?></a></li>
+				<li><a href="<?php __($edge->getPath()); ?>" title="<?php __(_m('view_edge_title', $edge->getTitle())); ?>"><?php __($edge->getTitle()); ?></a></li>
 				<?php
 
 				}
