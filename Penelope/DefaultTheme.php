@@ -35,21 +35,47 @@ class DefaultTheme extends Slim\View {
 			$messageformat = new MessageFormat($this->getDefaultTemplatesDirectory() . DIRECTORY_SEPARATOR . '_lang', 'en');
 		}
 
-		$this->messageformat = $messageformat;
-
+		$this->setMessageFormat($messageformat);
 		$this->setTemplatesDirectory($this->getDefaultTemplatesDirectory());
+	}
+
+	public function getMessageFormat() {
+		return $this->messageformat;
+	}
+
+	public function setMessageFormat(MessageFormat $messageformat) {
+		$this->messageformat = $messageformat;
+	}
+
+	public function addResource($resource_type, $file_name) {
+		if (!isset($this->resources[$resource_type])) {
+			throw new \InvalidArgumentException('Invalid resource type "' . $resource_type . '". Permitted types are ' . implode(', ', array_keys($this->resources)) . '.');
+		}
+
+		// NOOP if the resource already exists.
+		if (!in_array($file_name, $this->resources[$resource_type])) {
+			$this->resources[$resource_type][] = $file_name;
+		}
+	}
+
+	public function hasResource($resource_type, $file_name) {
+		return (isset($this->resources[$resource_type]) and in_array($file_name, $this->resources[$resource_type], true));
 	}
 
 	public function getDefaultTemplatesDirectory() {
 		return implode(DIRECTORY_SEPARATOR, array(__DIR__, '..', 'themes', 'default'));
 	}
 
-	public function getResourcePath($resource_type, $file) {
-		return $this->getTemplatePath(implode(DIRECTORY_SEPARATOR, array('resources', $resource_type, $file)));
+	public function getResourcePath($resource_type, $file_name) {
+		if (!$this->hasResource($resource_type, $file_name)) {
+			throw new \InvalidArgumentException('Unknown resource "' . $file_name . '".');
+		}
+
+		return $this->getTemplatePath(implode(DIRECTORY_SEPARATOR, array('resources', $resource_type, $file_name)));
 	}
 
-	public function getTemplatePath($file) {
-		$relative_path = DIRECTORY_SEPARATOR . ltrim($file, DIRECTORY_SEPARATOR);
+	public function getTemplatePath($relative_path) {
+		$relative_path = DIRECTORY_SEPARATOR . ltrim($relative_path, DIRECTORY_SEPARATOR);
 		$path = $this->getTemplatesDirectory() . $relative_path;
 
 		// Allow fallback to default theme files if DefaultTheme is subclassed.
@@ -64,8 +90,12 @@ class DefaultTheme extends Slim\View {
 		return $this->getTemplatePath($file);
 	}
 
-	public function getResourceUrl($resource_type, $file) {
-		return $this->app->urlFor(static::ROUTE_NAME, array('resource_type' => $resource_type, 'file_name' => $file));
+	public function getResourceUrl($resource_type, $file_name) {
+		if (!$this->hasResource($resource_type, $file_name)) {
+			throw new \InvalidArgumentException('Unknown resource "' . $file_name . '".');
+		}
+
+		return $this->app->urlFor(static::ROUTE_NAME, array('resource_type' => $resource_type, 'file_name' => $file_name));
 	}
 
 	public function render($template, $data = null) {
