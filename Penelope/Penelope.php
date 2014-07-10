@@ -91,7 +91,11 @@ class Penelope extends OptionContainer {
 			}
 
 			$controller = new Controllers\FileController($this->app);
-			$controller->read($theme->getResourcePath($resource_type, $file_name));
+			if ($theme->hasResource($resource_type, $file_name)) {
+				$controller->read($theme->getResourcePath($resource_type, $file_name));
+			} else {
+				$controller->render404(new Exceptions\Exception('Unknown resource "' . $file_name . '".'));
+			}
 
 		}, $this))->name($theme::ROUTE_NAME);
 	}
