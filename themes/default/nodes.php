@@ -23,7 +23,7 @@
 				foreach ($nodes as $node) {
 
 				?>
-				<li><a href="<?php __($node->getPath()); ?>" title="<?php __($node->getTitle()); ?>"><?php __($node->getTitle()); ?></a></li>
+				<li class="object"><a href="<?php __($node->getPath()); ?>" title="<?php __($node->getTitle()); ?>"><?php __($node->getTitle()); ?></a></li>
 				<?php
 
 				}
