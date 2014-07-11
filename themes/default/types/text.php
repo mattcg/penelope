@@ -15,7 +15,7 @@ if ($property->getSchema()->isMultiValue()) {
 	foreach ($property->getValue() as $value) {
 
 	?>
-	<li><?php __($value); ?></li>
+	<li><?php __(_e($value)); ?></li>
 	<?php
 
 	}
@@ -27,7 +27,7 @@ if ($property->getSchema()->isMultiValue()) {
 } else {
 
 ?>
-<div class="format-<?php __class($format); ?>"><?php __($property->getValue()); ?></div>
+<div class="format-<?php __class($format); ?>"><?php __(_e($property->getValue())); ?></div>
 <?php
 
 }

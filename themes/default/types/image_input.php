@@ -16,14 +16,14 @@ if ($property->getSchema()->isMultiValue()) {
 		$size = getimagesize(Image::getSystemPath($path))[3];
 
 ?>
-<img src="/uploads/<?php __($path); ?>" alt="" <?php __($size); ?>>
-<input type="checkbox" name="<?php __($property->getName()); ?>[]" value="<?php __(Image::serialize($value)); ?>" checked>
+<img src="/uploads/<?php __(_e($path)); ?>" alt="" <?php __($size); ?>>
+<input type="checkbox" name="<?php __(_e($property->getName())); ?>[]" value="<?php __(_e(Image::serialize($value))); ?>" checked>
 <?php
 
 	}
 
 ?>
-<input type="file" id="<?php __($property_id); ?>" name="<?php __($property->getName()); ?>[]" class="new">
+<input type="file" id="<?php __($property_id); ?>" name="<?php __(_e($property->getName())); ?>[]" class="new">
 <?php
 
 } else if ($property->hasValue() and Image::isValid($value = $property->getValue())) {
@@ -32,14 +32,14 @@ if ($property->getSchema()->isMultiValue()) {
 	$size = getimagesize(Image::getSystemPath($path))[3];
 
 ?>
-<img src="/uploads/<?php __($path); ?>" alt="" <?php __($size); ?>>
-<input id="<?php __($property_id); ?>" type="checkbox" name="<?php __($property->getName()); ?>" value="<?php __(Image::serialize($value)); ?>" checked>
+<img src="/uploads/<?php __(_e($path)); ?>" alt="" <?php __($size); ?>>
+<input id="<?php __($property_id); ?>" type="checkbox" name="<?php __(_e($property->getName())); ?>" value="<?php __(_e(Image::serialize($value))); ?>" checked>
 <?php
 
 } else {
 
 ?>
-<input id="<?php __($property_id); ?>" type="file" id="<?php __($property_id); ?>" name="<?php __($property->getName()); ?>" class="new">
+<input id="<?php __($property_id); ?>" type="file" id="<?php __($property_id); ?>" name="<?php __(_e($property->getName())); ?>" class="new">
 <?php
 
 }

@@ -11,7 +11,7 @@ if ($property->getSchema()->isMultiValue()) {
 	foreach ($property->getValue() as $value) {
 
 	?>
-	<li><a href="/uploads/<?php __($value[File::PATH_KEY]); ?>" alt=""><?php __($value[File::NAME_KEY]); ?></a></li>
+	<li><a href="/uploads/<?php __(_e($value[File::PATH_KEY])); ?>" alt=""><?php __(_e($value[File::NAME_KEY])); ?></a></li>
 	<?php
 
 	}
@@ -24,7 +24,7 @@ if ($property->getSchema()->isMultiValue()) {
 	$value = $property->getValue();
 
 ?>
-<a href="/uploads/<?php __($value[File::PATH_KEY]); ?>" alt=""><?php __($value[File::NAME_KEY]); ?></a>
+<a href="/uploads/<?php __(_e($value[File::PATH_KEY])); ?>" alt=""><?php __(_e($value[File::NAME_KEY])); ?></a>
 <?php
 
 }
