@@ -1,25 +1,42 @@
+@import '//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css';
 html {
   min-height: 100%;
   position: relative;
 }
 
 body {
-  font: 0.9rem sans-serif;
   margin: 0;
 }
 
 a {
-  color: #428bca;
+  color: #4679bd;
   text-decoration: none;
 }
 
+body,
+button,
+input,
+textarea,
+select {
+  text-rendering: optimizeLegibility;
+  font: 100 0.9rem Helvetica, Arial, sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-weight: 100;
+}
+
 body > header {
-  background-color: #a9ba9d;
+  background-color: #4679bd;
   padding: 1rem;
 }
 body > header > a > h1 {
   margin: 0;
   color: white;
+  font-weight: 100;
 }
 
 body > footer {
@@ -53,14 +70,14 @@ main > article > footer {
 
 main > header,
 main > article > header {
-  background-color: #333;
+  background-color: #f6f6f6;
+  border-bottom: 1px solid #e0e0e0;
   padding: 0.8rem 1rem;
 }
 main > header > h1,
 main > article > header > h1 {
   margin: 0;
   color: #999;
-  font-weight: normal;
   font-size: 1.1rem;
   text-transform: uppercase;
 }
@@ -103,7 +120,7 @@ header.object > nav.crud > ul > li + li {
   margin-left: 0.4rem;
 }
 header.object > nav.crud > ul > li > a.new {
-  background-color: #428bca;
+  background-color: #4679bd;
 }
 header.object > nav.crud > ul > li > a.edit {
   background-color: #d9534f;
@@ -167,13 +184,15 @@ form.object > img {
 
 nav.collection > ul {
   padding: 0;
+  list-style: none;
 }
 nav.collection > ul > li {
   margin: 1em 0;
 }
-
-.body > nav.collection > ul {
-  padding-left: 1rem;
+nav.collection > ul > li.object > a:before {
+  font-family: FontAwesome;
+  content: "\f144";
+  margin-right: 0.8em;
 }
 
 form.object > label {
@@ -183,7 +202,10 @@ form.object > label {
   font-weight: bold;
   border-bottom: 1px solid #ddd;
   padding-bottom: 0.4em;
-  margin: 2rem 0 1rem 0;
+  margin-bottom: 1rem;
+}
+form.object > label ~ label {
+  margin-top: 2rem;
 }
 form.object > hr {
   border-width: 1px;
@@ -236,7 +258,7 @@ input[type=submit] {
   text-align: center;
   display: block;
   cursor: pointer;
-  background-color: #428bca;
+  background-color: #4679bd;
   -webkit-border-radius: 0.2em;
   -moz-border-radius: 0.2em;
   -ms-border-radius: 0.2em;
@@ -256,7 +278,6 @@ textarea {
 input[type=text],
 input:not([type]),
 textarea {
-  font: 0.9rem sans-serif;
   padding: 0.4em;
   border: 1px solid #eee;
   -webkit-border-radius: 0.2em;
@@ -264,10 +285,6 @@ textarea {
   -ms-border-radius: 0.2em;
   -o-border-radius: 0.2em;
   border-radius: 0.2em;
-}
-
-select {
-  font: 0.9rem sans-serif;
 }
 
 p.error {
@@ -298,10 +315,6 @@ article.node > footer.node > section.edges > h1 {
 article.node > footer.node > section.edges > h2 {
   font-size: 0.9rem;
 }
-article.node > footer.node > section.edges > nav.edges > ul {
-  padding: 0;
-  list-style: none;
-}
 article.node > footer.node > section.edges > nav.edges > ul > li.new > a.new {
   text-transform: uppercase;
   color: white;
@@ -317,5 +330,9 @@ article.node > footer.node > section.edges > nav.edges > ul > li.new > a.new {
   -ms-border-radius: 0.2em;
   -o-border-radius: 0.2em;
   border-radius: 0.2em;
-  background-color: #428bca;
+  background-color: #4679bd;
+}
+
+main.home p.intro {
+  font-size: 2em;
 }

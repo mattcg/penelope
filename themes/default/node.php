@@ -33,7 +33,7 @@
 						foreach ($node->getOutEdges($edge_schema) as $edge) {
 
 						?>
-						<li><a href="<?php __($edge->getPath()); ?>" title="<?php __($edge->getTitle()); ?>"><?php __($edge->getToNode()->getTitle()); ?></a></li>
+						<li class="object"><a href="<?php __($edge->getPath()); ?>" title="<?php __($edge->getTitle()); ?>"><?php __($edge->getToNode()->getTitle()); ?></a></li>
 						<?php
 
 						}

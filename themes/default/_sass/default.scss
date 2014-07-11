@@ -3,13 +3,14 @@
 @import 'variables';
 @import 'mixins';
 
+@import '//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css';
+
 html {
 	min-height: 100%;
 	position: relative;
 }
 
 body {
-	font: 0.9rem sans-serif;
 	margin: 0;
 }
 
@@ -18,13 +19,30 @@ a {
 	text-decoration: none;
 }
 
+body,
+button,
+input,
+textarea,
+select {
+	text-rendering: optimizeLegibility;
+	font: 100 0.9rem Helvetica, Arial, sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4 {
+	font-weight: 100;
+}
+
 body > header {
-	background-color: #a9ba9d;
+	background-color: #4679bd;
 	padding: 1rem;
 
 	> a > h1 {
 		margin: 0;
 		color: white;
+		font-weight: 100;
 	}
 }
 
@@ -62,13 +80,13 @@ main {
 
 main > header,
 main > article > header {
-	background-color: #333;
+	background-color: #f6f6f6;
+	border-bottom: 1px solid #e0e0e0;
 	padding: 0.8rem 1rem;
 
 	> h1 {
 		margin: 0;
 		color: #999;
-		font-weight: normal;
 		font-size: 1.1rem;
 		text-transform: uppercase;
 	}
@@ -182,16 +200,17 @@ form.object > img {
 nav.collection {
 	> ul {
 		padding: 0;
+		list-style: none;
 	}
 
 	> ul > li {
 		margin: 1em 0;
 	}
-}
 
-.body > nav.collection {
-	> ul {
-		padding-left: 1rem;
+	> ul > li.object > a:before {
+		font-family: FontAwesome;
+		content: "\f144";
+		margin-right: 0.8em;
 	}
 }
 
@@ -203,7 +222,11 @@ form.object {
 		font-weight: bold;
 		border-bottom: 1px solid #ddd;
 		padding-bottom: 0.4em;
-		margin: 2rem 0 1rem 0;
+		margin-bottom: 1rem
+	}
+
+	> label ~ label {
+		margin-top: 2rem;
 	}
 
 	> hr {
@@ -280,14 +303,9 @@ textarea {
 input[type=text],
 input:not([type]),
 textarea {
-	font: 0.9rem sans-serif;
 	padding: 0.4em;
 	border: 1px solid #eee;
 	@include border-radius(0.2em);
-}
-
-select {
-	font: 0.9rem sans-serif;
 }
 
 p.error {
@@ -323,13 +341,12 @@ article.node > footer.node > section.edges {
 		font-size: 0.9rem;
 	}
 
-	> nav.edges > ul {
-		padding: 0;
-		list-style: none;
-
-		> li.new > a.new {
-			@include button();
-			background-color: $button-blue;
-		}
+	> nav.edges > ul > li.new > a.new {
+		@include button();
+		background-color: $button-blue;
 	}
+}
+
+main.home p.intro {
+	font-size: 2em;
 }

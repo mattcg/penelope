@@ -22,7 +22,7 @@
 			foreach ($node_schemas as $node_schema) {
 
 			?>
-				<li><a href="/<?php __($node_schema->getSlug()); ?>/"><?php __($node_schema->getName()); ?></a></li>
+				<li class="object"><a href="/<?php __($node_schema->getSlug()); ?>/"><?php __($node_schema->getName()); ?></a></li>
 			<?php
 
 			}
