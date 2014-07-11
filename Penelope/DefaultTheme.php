@@ -141,6 +141,12 @@ class DefaultTheme extends Slim\View {
 			$args[$i] = $this->_e($arg);
 		}
 
+		// If the message key has no section, use the default.
+		// The is to avoid having to repeat it in the default templates and controllers.
+		if (false === strpos($message_key, '.')) {
+			$message_key = 'penelope.' . $message_key;
+		}
+
 		return $this->messageformat->format($message_key, $args);
 	}
 

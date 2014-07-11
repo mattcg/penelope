@@ -17,11 +17,7 @@ function _e($string) {
 function _m() {
 	global $app;
 
-	// Prepend the namespace to avoid having to repeate it in templates.
-	$args = func_get_args();
-	$args[0] = 'penelope.' . $args[0];
-
-	return call_user_func_array(array($app->view(), '_m'), $args);
+	return call_user_func_array(array($app->view(), '_m'), func_get_args());
 }
 
 function __label(Penelope\Property $property) {

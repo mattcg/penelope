@@ -48,10 +48,6 @@ abstract class Controller {
 			return $message_key;
 		}
 
-		// Prepend the namespace to avoid having to repeate it in controllers.
-		$args = func_get_args();
-		$args[0] = 'penelope.' . $args[0];
-
-		return call_user_func_array(array($view, '_m'), $args);
+		return call_user_func_array(array($view, '_m'), func_get_args());
 	}
 }
