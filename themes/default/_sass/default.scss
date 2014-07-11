@@ -167,16 +167,20 @@ dl.object-properties {
 	}
 }
 
-dd.multivalue > ul.multivalue {
+ul.multivalue {
 	padding: 0;
 	list-style: none;
 
 	> li {
-		background-color: #ddd;
-		display: inline-block;
-		padding: 0.2em 0.4em;
-		font-size: 0.8em;
+		margin: 0.6em 0;
 	}
+}
+
+dd.multivalue > ul.multivalue > li {
+	background-color: #ddd;
+	display: inline-block;
+	padding: 0.2em 0.4em;
+	font-size: 0.8em;
 }
 
 dd.type-image > img,
@@ -222,10 +226,10 @@ form.object {
 		border-color: #eee;
 		margin: 1rem 0;
 	}
-}
 
-form.object > img {
-	vertical-align: middle;
+	> img {
+		vertical-align: middle;
+	}
 }
 
 form.object.delete {

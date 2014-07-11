@@ -141,10 +141,14 @@ dl.object-properties > dd + dt {
   margin-top: 2em;
 }
 
-dd.multivalue > ul.multivalue {
+ul.multivalue {
   padding: 0;
   list-style: none;
 }
+ul.multivalue > li {
+  margin: 0.6em 0;
+}
+
 dd.multivalue > ul.multivalue > li {
   background-color: #ddd;
   display: inline-block;
@@ -188,7 +192,6 @@ form.object > hr {
   border-color: #eee;
   margin: 1rem 0;
 }
-
 form.object > img {
   vertical-align: middle;
 }

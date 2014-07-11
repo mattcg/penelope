@@ -4,6 +4,10 @@ use Karwana\Penelope\Types\Image;
 
 if ($property->getSchema()->isMultiValue()) {
 
+?>
+<ul class="multivalue">
+<?php
+
 	foreach ((array) $property->getValue() as $value) {
 
 		// Nothing useful can be shown for invalid images, not even the original input.
@@ -16,14 +20,14 @@ if ($property->getSchema()->isMultiValue()) {
 		$size = getimagesize(Image::getSystemPath($path))[3];
 
 ?>
-<img src="/uploads/<?php __(_e($path)); ?>" alt="" <?php __($size); ?>>
-<input type="checkbox" name="<?php __(_e($property->getName())); ?>[]" value="<?php __(_e(Image::serialize($value))); ?>" checked>
+	<li><img src="/uploads/<?php __(_e($path)); ?>" alt="" <?php __($size); ?>> <input type="checkbox" name="<?php __(_e($property->getName())); ?>[]" value="<?php __(_e(Image::serialize($value))); ?>" checked></li>
 <?php
 
 	}
 
 ?>
-<input type="file" id="<?php __($property_id); ?>" name="<?php __(_e($property->getName())); ?>[]" class="new">
+	<li><input type="file" id="<?php __($property_id); ?>" name="<?php __(_e($property->getName())); ?>[]" class="new"></li>
+</ul>
 <?php
 
 } else if ($property->hasValue() and Image::isValid($value = $property->getValue())) {

@@ -4,6 +4,10 @@ use Karwana\Penelope\Types\File;
 
 if ($property->getSchema()->isMultiValue()) {
 
+?>
+<ul class="multivalue">
+<?php
+
 	foreach ((array) $property->getValue() as $value) {
 
 		// Nothing useful can be shown for invalid files, not even the original input.
@@ -13,14 +17,14 @@ if ($property->getSchema()->isMultiValue()) {
 		}
 
 ?>
-<a href="/uploads/<?php __(_e($value[File::PATH_KEY])); ?>" alt=""><?php __(_e($value[File::NAME_KEY])); ?></a>
-<input type="checkbox" name="<?php __(_e($property->getName())); ?>[]" value="<?php __(_e(File::serialize($value))); ?>" checked>
+	<li><a href="/uploads/<?php __(_e($value[File::PATH_KEY])); ?>" alt=""><?php __(_e($value[File::NAME_KEY])); ?></a> <input type="checkbox" name="<?php __(_e($property->getName())); ?>[]" value="<?php __(_e(File::serialize($value))); ?>" checked></li>
 <?php
 
 	}
 
 ?>
-<input type="file" id="<?php __($property_id); ?>" name="<?php __(_e($property->getName())); ?>[]" class="new">
+	<li><input type="file" id="<?php __($property_id); ?>" name="<?php __(_e($property->getName())); ?>[]" class="new"></li>
+</ul>
 <?php
 
 } else if ($property->hasValue() and File::isValid($value = $property->getValue())) {
