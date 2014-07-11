@@ -44,7 +44,7 @@ class Penelope extends OptionContainer {
 
 		// Set up the home route.
 		$app->get('/', Closure::bind(function() {
-			$controller = new Controllers\HomeController($this->app, $this->schema);
+			$controller = new Controllers\HomeController($this->client, $this->app, $this->schema);
 			$controller->read();
 		}, $this));
 
