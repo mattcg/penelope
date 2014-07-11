@@ -21,7 +21,15 @@
 				<h1><?php __(_m('node_edges_title')); ?></h1>
 				<?php
 
-				foreach ($edge_schemas as $edge_schema) {
+				if (empty($edge_schemas)) {
+
+				?>
+				<p><?php __(_m('node_edges_none_defined')); ?></p>
+				<?php
+
+				} else {
+
+					foreach ($edge_schemas as $edge_schema) {
 
 				?>
 				<h2><?php __($edge_schema->getName()); ?></h2>
@@ -42,6 +50,8 @@
 					</ul>
 				</nav>
 				<?php
+
+					}
 
 				}
 
