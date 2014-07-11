@@ -126,12 +126,12 @@ class File extends Type {
 		}
 
 		if (empty($value[static::PATH_KEY]) or !is_string($value[static::PATH_KEY])) {
-			$message = 'Unable to read image path.';
+			$message = 'Unable to read file path.';
 			return false;
 		}
 
 		if (empty($value[static::NAME_KEY]) or !is_string($value[static::NAME_KEY])) {
-			$message = 'Unable to read image name.';
+			$message = 'Unable to read file name.';
 			return false;
 		}
 
