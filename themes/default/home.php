@@ -14,6 +14,7 @@
 		} else {
 
 		?>
+		<p class="intro"><?php __(_m('home')); ?></p>
 		<nav class="collection">
 			<ul>
 			<?php
