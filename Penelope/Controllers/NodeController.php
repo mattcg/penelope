@@ -28,10 +28,10 @@ class NodeController extends ObjectController {
 
 	public function delete($schema_slug, $node_id) {
 		$node = $this->getNodeByParams($schema_slug, $node_id);
-		$id = $node->getId();
+		$node_title = $node->getTitle();
 		$node_schema = $node->getSchema();
 
-		$view_data = array('title' => 'Deleted ' . $node_schema->getName() . ' #' . $id, 'node_schema' => $node_schema);
+		$view_data = array('title' => $this->_m('node_deleted_title', $node_title), 'node_schema' => $node_schema);
 
 		$node->delete();
 		$this->app->render('node_deleted', $view_data);
@@ -67,7 +67,7 @@ class NodeController extends ObjectController {
 		$node = $this->getNodeByParams($schema_slug, $node_id);
 		$node_schema = $node->getSchema();
 
-		$view_data = array('title' => 'Edit ' . $node->getDefaultTitle(), 'error' => $e);
+		$view_data = array('title' => $this->_m('edit_node_title', $node->getTitle()), 'error' => $e);
 		$view_data['properties'] = array();
 
 		foreach ($node_schema->getProperties() as $property_schema) {

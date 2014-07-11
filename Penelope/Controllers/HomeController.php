@@ -27,7 +27,7 @@ class HomeController extends Controller {
 	}
 
 	public function read() {
-		$view_data = array('title' => 'Welcome', 'node_schemas' => $this->schema->getNodes());
+		$view_data = array('title' => $this->_m('home_title'), 'node_schemas' => $this->schema->getNodes());
 		$this->app->render('home', $view_data);
 	}
 }

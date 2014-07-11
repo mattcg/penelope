@@ -16,6 +16,7 @@ namespace Karwana\Penelope\Controllers;
 use Slim;
 
 use Karwana\Penelope\Exceptions;
+use Karwana\Penelope\DefaultTheme;
 
 abstract class Controller {
 
@@ -38,5 +39,19 @@ abstract class Controller {
 		}
 
 		return htmlspecialchars($string, ENT_COMPAT | ENT_HTML5, 'UTF-8', false);
+	}
+
+	public function _m() {
+		$view = $this->app->view();
+
+		if (!($view instanceof DefaultTheme)) {
+			return $message_key;
+		}
+
+		// Prepend the namespace to avoid having to repeate it in controllers.
+		$args = func_get_args();
+		$args[0] = 'penelope.' . $args[0];
+
+		return call_user_func_array(array($view, '_m'), $args);
 	}
 }

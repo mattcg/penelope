@@ -21,7 +21,7 @@ class NodesController extends ObjectController {
 	public function read($schema_slug) {
 		$node_schema = $this->getNodeSchemaBySlug($schema_slug);
 
-		$view_data = array('title' => $node_schema->getName() . ' list', 'node_schema' => $node_schema);
+		$view_data = array('title' => $this->_m('node_collection_title', $node_schema->getName()), 'node_schema' => $node_schema);
 		$view_data['nodes'] = $node_schema->getCollection($this->client);
 
 		$this->app->render('nodes', $view_data);
@@ -50,7 +50,7 @@ class NodesController extends ObjectController {
 			return;
 		}
 
-		$view_data = array('title' => $node_schema->getName() . ' #' . $node->getId() . ' created', 'node' => $node);
+		$view_data = array('title' => $this->_m('node_created_title', $node->getTitle()), 'node' => $node);
 		$app->response->setStatus(201);
 		$app->response->headers->set('Location', $node->getPath());
 		$app->render('node_created', $view_data);
@@ -59,7 +59,7 @@ class NodesController extends ObjectController {
 	public function renderNewForm($schema_slug, array $transient_properties = null, \Exception $e = null) {
 		$node_schema = $this->getNodeSchemaBySlug($schema_slug);
 
-		$view_data = array('title' => 'New ' . $node_schema->getName(), 'error' => $e);
+		$view_data = array('title' => $this->_m('new_node_title', $node_schema->getName()), 'error' => $e);
 		$view_data['properties'] = array();
 
 		foreach ($node_schema->getProperties() as $property_schema) {

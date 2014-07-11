@@ -34,9 +34,10 @@ class EdgeController extends ObjectController {
 
 	public function delete($node_schema_slug, $node_id, $edge_schema_slug, $edge_id) {
 		$edge = $this->getByParamsArray(func_get_args());
+		$edge_title = $edge->getTitle();
 		$edge->delete();
 
-		$viewdata = array('title' => 'Deleted ' . $edge->getTitle());
+		$viewdata = array('title' => $this->_m('edge_deleted_title', $edge_title));
 		$viewdata['node'] = $this->getNodeByParams($node_schema_slug, $node_id);
 		$viewdata['edge_schema'] = $edge->getSchema();
 
@@ -47,7 +48,7 @@ class EdgeController extends ObjectController {
 		$edge = $this->getEdgeByParams($node_schema_slug, $node_id, $edge_schema_slug, $edge_id);
 		$edge_schema = $edge->getSchema();
 
-		$view_data = array('title' => 'Edit ' . $edge->getDefaultTitle(), 'error' => $e);
+		$view_data = array('title' => $this->_m('edit_edge_title', $edge->getTitle()), 'error' => $e);
 		$view_data['edge_schema'] = $edge_schema;
 		$view_data['edge'] = $edge;
 		$view_data['node'] = $this->getNodeByParams($node_schema_slug, $node_id);
