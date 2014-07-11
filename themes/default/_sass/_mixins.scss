@@ -1,12 +1,12 @@
 @mixin button() {
-	text-transform: uppercase;
+	text-transform: capitalize;
 	color: white;
-	font-size: 0.7rem;
-	font-weight: bold;
-	line-height: 1.6rem;
+	font-size: 0.8rem;
+	line-height: 2rem;
 	min-width: 5em;
 	padding: 0 1em;
 	text-align: center;
 	display: inline-block;
-	@include border-radius(0.2em);
+	background-color: #646464;
+	@include border-radius(0.4em);
 }

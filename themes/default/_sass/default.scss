@@ -88,7 +88,6 @@ main > article > header {
 		margin: 0;
 		color: #999;
 		font-size: 1.1rem;
-		text-transform: uppercase;
 	}
 }
 
@@ -99,6 +98,7 @@ article.object > header.object {
 
 	h1 {
 		float: left;
+		line-height: 2rem;
 	}
 }
 
@@ -110,21 +110,8 @@ header.object > nav.crud {
 		padding: 0;
 	}
 
-	> ul > li > a {
-		background-color: #646464;
-		@include button();
-	}
-
 	> ul > li + li {
 		margin-left: 0.4rem;
-	}
-
-	> ul > li > a.new {
-		background-color: $button-blue;
-	}
-
-	> ul > li > a.edit {
-		background-color: $button-red;
 	}
 
 	> ul > li.view {
@@ -158,7 +145,6 @@ dl.object-properties {
 	margin: 0;
 
 	> dt {
-		text-transform: uppercase;
 		font-size: 0.8rem;
 		font-weight: bold;
 		border-bottom: 1px solid #ddd;
@@ -217,7 +203,6 @@ nav.collection {
 form.object {
 	> label {
 		display: block;
-		text-transform: uppercase;
 		font-size: 0.8rem;
 		font-weight: bold;
 		border-bottom: 1px solid #ddd;
@@ -280,17 +265,16 @@ form.object.create {
 input[type=submit] {
 	-webkit-appearance: none;
 	border: none;
-	text-transform: uppercase;
+	text-transform: capitalize;
 	color: white;
-	font-size: 0.7rem;
-	font-weight: bold;
-	line-height: 1.6rem;
+	font-size: 0.8rem;
+	line-height: 2rem;
 	min-width: 6rem;
 	text-align: center;
 	display: block;
 	cursor: pointer;
 	background-color: $button-blue;
-	@include border-radius(0.2em);
+	@include border-radius(0.4em);
 }
 
 textarea {
@@ -332,7 +316,6 @@ article.node {
 article.node > footer.node > section.edges {
 	> h1 {
 		margin: 0;
-		text-transform: uppercase;
 		font-size: 0.8rem;
 		font-weight: bold;
 	}
@@ -340,13 +323,34 @@ article.node > footer.node > section.edges {
 	> h2 {
 		font-size: 0.9rem;
 	}
-
-	> nav.edges > ul > li.new > a.new {
-		@include button();
-		background-color: $button-blue;
-	}
 }
 
 main.home p.intro {
 	font-size: 2em;
+}
+
+a.button {
+	@include button();
+}
+
+a.button:before {
+	font: 1.2em FontAwesome;
+	margin-right: 0.6em;
+	vertical-align: text-top;
+}
+
+a.button.new {
+	background-color: $button-blue;
+}
+
+a.button.new:before {
+	content: '\f196';
+}
+
+a.button.edit {
+	background-color: $button-red;
+}
+
+a.button.edit:before {
+	content: '\f044';
 }

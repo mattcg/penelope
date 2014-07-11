@@ -79,7 +79,6 @@ main > article > header > h1 {
   margin: 0;
   color: #999;
   font-size: 1.1rem;
-  text-transform: uppercase;
 }
 
 main.collection > header.object,
@@ -91,6 +90,7 @@ main.collection > header.object h1,
 main.object > header.object h1,
 article.object > header.object h1 {
   float: left;
+  line-height: 2rem;
 }
 
 header.object > nav.crud > ul,
@@ -99,31 +99,8 @@ header.object > nav.crud > ul > li {
   margin: 0;
   padding: 0;
 }
-header.object > nav.crud > ul > li > a {
-  background-color: #646464;
-  text-transform: uppercase;
-  color: white;
-  font-size: 0.7rem;
-  font-weight: bold;
-  line-height: 1.6rem;
-  min-width: 5em;
-  padding: 0 1em;
-  text-align: center;
-  display: inline-block;
-  -webkit-border-radius: 0.2em;
-  -moz-border-radius: 0.2em;
-  -ms-border-radius: 0.2em;
-  -o-border-radius: 0.2em;
-  border-radius: 0.2em;
-}
 header.object > nav.crud > ul > li + li {
   margin-left: 0.4rem;
-}
-header.object > nav.crud > ul > li > a.new {
-  background-color: #4679bd;
-}
-header.object > nav.crud > ul > li > a.edit {
-  background-color: #d9534f;
 }
 header.object > nav.crud > ul > li.view {
   display: none;
@@ -148,7 +125,6 @@ dl.object-properties {
   margin: 0;
 }
 dl.object-properties > dt {
-  text-transform: uppercase;
   font-size: 0.8rem;
   font-weight: bold;
   border-bottom: 1px solid #ddd;
@@ -197,7 +173,6 @@ nav.collection > ul > li.object > a:before {
 
 form.object > label {
   display: block;
-  text-transform: uppercase;
   font-size: 0.8rem;
   font-weight: bold;
   border-bottom: 1px solid #ddd;
@@ -249,21 +224,20 @@ form.object.create > input[type=submit] {
 input[type=submit] {
   -webkit-appearance: none;
   border: none;
-  text-transform: uppercase;
+  text-transform: capitalize;
   color: white;
-  font-size: 0.7rem;
-  font-weight: bold;
-  line-height: 1.6rem;
+  font-size: 0.8rem;
+  line-height: 2rem;
   min-width: 6rem;
   text-align: center;
   display: block;
   cursor: pointer;
   background-color: #4679bd;
-  -webkit-border-radius: 0.2em;
-  -moz-border-radius: 0.2em;
-  -ms-border-radius: 0.2em;
-  -o-border-radius: 0.2em;
-  border-radius: 0.2em;
+  -webkit-border-radius: 0.4em;
+  -moz-border-radius: 0.4em;
+  -ms-border-radius: 0.4em;
+  -o-border-radius: 0.4em;
+  border-radius: 0.4em;
 }
 
 textarea {
@@ -308,31 +282,52 @@ article.node > footer.node {
 
 article.node > footer.node > section.edges > h1 {
   margin: 0;
-  text-transform: uppercase;
   font-size: 0.8rem;
   font-weight: bold;
 }
 article.node > footer.node > section.edges > h2 {
   font-size: 0.9rem;
 }
-article.node > footer.node > section.edges > nav.edges > ul > li.new > a.new {
-  text-transform: uppercase;
+
+main.home p.intro {
+  font-size: 2em;
+}
+
+a.button {
+  text-transform: capitalize;
   color: white;
-  font-size: 0.7rem;
-  font-weight: bold;
-  line-height: 1.6rem;
+  font-size: 0.8rem;
+  line-height: 2rem;
   min-width: 5em;
   padding: 0 1em;
   text-align: center;
   display: inline-block;
-  -webkit-border-radius: 0.2em;
-  -moz-border-radius: 0.2em;
-  -ms-border-radius: 0.2em;
-  -o-border-radius: 0.2em;
-  border-radius: 0.2em;
+  background-color: #646464;
+  -webkit-border-radius: 0.4em;
+  -moz-border-radius: 0.4em;
+  -ms-border-radius: 0.4em;
+  -o-border-radius: 0.4em;
+  border-radius: 0.4em;
+}
+
+a.button:before {
+  font: 1.2em FontAwesome;
+  margin-right: 0.6em;
+  vertical-align: text-top;
+}
+
+a.button.new {
   background-color: #4679bd;
 }
 
-main.home p.intro {
-  font-size: 2em;
+a.button.new:before {
+  content: '\f196';
+}
+
+a.button.edit {
+  background-color: #d9534f;
+}
+
+a.button.edit:before {
+  content: '\f044';
 }
