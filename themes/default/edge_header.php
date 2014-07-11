@@ -17,8 +17,8 @@
 			if (isset($edge)) {
 
 			?>
-			<li class="edit"><a class="button edit" href="<?php __($edge->getEditPath()); ?>" title="<?php __(_m('edit_edge_title', $edge->getTitle())); ?>"><?php __(_m('edit_edge_link_text')); ?></a></li>
-			<li class="view"><a class="view" href="<?php __($edge->getPath()); ?>" title="<?php __(_m('view_edge_title')); ?>"><?php __(_m('view_edge_link_text')); ?></a></li>
+			<li class="edit"><a class="button edit" href="<?php __($edge->getEditPath()); ?>" title="<?php __(_m('edit_edge_button_title', $edge->getTitle())); ?>"><?php __(_m('edit_edge_button_text')); ?></a></li>
+			<li class="view"><a class="view" href="<?php __($edge->getPath()); ?>" title="<?php __(_m('view_edge_button_title')); ?>"><?php __(_m('view_edge_button_text')); ?></a></li>
 			<?php
 
 			}

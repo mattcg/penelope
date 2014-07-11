@@ -23,7 +23,7 @@
 				foreach ($edges as $edge) {
 
 				?>
-				<li><a href="<?php __($edge->getPath()); ?>" title="<?php __(_m('view_edge_title', $edge->getTitle())); ?>"><?php __($edge->getTitle()); ?></a></li>
+				<li><a href="<?php __($edge->getPath()); ?>" title="<?php __($edge->getTitle()); ?>"><?php __($edge->getTitle()); ?></a></li>
 				<?php
 
 				}
