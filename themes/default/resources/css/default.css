@@ -57,11 +57,11 @@ body > footer > p {
   text-align: right;
 }
 
-main {
-  margin-bottom: 6rem;
-}
 main > .body,
-main > article > .body,
+main > article > .body {
+  margin: 2em 0 6rem 0;
+  padding: 0 1em;
+}
 main > footer,
 main > article > footer {
   margin: 2em 0;
@@ -218,7 +218,6 @@ form.object.update > input[type=submit],
 form.object.update + form.object.delete > input[type=submit],
 form.object.create > input[type=submit] {
   float: right;
-  margin-bottom: 6rem;
 }
 
 input[type=submit] {

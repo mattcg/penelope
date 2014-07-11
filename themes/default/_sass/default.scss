@@ -67,10 +67,12 @@ body > footer {
 }
 
 main {
-	margin-bottom: 6rem;
-
 	> .body,
-	> article > .body,
+	> article > .body {
+		margin: 2em 0 6rem 0;
+		padding: 0 1em;
+	}
+
 	> footer,
 	> article > footer {
 		margin: 2em 0;
@@ -258,7 +260,6 @@ form.object.update + form.object.delete,
 form.object.create {
 	> input[type=submit] {
 		float: right;
-		margin-bottom: 6rem;
 	}
 }
 
