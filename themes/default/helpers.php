@@ -43,20 +43,20 @@ function __class($string, $echo = true) {
 	}
 }
 
-function __datetime($value, $format = 'j M Y H:i:s e') {
+function __datetime($value, $message_key = 'property_datetime_value') {
 	if (!$value) {
 		return;
 	}
 
 	if (ctype_digit($value)) {
-		__(date($format, $value));
+		__(_m($message_key, $value));
 	} else {
 		__(_e($value));
 	}
 }
 
 function __date($value) {
-	__datetime($value, 'j M Y');
+	__datetime($value, 'property_date_value');
 }
 
 function __path($file) {
