@@ -41,18 +41,16 @@ class HomeController extends Controller {
 
 		$view_data['node_totals'] = array();
 
+		// Initialize totals array with zeroes.
+		foreach ($view_data['node_schemas'] as $node_schema) {
+			$view_data['node_totals'][$node_schema->getName()] = 0;
+		}
+
 		// Get label totals.
 		$query = new Neo4j\Cypher\Query($this->client, 'MATCH n RETURN DISTINCT count(labels(n)), labels(n);');
 		foreach ($query->getResultSet() as $row) {
-			if (!empty($row[1][0])) {
+			if (!empty($row[1][0]) and isset($view_data['node_totals'][$row[1][0]])) {
 				$view_data['node_totals'][$row[1][0]] = $row[0];
-			}
-		}
-
-		// Fill zeroes for schemas with no nodes.
-		foreach ($view_data['node_schemas'] as $node_schema) {
-			if (!isset($view_data['node_totals'][$node_schema->getName()])) {
-				$view_data['node_totals'][$node_schema->getName()] = 0;
 			}
 		}
 
