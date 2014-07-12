@@ -24,7 +24,7 @@ class PropertySchema extends OptionContainer {
 			throw new \InvalidArgumentException('Property name can not be empty.');
 		}
 
-		if (!in_array($type, array('text', 'date', 'datetime', 'file', 'image', 'country', 'url'))) {
+		if (!in_array($type, array('text', 'date', 'datetime', 'file', 'image', 'country', 'url', 'enum'))) {
 			throw new \InvalidArgumentException('Unknown type "' . $type . '".');
 		}
 
