@@ -58,6 +58,10 @@ abstract class Object {
 	}
 
 	public function getTitle() {
+		if (!$this->hasId()) {
+			return $this->getDefaultTitle();
+		}
+
 		$option = $this->schema->getOption('format.title');
 		if (!$option) {
 			return $this->getDefaultTitle();
