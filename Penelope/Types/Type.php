@@ -28,7 +28,7 @@ abstract class Type extends OptionContainer {
 			return;
 		}
 
-		if (!static::isValid($value, $message)) {
+		if (!static::isValid($value, $options, $message)) {
 			throw new Exceptions\TypeException($message);	
 		}
 
@@ -70,7 +70,7 @@ abstract class Type extends OptionContainer {
 		return $value;
 	}
 
-	public static function isValid($value, &$message = null) {
+	public static function isValid($value, array $options = null, &$message = null) {
 		throw new \BadMethodCallException('Not implemented.');
 	}
 

@@ -15,7 +15,7 @@ namespace Karwana\Penelope\Types;
 
 class Url extends Type {
 
-	public static function isValid($value, &$message = null) {
+	public static function isValid($value, array $options = null, &$message = null) {
 		if (static::isEmpty($value)) {
 			return true;
 		}

@@ -15,20 +15,16 @@ namespace Karwana\Penelope\Types;
 
 class Enum extends Type {
 
-	public function __construct($value = null, array $options = null) {
+	public static function isValid($value, array $options = null, &$message = null) {
 		if (empty($options['allowed']) or !is_array($options['allowed'])) {
 			throw new \RuntimeException('Enum requires the "allowed" option be set to a non-empty array.');
 		}
 
-		parent::__construct($value, $options);
-	}
-
-	public static function isValid($value, &$message = null) {
 		if (static::isEmpty($value)) {
 			return true;
 		}
 
-		if (!in_array($value, $this->getOption('allowed'), true)) {
+		if (!in_array($value, $options['allowed'], true)) {
 			$message = 'Value "' . $value . '" is not allowed.';
 			return false;
 		}

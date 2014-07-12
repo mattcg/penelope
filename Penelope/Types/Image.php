@@ -15,8 +15,8 @@ namespace Karwana\Penelope\Types;
 
 class Image extends File {
 
-	public static function isValid($value, &$message = null) {
-		if (!parent::isValid($value, $message)) {
+	public static function isValid($value, array $options = null, &$message = null) {
+		if (!parent::isValid($value, $options, $message)) {
 			return false;
 		}
 
