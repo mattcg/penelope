@@ -49,6 +49,13 @@ class HomeController extends Controller {
 			}
 		}
 
+		// Fill zeroes for schemas with no nodes.
+		foreach ($view_data['node_schemas'] as $node_schema) {
+			if (!isset($view_data['node_totals'][$node_schema->getName()])) {
+				$view_data['node_totals'][$node_schema->getName()] = 0;
+			}
+		}
+
 		$view_data['total_nodes'] = array_sum($view_data['node_totals']);
 
 		$this->app->render('home', $view_data);
