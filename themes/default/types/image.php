@@ -12,7 +12,7 @@ if ($property->getSchema()->isMultiValue()) {
 		$size = getimagesize(File::getSystemPath($value[File::PATH_KEY]))[3];
 
 	?>
-	<li><img src="/uploads/<?php __(_e($value[File::PATH_KEY])); ?>" alt="" <?php __($size); ?>></li>
+	<li><a href="/uploads/<?php __(_e($value[File::PATH_KEY])); ?>" title="<?php __(_e($value[File::NAME_KEY])); ?>"><img src="/uploads/<?php __(_e($value[File::PATH_KEY])); ?>" alt="" <?php __($size); ?>></a></li>
 	<?php
 
 	}
@@ -22,11 +22,12 @@ if ($property->getSchema()->isMultiValue()) {
 <?php
 
 } else {
-	$path = $property->getValue()[File::PATH_KEY];
+	$value = $property->getValue();
+	$path = $value[File::PATH_KEY];
 	$size = getimagesize(File::getSystemPath($path))[3];
 
 ?>
-<img src="/uploads/<?php __(_e($path)); ?>" alt="" <?php __($size); ?>>
+<a href="/uploads/<?php __(_e($path)); ?>" title="<?php __(_e($value[File::NAME_KEY])); ?>"><img src="/uploads/<?php __(_e($path)); ?>" alt="" <?php __($size); ?>></a>
 <?php
 
 }
