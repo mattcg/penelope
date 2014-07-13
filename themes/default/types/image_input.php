@@ -26,7 +26,7 @@ if ($property->getSchema()->isMultiValue()) {
 	}
 
 ?>
-	<li><input type="file" id="<?php __($property_id); ?>" name="<?php __(_e($property->getName())); ?>[]" class="new"></li>
+	<li><input type="file" accept="image/*" id="<?php __($property_id); ?>" name="<?php __(_e($property->getName())); ?>[]" class="new"></li>
 </ul>
 <?php
 
@@ -43,7 +43,7 @@ if ($property->getSchema()->isMultiValue()) {
 } else {
 
 ?>
-<input id="<?php __($property_id); ?>" type="file" id="<?php __($property_id); ?>" name="<?php __(_e($property->getName())); ?>" class="new">
+<input type="file" accept="image/*" id="<?php __($property_id); ?>" name="<?php __(_e($property->getName())); ?>" class="new">
 <?php
 
 }
