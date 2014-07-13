@@ -139,19 +139,9 @@ abstract class ObjectController extends Controller {
 	protected function processProperties(Object $object, $data, array &$transient_properties, &$has_errors) {
 		$object_schema = $object->getSchema();
 
-		// Process file uploads.
-		foreach ($_FILES as $name => $file) {
-			$this->processFile($object, $name, $file, $transient_properties, $has_errors);
-		}
-
 		// Process form data into properties.
 		foreach ($object_schema->getProperties() as $property_schema) {
 			$name = $property_schema->getName();
-
-			// Skip over files, which are handled separately.
-			if (isset($_FILES[$name])) {
-				continue;
-			}
 
 			// If any properties are left out of the form, set them to null.
 			if (isset($data[$name])) {
@@ -179,6 +169,11 @@ abstract class ObjectController extends Controller {
 				$has_errors = true;
 			}
 		}
+
+		// Process file uploads.
+		foreach ($_FILES as $name => $file) {
+			$this->processFile($object, $name, $file, $transient_properties, $has_errors);
+		}
 	}
 
 	private function processFile(Object $object, $name, $file, array &$transient_properties, &$has_errors) {
@@ -188,8 +183,15 @@ abstract class ObjectController extends Controller {
 		}
 
 		$property_schema = $object_schema->getProperty($name);
-		$transient_property = new TransientProperty($property_schema);
-		$transient_properties[$name] = $transient_property;
+
+		// When a file is resubmitted as a serialized form value, it would be present the $_POST array.
+		// Therefore it would have already been set as a transient property.
+		if (isset($transient_properties[$name])) {
+			$transient_property = $transient_properties[$name];
+		} else {
+			$transient_property = new TransientProperty($property_schema);
+			$transient_properties[$name] = $transient_property;
+		}
 
 		// Check if each uploaded file was "OK" and if so set the value on the transient propert.
 		// Otherwise, set an error.
@@ -222,7 +224,7 @@ abstract class ObjectController extends Controller {
 			return;
 		}
 
-		$value = array();
+		$value = $transient_property->getValue();
 
 		// Array of files needs a second loop.
 		foreach ($file['error'] as $i => $error) {
