@@ -9,7 +9,7 @@ if ($property->getSchema()->isMultiValue()) {
 	<?php
 
 	foreach ($property->getValue() as $value) {
-		$size = getimagesize(File::getSystemPath($value))[3];
+		$size = getimagesize(File::getSystemPath($value[File::PATH_KEY]))[3];
 
 	?>
 	<li><img src="/uploads/<?php __(_e($value[File::PATH_KEY])); ?>" alt="" <?php __($size); ?>></li>
