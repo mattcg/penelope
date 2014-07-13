@@ -156,10 +156,17 @@ dd.multivalue > ul.multivalue > li {
   font-size: 0.8em;
 }
 
-dd.type-image > img,
-form.object > img {
+dd.type-image img,
+form.object img {
   max-height: 10rem;
+  max-width: 10rem;
   width: auto;
+  height: auto;
+  display: inline-block;
+}
+
+form.object img + input[type=checkbox] {
+  vertical-align: top;
 }
 
 nav.collection > ul {
