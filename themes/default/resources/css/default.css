@@ -12,6 +12,9 @@ a {
   color: #4679bd;
   text-decoration: none;
 }
+a img {
+  border: none;
+}
 
 body,
 button,
@@ -162,11 +165,23 @@ form.object img {
   max-width: 10rem;
   width: auto;
   height: auto;
-  display: inline-block;
 }
 
 form.object img + input[type=checkbox] {
   vertical-align: top;
+}
+
+dd.type-image.multivalue > ul.multivalue > li {
+  padding: 0;
+  background: white;
+}
+dd.type-image.multivalue > ul.multivalue > li > a > img {
+  display: block;
+  -webkit-border-radius: 0.4em;
+  -moz-border-radius: 0.4em;
+  -ms-border-radius: 0.4em;
+  -o-border-radius: 0.4em;
+  border-radius: 0.4em;
 }
 
 nav.collection > ul {

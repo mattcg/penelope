@@ -17,6 +17,10 @@ body {
 a {
 	color: $button-blue;
 	text-decoration: none;
+
+	img {
+		border: none;
+	}
 }
 
 body,
@@ -189,11 +193,20 @@ form.object img {
 	max-width: 10rem;
 	width: auto;
 	height: auto;
-	display: inline-block;
 }
 
 form.object img + input[type=checkbox] {
 	vertical-align: top;
+}
+
+dd.type-image.multivalue > ul.multivalue > li {
+	padding: 0;
+	background: white;
+
+	> a > img {
+		display: block;
+		@include border-radius(0.4em);
+	}
 }
 
 nav.collection {
