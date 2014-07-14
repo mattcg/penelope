@@ -16,15 +16,19 @@
 
 			}
 
+			$to_nodes = $edge_schema->getInSchema()->getCollection($node->getClient());
+
 			// A relationship to itself would be pointless.
-			$to_nodes = array_filter($node->getCollection(), function($to_node) use ($node) {
-				return $to_node->getId() !== $node->getId();
-			});
+			if ($edge_schema->getInSchema()->getName() === $edge_schema->getOutSchema()->getName()) {
+				$to_nodes = array_filter($to_nodes, function($to_node) use ($node) {
+					return $to_node->getId() !== $node->getId();
+				});
+			}
 
 			if (empty($to_nodes)) {
 
 			?>
-			<p><?php __(_m('edge_to_none', $node->getSchema()->getName(), $node->getSchema()->getNewPath(), _m('new_node_title', $node->getSchema()->getName()))); ?></p>
+			<p><?php __(_m('edge_to_none', $edge_schema->getInSchema()->getName(), $edge_schema->getInSchema()->getNewPath(), _m('new_node_title', $edge_schema->getInSchema()->getName()))); ?></p>
 			<?php
 
 			} else {

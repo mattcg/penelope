@@ -68,7 +68,7 @@ class Node extends Object {
 
 		// Check that the node given by the ID matches the schema.
 		if (!$this->schema->envelopes($node)) {
-			throw new Exceptions\SchemaException('Node with ID "' . $this->id . '" exists, but does not match schema "' . $$this->schema->getName() . '".');
+			throw new Exceptions\SchemaException('Node with ID "' . $this->id . '" exists, but does not match schema "' . $this->schema->getName() . '".');
 		}
 
 		$this->object = $node;
