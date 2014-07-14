@@ -48,7 +48,7 @@ abstract class Type extends OptionContainer {
 		}
 
 		if (!is_scalar($value)) {
-			$value = json_encode($value, JSON_BIGINT_AS_STRING);
+			$value = json_encode($value);
 			if (false === $value) {
 				throw new Exceptions\TypeException(json_last_error_msg(), json_last_error());
 			}

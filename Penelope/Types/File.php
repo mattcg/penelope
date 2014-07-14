@@ -104,7 +104,7 @@ class File extends Type {
 
 		// Files are encoded as non-scalar values.
 		// Because Neo4j doesn't support multidimensional arrays, they must be serialized and unserialized before storage.
-		$value = json_decode($value, false, 512, JSON_BIGINT_AS_STRING);
+		$value = json_decode($value);
 
 		// Yes, json_encode returns null on error.
 		if (is_null($value)) {
