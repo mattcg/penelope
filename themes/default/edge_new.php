@@ -16,6 +16,19 @@
 
 			}
 
+			// A relationship to itself would be pointless.
+			$to_nodes = array_filter($node->getCollection(), function($to_node) use ($node) {
+				return $to_node->getId() !== $node->getId();
+			});
+
+			if (empty($to_nodes)) {
+
+			?>
+			<p><?php __(_m('edge_to_none', $node->getSchema()->getName(), $node->getSchema()->getNewPath(), _m('new_node_title', $node->getSchema()->getName()))); ?></p>
+			<?php
+
+			} else {
+
 			?>
 			<form enctype="<?php __formenc($edge_schema); ?>" class="create object edge <?php __class('edge-' . $edge_schema->getName()); ?>" action="<?php __($node->getEdgeCollectionPath($edge_schema)); ?>" method="POST">
 				<?php
@@ -30,22 +43,6 @@
 
 				?>
 				<label for="node-collection"><?php __(_m('edge_to_label')); ?></label>
-				<?php
-
-				// A relationship to itself would be pointless.
-				$to_nodes = array_filter($node->getCollection(), function($to_node) use ($node) {
-					return $to_node->getId() !== $node->getId();
-				});
-
-				if (empty($to_nodes)) {
-
-				?>
-				<p><?php __(_m('edge_to_none', $node->getSchema()->getName(), $node->getSchema()->getNewPath(), _m('new_node_title', $node->getSchema()->getName()))); ?></p>
-				<?php
-
-				} else {
-
-				?>
 				<select name="to_node">
 					<?php
 
@@ -59,14 +56,13 @@
 
 					?>
 				</select>
-				<?php
-
-				}
-
-				?>
-				<hr>
 				<input type="submit" value="<?php __(_m('create_edge_button_text')); ?>">
 			</form>
+			<?php
+
+			}
+
+			?>
 		</div>
 	</article>
 </main>
