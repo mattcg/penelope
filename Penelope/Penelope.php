@@ -19,8 +19,6 @@ use Closure;
 use Slim;
 use Everyman\Neo4j;
 
-require_once __DIR__ . '/../vendor/autoload.php';
-
 Slim\Route::setDefaultConditions(array(
 	'node_id' => '\d+',
 	'edge_id' => '\d+'
