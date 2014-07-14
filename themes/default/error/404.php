@@ -9,6 +9,7 @@
 
 		?>
 		<p><?php __(_e($error->getMessage())); ?></p>
+		<pre><?php __(_e($error->getTraceAsString())); ?></pre>
 		<?php
 
 		} else {
