@@ -90,6 +90,7 @@ class EdgesController extends ObjectController {
 		$view_data = array('title' => $this->_m('edge_collection_title', $edge_schema->getName(), $node->getTitle()));
 		$view_data['node'] = $node;
 		$view_data['edge_schema'] = $edge_schema;
+		$view_data['edges'] = $edges;
 
 		$this->app->render('edges', $view_data);
 	}
