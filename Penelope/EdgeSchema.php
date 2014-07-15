@@ -18,7 +18,7 @@ class EdgeSchema extends ObjectSchema {
 
 	private $in_schema, $out_schema;
 
-	protected $path_formats = array('collection' => '/%s/%s/%s/', 'new' => '/%s/%s/%s/new', 'edit' => '/%s/%s/%s/%s/edit', 'object' => '/%s/%s/%s/%s');
+	protected $path_formats = array('collection' => '/%s/%s/%s/', 'new' => '/%s/%s/%s/new', 'edit' => '/%s/%s/%s/%s/edit', 'object' => '/%s/%s/%s/%s', 'svg' => '/%s/%s/%s/%s/svg');
 
 	public function __construct($name, $slug, NodeSchema $out_schema, NodeSchema $in_schema, array $properties, array $options = null) {
 		$this->in_schema = $in_schema;
@@ -84,6 +84,11 @@ class EdgeSchema extends ObjectSchema {
 	public function getPath() {
 		$node_slug = $this->out_schema->getSlug();
 		return sprintf($this->getPathFormat(), $node_slug, ':node_id',  $this->getSlug(), ':edge_id');
+	}
+
+	public function getSvgPath() {
+		$node_slug = $this->out_schema->getSlug();
+		return sprintf($this->getPathFormat('svg'), $node_slug, ':node_id',  $this->getSlug(), ':edge_id');
 	}
 
 	public function getCollectionPath() {

@@ -16,7 +16,7 @@ class Edge extends Object {
 
 	private $from_node, $to_node;
 
-	public function getPath() {
+	private function formatPath($path) {
 		if (!$this->hasId()) {
 			throw new \LogicException('Cannot get path for edge with no ID.');
 		}
@@ -25,27 +25,22 @@ class Edge extends Object {
 			throw new \LogicException('Cannot get path from node with no ID.');
 		}
 
-		$path = $this->schema->getPath();
 		$path = preg_replace('/:edge_id/', $this->getId(), $path);
 		$path = preg_replace('/:node_id/', $this->getFromNode()->getId(), $path);
 
 		return $path;
 	}
 
+	public function getPath() {
+		return $this->formatPath($this->schema->getPath());
+	}
+
+	public function getSvgPath() {
+		return $this->formatPath($this->schema->getSvgPath());
+	}
+
 	public function getEditPath() {
-		if (!$this->hasId()) {
-			throw new \LogicException('Cannot create edit path for edge with no ID.');
-		}
-
-		if (!$this->getFromNode()->hasId()) {
-			throw new \LogicException('Cannot create edit path from node with no ID.');
-		}
-
-		$path = $this->schema->getEditPath();
-		$path = preg_replace('/:edge_id/', $this->getId(), $path);
-		$path = preg_replace('/:node_id/', $this->getFromNode()->getId(), $path);
-
-		return $path;
+		return $this->formatPath($this->schema->getEditPath());
 	}
 
 	public function getCollectionPath() {

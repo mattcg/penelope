@@ -31,6 +31,13 @@ class EdgeController extends ObjectController {
 		$this->app->render('edge', $viewdata);
 	}
 
+	public function readSvg($node_schema_slug, $node_id, $edge_schema_slug, $edge_id) {
+		$edge = $this->getByParamsArray(func_get_args());
+
+		$this->app->response->headers->set('Content-Type', 'image/svg+xml');
+		$this->app->render('edge_svg', array('edge' => $edge, 'bookends' => false));
+	}
+
 	public function delete($node_schema_slug, $node_id, $edge_schema_slug, $edge_id) {
 		$edge = $this->getByParamsArray(func_get_args());
 		$edge_title = $edge->getTitle();

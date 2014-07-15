@@ -122,10 +122,14 @@ class DefaultTheme extends Slim\View {
 			}
 		}
 
-		$header = parent::render('header.php', compact('resources'));
-		$footer = parent::render('footer.php');
+		if (false !== $this->data->get('bookends')) {
+			$header = parent::render('header.php', compact('resources'));
+			$footer = parent::render('footer.php');
 
-		return $header . parent::render($template . '.php') . $footer;
+			return $header . parent::render($template . '.php') . $footer;
+		}
+
+		return parent::render($template . '.php');
 	}
 
 	public function _e($string) {
