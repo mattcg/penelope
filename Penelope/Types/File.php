@@ -89,12 +89,12 @@ class File extends Type {
 			return false;
 		}
 
-		$path = dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'uploads';
+		$file_dir = getcwd() . DIRECTORY_SEPARATOR . 'uploads';
 		if ($file_name) {
-			$path .=  DIRECTORY_SEPARATOR . $file_name;
+			return $file_dir . DIRECTORY_SEPARATOR . $file_name;
 		}
 
-		return $path;
+		return $file_dir;
 	}
 
 	public static function unserialize($value) {
@@ -135,8 +135,8 @@ class File extends Type {
 		}
 
 		$path = $value[static::PATH_KEY];
-		if (!is_file(static::getSystemPath($path))) {
-			$message = 'Unable to read file.';
+		if (!is_file($full_path = static::getSystemPath($path))) {
+			$message = 'Unable to read file at "' . $full_path . '".';
 			return false;
 		}
 
