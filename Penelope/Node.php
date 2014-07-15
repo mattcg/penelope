@@ -94,7 +94,7 @@ class Node extends Object {
 			// Only include edges permitted by the schema.
 			// Note that if one of the edges doesn't match the schema, this probably indicates that the database is in an error state.
 			// In that case, trigger a notice.
-			if ($edge_schema->getOutSchema()->envelopes($relationship->getEndNode())) {
+			if ($edge_schema->getInSchema()->envelopes($relationship->getEndNode())) {
 				$edges[] = $edge_schema->get($this->client, $relationship->getId());
 			} else {
 				trigger_error('Edge with ID "' . $relationship->getId() . '" has non-confirming relationship.');
