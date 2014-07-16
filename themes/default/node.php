@@ -32,16 +32,16 @@
 					foreach ($edge_schemas as $edge_schema) {
 
 				?>
-				<h2><?php __($edge_schema->getName()); ?></h2>
+				<h2><?php __(_e($edge_schema->getName())); ?></h2>
 				<nav class="collection edges <?php __class('edges-' . $edge_schema->getName()); ?>">
 					<ul>
-						<li class="new"><a class="button new" href="<?php __($node->getNewEdgePath($edge_schema)); ?>" title="<?php __(_a('new_edge_button_title', $edge_schema->getName(), $node->getTitle())); ?> "><?php __(_m('new_edge_button_text')); ?></a></li>
+						<li class="new"><a class="button new" href="<?php __(_e($node->getNewEdgePath($edge_schema))); ?>" title="<?php __(_a('new_edge_button_title', $edge_schema->getName(), $node->getTitle())); ?> "><?php __(_m('new_edge_button_text')); ?></a></li>
 						<?php
 
 						foreach ($node->getOutEdges($edge_schema) as $edge) {
 
 						?>
-						<li class="object"><a href="<?php __($edge->getPath()); ?>" title="<?php __($edge->getTitle()); ?>"><?php __($edge->getToNode()->getTitle()); ?></a></li>
+						<li class="object"><a href="<?php __(_e($edge->getPath())); ?>" title="<?php __(_e($edge->getTitle())); ?>"><?php __(_e($edge->getToNode()->getTitle())); ?></a></li>
 						<?php
 
 						}

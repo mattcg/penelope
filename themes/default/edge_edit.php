@@ -17,7 +17,7 @@
 			}
 
 			?>
-			<form enctype="<?php __formenc($edge_schema); ?>" class="update object edge <?php __class('edge-'. $edge_schema->getName()); ?>" action="<?php __($edge->getPath()); ?>" method="POST">
+			<form enctype="<?php __formenc($edge_schema); ?>" class="update object edge <?php __class('edge-'. $edge_schema->getName()); ?>" action="<?php __(_e($edge->getPath())); ?>" method="POST">
 				<?php
 
 				foreach ($properties as $property) {
@@ -34,7 +34,7 @@
 				<input type="submit" value="Update">
 			</form>
 
-			<form class="delete object edge <?php __class('edge-' . $edge_schema->getName()); ?>" action="<?php __($edge->getPath()); ?>" method="POST">
+			<form class="delete object edge <?php __class('edge-' . $edge_schema->getName()); ?>" action="<?php __(_e($edge->getPath())); ?>" method="POST">
 				<input type="hidden" name="_METHOD" value="DELETE">
 				<input type="submit" value="Delete">
 			</form>

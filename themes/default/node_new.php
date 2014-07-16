@@ -17,7 +17,7 @@
 			}
 
 			?>
-			<form enctype="<?php __formenc($node_schema); ?>" class="create object node <?php __class('node-' . $node_schema->getName()); ?>" action="<?php __($node_schema->getCollectionPath()); ?>" method="POST">
+			<form enctype="<?php __formenc($node_schema); ?>" class="create object node <?php __class('node-' . $node_schema->getName()); ?>" action="<?php __(_e($node_schema->getCollectionPath())); ?>" method="POST">
 				<?php
 
 				foreach ($properties as $property) {

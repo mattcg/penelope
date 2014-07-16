@@ -17,7 +17,7 @@
 			}
 
 			?>
-			<form enctype="<?php __formenc($node_schema); ?>" class="update object node <?php __class('node-' . $node_schema->getName()); ?>" action="<?php __($node->getPath()); ?>" method="POST">
+			<form enctype="<?php __formenc($node_schema); ?>" class="update object node <?php __class('node-' . $node_schema->getName()); ?>" action="<?php __(_e($node->getPath())); ?>" method="POST">
 				<?php
 
 				foreach ($properties as $property) {
@@ -34,7 +34,7 @@
 				<input type="submit" value="<?php __(_m('update_node_button_text')); ?>">
 			</form>
 
-			<form class="delete object node <?php __class('node-' . $node_schema->getName()); ?>" action="<?php __($node->getPath()); ?>" method="POST">
+			<form class="delete object node <?php __class('node-' . $node_schema->getName()); ?>" action="<?php __(_e($node->getPath())); ?>" method="POST">
 				<input type="hidden" name="_METHOD" value="DELETE">
 				<input type="submit" value="<?php __(_m('delete_node_button_text')); ?>">
 			</form>

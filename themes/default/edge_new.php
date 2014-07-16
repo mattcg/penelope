@@ -34,7 +34,7 @@
 			} else {
 
 			?>
-			<form enctype="<?php __formenc($edge_schema); ?>" class="create object edge <?php __class('edge-' . $edge_schema->getName()); ?>" action="<?php __($node->getEdgeCollectionPath($edge_schema)); ?>" method="POST">
+			<form enctype="<?php __formenc($edge_schema); ?>" class="create object edge <?php __class('edge-' . $edge_schema->getName()); ?>" action="<?php __(_e($node->getEdgeCollectionPath($edge_schema))); ?>" method="POST">
 				<?php
 
 				foreach ($properties as $property) {
@@ -53,7 +53,7 @@
 					foreach ($to_nodes as $to_node) {
 
 					?>
-					<option value="<?php __($to_node->getId()); ?>"><?php __($to_node->getTitle()); ?></option>
+					<option value="<?php __(_e($to_node->getId())); ?>"><?php __(_e($to_node->getTitle())); ?></option>
 					<?php
 
 					}
