@@ -27,5 +27,9 @@
 	</head>
 	<body>
 		<header>
-			<a href="/"><h1><?php __(_m('application_title')); ?></h1></a>
+			<a href="/" title="<?php __(_m('application_title')); ?>"><h1><?php __(_m('application_title')); ?></h1></a>
+			<form action="/search" class="search">
+				<input name="q" placeholder="<?php __(_m('search_placeholder')); ?>"<?php if (isset($query)) { ?> value="<?php __(_e($query)); ?>"<?php } ?>>
+				<input type="submit" value="<?php __(_m('search_submit')); ?>">
+			</form>
 		</header>

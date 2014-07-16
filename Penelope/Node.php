@@ -117,6 +117,23 @@ class Node extends Object {
 		if ($is_new) {
 			$this->object->addLabels(array($this->client->makeLabel($this->schema->getName())));
 		}
+
+		// Index the node.
+		$index = new Neo4j\Index\NodeFulltextIndex($this->client, 'full_text');
+		$full_text = implode(' ', array_map(function($property) {
+			$value = $property->getSerializedValue();
+			if (is_array($value)) {
+				return implode(' ', $value);
+			}
+
+			return $value;
+		}, $this->getProperties()));
+
+		// Needs to be saved before anything is ever added, otherwise config errors will be thrown.
+		// See: https://github.com/jadell/neo4jphp/issues/77
+		$index->save();
+		$index->add($this->object, 'full_text', $full_text);
+		$index->save();
 	}
 
 	public function delete() {
@@ -124,6 +141,10 @@ class Node extends Object {
 		if (!$node) {
 			throw new Exceptions\NotFoundException('Nonexistent node "' . $this->id . '".');
 		}
+
+		$index = new Neo4j\Index\NodeFulltextIndex($this->client, 'full_text');
+		$index->remove($node);
+		$index->save();
 
 		$node->delete();
 		$this->id = null;

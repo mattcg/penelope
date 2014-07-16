@@ -41,15 +41,21 @@ class Penelope extends OptionContainer {
 
 		// Set up the home route.
 		$app->get('/', Closure::bind(function() {
-			$controller = new Controllers\HomeController($this->client, $this->app, $this->schema);
+			$controller = new Controllers\HomeController($this->app, $this->schema, $this->client);
 			$controller->read();
 		}, $this));
 
 		// Set up the uploads route.
-		$app->get('/uploads/:file_name', function($file_name) {
+		$app->get('/uploads/:file_name', Closure::bind(function($file_name) {
 			$controller = new Controllers\UploadController($this->app);
 			$controller->read($file_name);
-		});
+		}, $this));
+
+		// Set up the search controller.
+		$app->get('/search', Closure::bind(function() {
+			$controller = new Controllers\SearchController($this->app, $this->schema, $this->client);
+			$controller->run();
+		}, $this));
 	}
 
 	public function getClient() {

@@ -19,10 +19,11 @@ use Karwana\Penelope\Schema;
 
 class HomeController extends Controller {
 
-	protected $schema;
+	protected $client, $schema;
 
-	public function __construct(Neo4j\Client $client, Slim\Slim $app, Schema $schema) {
+	public function __construct(Slim\Slim $app, Schema $schema, Neo4j\Client $client) {
 		parent::__construct($app);
+
 		$this->client = $client;
 		$this->schema = $schema;
 	}

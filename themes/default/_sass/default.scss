@@ -42,11 +42,25 @@ h4 {
 body > header {
 	background-color: #4679bd;
 	padding: 1rem;
+	height: 2rem;
 
 	> a > h1 {
 		margin: 0;
 		color: white;
 		font-weight: 100;
+		float: left;
+		line-height: 2rem;
+	}
+
+	> form.search {
+		float: right;
+	}
+
+	> form.search > input[type=submit] {
+		font-family: FontAwesome;
+		display: inline;
+		line-height: 1.6rem;
+		min-width: 4em;
 	}
 }
 
@@ -94,17 +108,16 @@ main > article > header {
 		margin: 0;
 		color: #999;
 		font-size: 1.1rem;
+		line-height: 2rem;
 	}
 }
 
-main.collection > header.object,
-main.object > header.object,
+main > header.object,
 article.object > header.object {
 	text-align: right;
 
 	h1 {
 		float: left;
-		line-height: 2rem;
 	}
 }
 
