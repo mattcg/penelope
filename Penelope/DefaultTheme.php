@@ -136,6 +136,13 @@ class DefaultTheme extends Slim\View {
 		return htmlspecialchars($string, ENT_COMPAT | ENT_HTML5, 'UTF-8', false);
 	}
 
+	public function _a() {
+
+		// Like _m, but strips tags from the resulting message for use in title attributes.
+		$message = call_user_func_array(array($this, '_m'), func_get_args());
+		return strip_tags($message);
+	}
+
 	public function _m($message_key) {
 		$args = array_slice(func_get_args(), 1);
 

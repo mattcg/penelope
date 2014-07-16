@@ -20,6 +20,12 @@ function _m() {
 	return call_user_func_array(array($app->view(), '_m'), func_get_args());
 }
 
+function _a() {
+	global $app;
+
+	return call_user_func_array(array($app->view(), '_a'), func_get_args());
+}
+
 function __label(Penelope\Property $property) {
 	$label = $property->getSchema()->getOption('label');
 
