@@ -26,7 +26,7 @@ class File extends Type {
 	}
 
 	public static function getMimeType($file_path, $reference_name = null) {
-		return Mime::guessType($file_path, $reference_name = null);
+		return Mime::guessType($file_path, $reference_name);
 	}
 
 	public static function getSystemDirectory() {
