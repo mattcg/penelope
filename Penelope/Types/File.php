@@ -12,89 +12,42 @@
 
 namespace Karwana\Penelope\Types;
 
-use Rhumsaa\Uuid\Uuid;
-use Dflydev\ApacheMimeTypes;
-
 use Karwana\Penelope\Exceptions;
+use Karwana\Mime\Mime;
 
 class File extends Type {
 
 	const PATH_KEY = 0, NAME_KEY = 1;
 
-	public function __construct($value = null, array $options = null) {
-		if (isset($value[static::PATH_KEY], $value[static::NAME_KEY]) and is_uploaded_file($value[static::PATH_KEY])) {
-			$temp_path = $value[static::PATH_KEY];
-			$perm_name = Uuid::uuid4(). '.' . static::getExtension($temp_path, $value[static::NAME_KEY]);
+	protected static $system_directory;
 
-			try {
-				$moved_uploaded_file = move_uploaded_file($temp_path, static::getSystemPath($perm_name));
-			} catch (\Exception $e) {
-				$moved_uploaded_file = false;
-			}
-
-			if (false === $moved_uploaded_file) {
-				throw new Exceptions\TypeException('Unable to move uploaded file. Please check that the directory "' . static::getSystemPath() . '" is writable.');
-			}
-
-			$value[static::PATH_KEY] = $perm_name;
-		}
-
-		parent::__construct($value, $options);
+	public static function getExtension($file_path, $reference_name = null) {
+		return Mime::guessExtension($file_path, $reference_name);
 	}
 
-	private static function getMimeRepository() {
-		static $repo;
-
-		if (!isset($repo)) {
-			$repo = new ApacheMimeTypes\PhpRepository();
-		}
-
-		return $repo;
+	public static function getMimeType($file_path, $reference_name = null) {
+		return Mime::guessType($file_path, $reference_name = null);
 	}
 
-	public static function getExtension($file_path, $file_name = null) {
-		if (!$file_name) {
-			$file_name = basename($file_path);
+	public static function getSystemDirectory() {
+		if (!isset(static::$system_directory)) {
+			static::setSystemDirectory(getcwd() . DIRECTORY_SEPARATOR . 'files');
 		}
 
-		$extension = pathinfo($file_name, PATHINFO_EXTENSION);
-		if ($extension) {
-			return strtolower($extension);
-		}
-
-		// Attempt to guess the extension using MIME magic.
-		$finfo = finfo_open(FILEINFO_MIME_TYPE);
-		$mime_type = finfo_file($finfo, $file_path);
-		finfo_close($finfo);
-		if ($mime_type and $extensions = self::getMimeRepository()->findExtensions($mime_type)) {
-			return $extensions[0];
-		}
-
-		return 'bin';
+		return static::$system_directory;
 	}
 
-	public static function getMimeType($file_path, $file_name = null) {
-		$extension = static::getExtension($file_path, $file_name);
-		if ($extension and $mime_type = self::getMimeRepository()->findType($extension)) {
-			return $mime_type;
-		}
-
-		return 'application/octet-stream';
+	public static function setSystemDirectory($directory) {
+		static::$system_directory = $directory;
 	}
 
-	public static function getSystemPath($file_name = null) {
+	public static function getSystemPath($file_name) {
 
 		// As a security measure, ensure that the file name is actually a file name.
-		if ($file_name and basename($file_name) !== $file_name) {
-			return false;
+		// This prevents for example "../../../etc/passwd" from being passed as a value.
+		if (basename($file_name) === $file_name) {
+			return static::getSystemDirectory() . DIRECTORY_SEPARATOR . $file_name;
 		}
-
-		$file_dir = getcwd() . DIRECTORY_SEPARATOR . 'uploads';
-		if ($file_name) {
-			return $file_dir . DIRECTORY_SEPARATOR . $file_name;
-		}
-
-		return $file_dir;
 	}
 
 	public static function unserialize($value) {
@@ -135,15 +88,22 @@ class File extends Type {
 		}
 
 		$path = $value[static::PATH_KEY];
-		if (!is_file($full_path = static::getSystemPath($path))) {
-			$message = 'Unable to read file at "' . $full_path . '".';
+
+		if (is_uploaded_file($path)) {
+			$message = 'The file must be moved to a permanent location before it can be used.';
 			return false;
 		}
 
-		// As a security measure, only a bare filename is permitted.
-		// This prevents for example "../../../etc/passwd" from being passed as a value.
-		if (basename($path) !== $path) {
-			$message = 'File name must be supplied without path.';
+		$system_path = static::getSystemPath($path);
+
+		// As a security measure, only a bare filename is permitted by getSystemPath.
+		if (!$path) {
+			$message = 'The file name must be supplied without path.';
+			return false;
+		}
+
+		if (!is_file($system_path)) {
+			$message = 'Unable to read file at "' . $system_path . '".';
 			return false;
 		}
 

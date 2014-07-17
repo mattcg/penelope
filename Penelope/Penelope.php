@@ -39,6 +39,10 @@ class Penelope extends OptionContainer {
 			$this->setTheme($theme);
 		}
 
+		if ($this->hasOption('upload.directory')) {
+			$this->setUploadDirectory($this->getOption('upload.directory'));
+		}
+
 		// Set up the home route.
 		$app->get('/', Closure::bind(function() {
 			$controller = new Controllers\HomeController($this->app, $this->schema, $this->client);
@@ -109,6 +113,10 @@ class Penelope extends OptionContainer {
 		if ($view instanceof DefaultTheme) {
 			return $view;
 		}
+	}
+
+	public function setUploadDirectory($directory) {
+		Types\File::setSystemDirectory($directory);
 	}
 
 	public function defineEdge($name, $slug, $from_name, $to_name, array $properties = array(), array $options = null) {

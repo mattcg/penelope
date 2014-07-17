@@ -18,9 +18,9 @@
 		"php": ">=5.5.0",
 		"willdurand/negotiation": "~1.3.3",
 		"alcohol/iso3166": "~1.0.3",
-		"dflydev/apache-mime-types": "~1.0.1",
 		"rhumsaa/uuid": "~2.7.1",
-		"karwana/messageformat": "~1.1.0"
+		"karwana/messageformat": "~1.1.0",
+		"karwana/mime": "~1.0.0"
 	},
 	"require-dev": {
 		"slim/slim": "~2.4.3",

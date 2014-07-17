@@ -197,7 +197,15 @@ abstract class ObjectController extends Controller {
 		if ($property_schema->isMultiValue()) {
 			$this->processMultiFile($transient_property, $file);
 		} else if (UPLOAD_ERR_OK === $file['error']) {
-			$transient_property->setValue(array($file['tmp_name'], $file['name']));
+			try {
+				$perm_name = UploadController::move($file['tmp_name'], $file['name']);
+			} catch (\RuntimeException $e) {
+				$transient_property->setError($e);
+			}
+
+			if ($perm_name) {
+				$transient_property->setValue(array($perm_name, $file['name']));
+			}
 		} else if (UPLOAD_ERR_NO_FILE !== $file['error'] or $transient_property->getSchema()->getOption('required')) {
 			$transient_property->setError(new Exceptions\UploadException($file['error']));
 		}
@@ -228,7 +236,15 @@ abstract class ObjectController extends Controller {
 		// Array of files needs a second loop.
 		foreach ($file['error'] as $i => $error) {
 			if (UPLOAD_ERR_OK === $error) {
-				$value[] = array($file['tmp_name'][$i], $file['name'][$i]);
+				try {
+					$perm_name = UploadController::move($file['tmp_name'][$i], $file['name'][$i]);
+				} catch (\RuntimeException $e) {
+					$transient_property->setError($e);
+				}
+
+				if ($perm_name) {
+					$value[] = array($perm_name, $file['name'][$i]);
+				}
 			} else if (UPLOAD_ERR_NO_FILE !== $error or $transient_property->getSchema()->getOption('required')) {
 				$transient_property->setError(new Exceptions\UploadException($error));
 			}
