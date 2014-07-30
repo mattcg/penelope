@@ -54,7 +54,9 @@ function __datetime($value, $message_key = 'property_datetime_value') {
 		return;
 	}
 
-	if (ctype_digit($value)) {
+	// Only accept valid Unix timestamp.
+	// ctype_digit can't be used as value might be negative for dates before 1970.
+	if (is_numeric($value)) {
 		__(_m($message_key, $value));
 	} else {
 		__(_e($value));
