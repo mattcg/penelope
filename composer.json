@@ -19,7 +19,7 @@
 		"willdurand/negotiation": "~1.3.3",
 		"alcohol/iso3166": "~1.0.3",
 		"rhumsaa/uuid": "~2.7.1",
-		"karwana/messageformat": "~1.1.0",
+		"karwana/messageformat": "~1.2.0",
 		"karwana/mime": "~1.0.0"
 	},
 	"require-dev": {
