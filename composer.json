@@ -25,7 +25,6 @@
 	"require-dev": {
 		"slim/slim": "~2.4.3",
 		"everyman/neo4jphp": "dev-master",
-		"phing/phing": "~2.8.1",
-		"squizlabs/php_codesniffer": "~1.5.3"
+		"phing/phing": "~2.8.1"
 	}
 }
