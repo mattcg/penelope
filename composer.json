@@ -25,6 +25,7 @@
 	"require-dev": {
 		"slim/slim": "~2.4.3",
 		"everyman/neo4jphp": "dev-master",
-		"phing/phing": "~2.8.1"
+		"phing/phing": "~2.8.2",
+		"phpunit/phpunit": "~4.2.4"
 	}
 }

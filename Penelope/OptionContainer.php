@@ -12,7 +12,7 @@
 
 namespace Karwana\Penelope;
 
-abstract class OptionContainer {
+class OptionContainer {
 
 	protected $options;
 

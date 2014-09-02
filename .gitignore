@@ -1,3 +1,4 @@
 composer.lock
 vendor/
 themes/default/_sass/.sass-cache/
+tests/coverage/

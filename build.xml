@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Penelope" default="cs">
+<project name="Penelope" default="test">
 
-	<!-- Target: cs -->
-	<target name="cs" description="Verify that coding style guidelines are met; fail if not">
-		<exec executable="vendor/bin/phpcs" passthru="true" checkreturn="true">
-			<arg line="--standard=./tests/cs/ruleset.xml" />
-			<arg line="-s" />
-			<arg line="Penelope" />
+	<!-- Target: clean -->
+	<target name="clean" description="Delete generated files">
+		<delete dir="./tests/coverage" />
+	</target>
+
+	<!-- Target: test -->
+	<target name="test" description="Verify all unit tests pass; fail if not">
+		<exec executable="vendor/bin/phpunit" passthru="true" checkreturn="true">
+			<arg line="-c tests/phpunit.xml" />
 		</exec>
 	</target>
 </project>
