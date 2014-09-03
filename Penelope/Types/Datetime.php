@@ -25,12 +25,12 @@ class Datetime extends Type {
 			return $value;
 		}
 
-		$value = strtotime($value);
-		if (false === $value) {
+		$time = strtotime($value);
+		if (false === $time) {
 			throw new Exceptions\TypeException('Unable to convert "' . $value . '" to a valid time.');
 		}
 
-		return $value;
+		return $time;
 	}
 
 	public static function isValid($value, array $options = null, &$message = null) {
