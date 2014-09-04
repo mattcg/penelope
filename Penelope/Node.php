@@ -142,9 +142,18 @@ class Node extends Object {
 			throw new Exceptions\NotFoundException('Nonexistent node "' . $this->id . '".');
 		}
 
+		// Remove the full text index.
 		$index = new Neo4j\Index\NodeFulltextIndex($this->client, 'full_text');
 		$index->remove($node);
 		$index->save();
+
+		// Orphan the node.
+		$relationships = $node->getRelationships();
+		if ($relationships) {
+			foreach ($relationships as $relationship) {
+				$relationship->delete();
+			}
+		}
 
 		$node->delete();
 		$this->id = null;
