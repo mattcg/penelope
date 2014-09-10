@@ -78,7 +78,7 @@ abstract class Type extends OptionContainer {
 			return true;
 		}
 
-		if ('' === $value) {
+		if ('' === trim($value)) {
 			return true;
 		}
 
