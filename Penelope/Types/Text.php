@@ -14,6 +14,14 @@ namespace Karwana\Penelope\Types;
 
 class Text extends Type {
 
+	public function __construct($value = null, array $options = null) {
+		if (is_string($value)) {
+			$value = trim($value);
+		}
+
+		parent::__construct($value, $options);
+	}
+
 	public static function isValid($value, array $options = null, &$message = null) {
 		if (static::isEmpty($value)) {
 			return true;
