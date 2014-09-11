@@ -23,9 +23,10 @@ class NodesController extends ObjectController {
 		$view_data = array('title' => $this->_m('node_collection_title', $node_schema->getName()), 'node_schema' => $node_schema);
 		$view_data['nodes'] = $node_schema->getCollection($this->client);
 
-		// Sort by name.
-		usort($view_data['nodes'], function($a, $b) {
-			return strcmp($a->getTitle(), $b->getTitle());
+		// Sort by title using Unicode Collation Algorithm rules.
+		$collator = \Collator::create('root');
+		usort($view_data['nodes'], function($a, $b) use ($collator) {
+			return $collator->compare($a->getTitle(), $b->getTitle());
 		});
 
 		$this->app->render('nodes', $view_data);
