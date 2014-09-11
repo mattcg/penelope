@@ -12,6 +12,8 @@
 
 namespace Karwana\Penelope\Types;
 
+use Rhumsaa\Uuid\Uuid;
+
 use Karwana\Penelope\Exceptions;
 use Karwana\Mime\Mime;
 
@@ -48,6 +50,26 @@ class File extends Type {
 		if (basename($file_name) === $file_name) {
 			return static::getSystemDirectory() . DIRECTORY_SEPARATOR . $file_name;
 		}
+	}
+
+	public static function store($temp_path, $original_name) {
+		$perm_name = Uuid::uuid4(). '.' . static::getExtension($temp_path, $original_name);
+
+		// If the file is NOT an uploaded file, copy instead of moving.
+		// This is done in case file is being restored from backup which we don't want to mutate.
+		if (!is_uploaded_file($temp_path)) {
+			$stored = copy($temp_path, static::getSystemPath($perm_name));
+
+		// Even though PHP clears temporary uploaded files automatically, it's better to use `rename` instead of `copy`, for efficiency.
+		} else {
+			$stored = rename($temp_path, static::getSystemPath($perm_name));
+		}
+
+		if (false === $stored) {
+			throw new \RuntimeException('Unable to store file. Is "' . static::getSystemDirectory() . '" is writable?');
+		}
+
+		return $perm_name;
 	}
 
 	public static function unserialize($value) {

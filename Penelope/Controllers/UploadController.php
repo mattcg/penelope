@@ -12,8 +12,6 @@
 
 namespace Karwana\Penelope\Controllers;
 
-use Rhumsaa\Uuid\Uuid;
-
 use Karwana\Penelope\Types\File;
 
 class UploadController extends FileController {
@@ -22,6 +20,7 @@ class UploadController extends FileController {
 		$system_path = File::getSystemPath($file_name);
 
 		// Null is returned if the given file name is invalid.
+		// TODO: `File::getSystemPath` should throw an exception and it should be handled here.
 		if (!$system_path) {
 			$this->render404();
 			return;
@@ -31,18 +30,12 @@ class UploadController extends FileController {
 	}
 
 	public static function move($temp_path, $original_name) {
-		$perm_name = Uuid::uuid4(). '.' . File::getExtension($temp_path, $original_name);
 
-		try {
-			$moved_uploaded_file = move_uploaded_file($temp_path, File::getSystemPath($perm_name));
-		} catch (\Exception $e) {
-			$moved_uploaded_file = false;
+		// Unless there's a security vulnerability being exploited, this method would only ever be used to move an uploaded file. Otherwise `File::store` would be used explicitly.
+		if (!is_uploaded_file($temp_path)) {
+			throw new \RuntimeException('Only uploaded files may be moved.');
 		}
 
-		if (false === $moved_uploaded_file) {
-			throw new \RuntimeException('Unable to move uploaded file. Please check that the directory "' . File::getSystemDirectory() . '" is writable.');
-		}
-
-		return $perm_name;
+		return File::store($temp_path, $original_name);
 	}
 }
