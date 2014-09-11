@@ -41,6 +41,23 @@ class Country extends Type {
 		return $country['name'];
 	}
 
+	public static function getCountryCode($name) {
+
+		// Special case for Venezuela, which is stored as 'Venezuela, Bolivarian Republic of'.
+		if (0 === strcasecmp('Venezuela', $name)) {
+			return 'VEN';
+		}
+
+		foreach (ISO3166::getAll() as $country) {
+			if (0 === strcasecmp($country['name'], $name) or
+
+				// Some country names use the 'The' prefix. These are stored as, for exampled 'United States (the)' in the underlying database.
+				0 === strcasecmp($country['name'], $name . ' (the)')) {
+				return $country['alpha3'];
+			}
+		}
+	}
+
 	public static function unserialize($value) {
 		if (static::isEmpty($value)) {
 			return;
