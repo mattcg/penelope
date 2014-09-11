@@ -16,7 +16,7 @@ use Everyman\Neo4j;
 
 abstract class Object {
 
-	protected $id, $schema, $object, $properties = array();
+	protected $id, $schema, $client_object, $properties = array();
 
 	private $got_properties;
 
@@ -25,8 +25,8 @@ abstract class Object {
 		$this->client = $client;
 
 		if ($id instanceof Neo4j\PropertyContainer) {
-			$this->object = $id;
-			$this->id = $this->object->getId();
+			$this->client_object = $id;
+			$this->id = $this->client_object->getId();
 		} else if (is_int($id) or ctype_digit($id)) {
 			$this->id = (int) $id;
 		}
@@ -49,11 +49,11 @@ abstract class Object {
 	}
 
 	public function getClientObject() {
-		if (!$this->object) {
+		if (!$this->client_object) {
 			$this->fetch();
 		}
 
-		return $this->object;
+		return $this->client_object;
 	}
 
 	public function getTitle() {
@@ -113,11 +113,11 @@ abstract class Object {
 	public function save() {
 
 		// Fetch the object if it hasn't been fetched yet.
-		if (!$this->object) {
+		if (!$this->client_object) {
 			$this->fetch();
 		}
 
-		$object = $this->object;
+		$object = $this->client_object;
 		foreach ($this->properties as $property) {
 			$object->setProperty($property->getName(), $property->getSerializedValue());
 		}
@@ -130,7 +130,7 @@ abstract class Object {
 		$this->got_properties = true;
 
 		// Prefill with values from the server if available.
-		if ($this->hasId() and !$this->object) {
+		if ($this->hasId() and !$this->client_object) {
 			$this->fetch();
 		}
 
@@ -141,7 +141,7 @@ abstract class Object {
 			$property = new Property($property_schema);
 			$this->properties[$property_name] = $property;
 
-			if ($this->object and !is_null($value = $this->object->getProperty($property_name))) {
+			if ($this->client_object and !is_null($value = $this->client_object->getProperty($property_name))) {
 				$property->setSerializedValue($value);
 			}
 		}

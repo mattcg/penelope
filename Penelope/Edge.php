@@ -66,28 +66,28 @@ class Edge extends Object {
 			throw new \LogicException('Cannot fetch without ID.');
 		}
 
-		$edge = $this->client->getRelationship($this->id);
-		if (!$edge) {
+		$client_edge = $this->client->getRelationship($this->id);
+		if (!$client_edge) {
 			throw new Exceptions\NotFoundException('No edge with ID "' . $this->id . '".');
 		}
 
-		if (!$this->schema->envelopes($edge)) {
+		if (!$this->schema->envelopes($client_edge)) {
 			throw new Exceptions\SchemaException('Edge with ID "' . $this->id . '" exists, but does not match schema "' . $this->schema->getName() . '".');
 		}
 
 		// Preload the start and end nodes.
 		// Implicitly checks that the edge's relationships are permitted by the schema.
 		$edge_schema = $this->getSchema();
-		$this->end_node = $edge_schema->getEndNodeSchema()->get($this->client, $edge->getEndNode()->getId());
-		$this->start_node = $edge_schema->getStartNodeSchema()->get($this->client, $edge->getStartNode()->getId());
+		$this->end_node = $edge_schema->getEndNodeSchema()->get($this->client, $client_edge->getEndNode()->getId());
+		$this->start_node = $edge_schema->getStartNodeSchema()->get($this->client, $client_edge->getStartNode()->getId());
 
-		$this->object = $edge;
+		$this->client_object = $client_edge;
 
-		return $edge;
+		return $client_edge;
 	}
 
 	public function getFromNode() {
-		if (!$this->object) {
+		if (!$this->client_object) {
 			$this->fetch();
 		}
 
@@ -95,7 +95,7 @@ class Edge extends Object {
 	}
 
 	public function getToNode() {
-		if (!$this->object) {
+		if (!$this->client_object) {
 			$this->fetch();
 		}
 
@@ -118,28 +118,28 @@ class Edge extends Object {
 
 		// Make an edge if this edge is new.
 		if (!$this->hasId($this->id)) {
-			$edge = $this->client->makeRelationship();
-			$edge->setType($this->schema->getName());
-			$this->object = $edge;
-		} else if (!$this->object) {
+			$client_edge = $this->client->makeRelationship();
+			$client_edge->setType($this->schema->getName());
+			$this->client_object = $client_edge;
+		} else if (!$this->client_object) {
 			$this->fetch();
 		}
 
-		$edge = $this->object;
-		$edge->setStartNode($this->start_node->getClientObject());
-		$edge->setEndNode($this->end_node->getClientObject());
+		$client_edge = $this->client_object;
+		$client_edge->setStartNode($this->start_node->getClientObject());
+		$client_edge->setEndNode($this->end_node->getClientObject());
 
 		parent::save();
 	}
 
 	public function delete() {
-		$edge = $this->client->getRelationship($this->id);
-		if (!$edge) {
+		$client_edge = $this->client->getRelationship($this->id);
+		if (!$client_edge) {
 			throw new Exceptions\NotFoundException('Nonexistent edge "' . $this->id . '".');
 		}
 
-		$edge->delete();
+		$client_edge->delete();
 		$this->id = null;
-		$this->object = null;
+		$this->client_object = null;
 	}
 }

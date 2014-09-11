@@ -71,7 +71,7 @@ class Node extends Object {
 			throw new Exceptions\SchemaException('Node with ID "' . $this->id . '" exists, but does not match schema "' . $this->schema->getName() . '".');
 		}
 
-		$this->object = $client_node;
+		$this->client_object = $client_node;
 
 		return $client_node;
 	}
@@ -81,13 +81,13 @@ class Node extends Object {
 			throw new Exceptions\SchemaException('The schema for edges of type "' . $edge_schema->getName() . '" does not permit edges from nodes of type "' . $this->schema->getName() . '".');
 		}
 
-		if (!$this->object) {
+		if (!$this->client_object) {
 			$this->fetch();
 		}
 
 		// No need to worry about caching, as the Neo4j client takes care of this.
 		$edges = array();
-		$client_edges = $this->object->getRelationships(array($edge_schema->getName()), Neo4j\Relationship::DirectionOut);
+		$client_edges = $this->client_object->getRelationships(array($edge_schema->getName()), Neo4j\Relationship::DirectionOut);
 
 		foreach ($client_edges as $client_edge) {
 
@@ -108,14 +108,14 @@ class Node extends Object {
 
 		// Make a node if this node is new.
 		if ($is_new = !$this->hasId()) {
-			$this->object = $this->client->makeNode();
+			$this->client_object = $this->client->makeNode();
 		}
 
 		parent::save();
 
 		// Labels can only be added after the node is saved.
 		if ($is_new) {
-			$this->object->addLabels(array($this->client->makeLabel($this->schema->getName())));
+			$this->client_object->addLabels(array($this->client->makeLabel($this->schema->getName())));
 		}
 
 		// Index the node.
@@ -132,7 +132,7 @@ class Node extends Object {
 		// Needs to be saved before anything is ever added, otherwise config errors will be thrown.
 		// See: https://github.com/jadell/neo4jphp/issues/77
 		$index->save();
-		$index->add($this->object, 'full_text', $full_text);
+		$index->add($this->client_object, 'full_text', $full_text);
 		$index->save();
 	}
 
@@ -157,6 +157,6 @@ class Node extends Object {
 
 		$client_node->delete();
 		$this->id = null;
-		$this->object = null;
+		$this->client_object = null;
 	}
 }
