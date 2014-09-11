@@ -61,24 +61,24 @@ class Node extends Object {
 			throw new \LogicException('Cannot fetch without ID.');
 		}
 
-		$node = $this->client->getNode($this->id);
-		if (!$node) {
+		$client_node = $this->client->getNode($this->id);
+		if (!$client_node) {
 			throw new Exceptions\NotFoundException('No node with ID "' . $this->id . '".');
 		}
 
 		// Check that the node given by the ID matches the schema.
-		if (!$this->schema->envelopes($node)) {
+		if (!$this->schema->envelopes($client_node)) {
 			throw new Exceptions\SchemaException('Node with ID "' . $this->id . '" exists, but does not match schema "' . $this->schema->getName() . '".');
 		}
 
-		$this->object = $node;
+		$this->object = $client_node;
 
-		return $node;
+		return $client_node;
 	}
 
 	public function getOutEdges(EdgeSchema $edge_schema) {
 		if (!$edge_schema->canRelateFrom($this->schema->getName())) {
-			throw new Exceptions\SchemaException('The schema for edges of type "' . $edge_schema->getName() . '" does not permit relationships from nodes of type "' . $this->schema->getName() . '".');
+			throw new Exceptions\SchemaException('The schema for edges of type "' . $edge_schema->getName() . '" does not permit edges from nodes of type "' . $this->schema->getName() . '".');
 		}
 
 		if (!$this->object) {
@@ -87,17 +87,17 @@ class Node extends Object {
 
 		// No need to worry about caching, as the Neo4j client takes care of this.
 		$edges = array();
-		$relationships = $this->object->getRelationships(array($edge_schema->getName()), Neo4j\Relationship::DirectionOut);
+		$client_edges = $this->object->getRelationships(array($edge_schema->getName()), Neo4j\Relationship::DirectionOut);
 
-		foreach ($relationships as $relationship) {
+		foreach ($client_edges as $client_edge) {
 
 			// Only include edges permitted by the schema.
 			// Note that if one of the edges doesn't match the schema, this probably indicates that the database is in an error state.
 			// In that case, trigger a notice.
-			if ($edge_schema->getEndNodeSchema()->envelopes($relationship->getEndNode())) {
-				$edges[] = $edge_schema->get($this->client, $relationship->getId());
+			if ($edge_schema->getEndNodeSchema()->envelopes($client_edge->getEndNode())) {
+				$edges[] = $edge_schema->get($this->client, $client_edge->getId());
 			} else {
-				trigger_error('Edge with ID "' . $relationship->getId() . '" has non-confirming relationship.');
+				trigger_error('Edge with ID "' . $client_edge->getId() . '" has non-conforming relationship.');
 			}
 		}
 
@@ -137,25 +137,25 @@ class Node extends Object {
 	}
 
 	public function delete() {
-		$node = $this->client->getNode($this->id);
-		if (!$node) {
+		$client_node = $this->client->getNode($this->id);
+		if (!$client_node) {
 			throw new Exceptions\NotFoundException('Nonexistent node "' . $this->id . '".');
 		}
 
 		// Remove the full text index.
 		$index = new Neo4j\Index\NodeFulltextIndex($this->client, 'full_text');
-		$index->remove($node);
+		$index->remove($client_node);
 		$index->save();
 
 		// Orphan the node.
-		$relationships = $node->getRelationships();
-		if ($relationships) {
-			foreach ($relationships as $relationship) {
-				$relationship->delete();
+		$client_edges = $client_node->getRelationships();
+		if ($client_edges) {
+			foreach ($client_edges as $client_edge) {
+				$client_edge->delete();
 			}
 		}
 
-		$node->delete();
+		$client_node->delete();
 		$this->id = null;
 		$this->object = null;
 	}
