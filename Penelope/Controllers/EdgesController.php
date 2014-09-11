@@ -50,6 +50,7 @@ class EdgesController extends ObjectController {
 		$from_node = $this->getNodeByParams($node_schema_slug, $node_id);
 		$to_node = $this->getNodeByParams($edge_schema->getInSchema()->getSlug(), $app->request->post('to_node'));
 
+		// TODO: Move this check to the Edge object.
 		if ($from_node->getId() === $to_node->getId()) {
 			throw new Exceptions\SchemaException('A node may not have an edge to itself.');
 		}
