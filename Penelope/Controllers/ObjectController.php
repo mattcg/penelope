@@ -124,10 +124,10 @@ abstract class ObjectController extends Controller {
 			$this->app->stop();
 		}
 
-		$from_node_schema = $edge_schema->getOutSchema();
+		$start_node_schema = $edge_schema->getStartNodeSchema();
 
 		// If the edge's schema defines relationships from nodes of a different schema.
-		if ($from_node_schema->getSlug() !== $node_schema_slug) {
+		if ($start_node_schema->getSlug() !== $node_schema_slug) {
 			$this->render404(new Exceptions\SchemaException('The schema for edges of type "' . $edge_schema->getName() . '" does not permit relationships with nodes of the given type.'));
 			$this->app->stop();
 		}

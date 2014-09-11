@@ -16,19 +16,19 @@
 
 			}
 
-			$to_nodes = $edge_schema->getInSchema()->getCollection($node->getClient());
+			$end_nodes = $edge_schema->getEndNodeSchema()->getCollection($node->getClient());
 
 			// A relationship to itself would be pointless.
-			if ($edge_schema->getInSchema()->getName() === $edge_schema->getOutSchema()->getName()) {
-				$to_nodes = array_filter($to_nodes, function($to_node) use ($node) {
-					return $to_node->getId() !== $node->getId();
+			if ($edge_schema->getEndNodeSchema()->getName() === $edge_schema->getStartNodeSchema()->getName()) {
+				$end_nodes = array_filter($end_nodes, function($end_node) use ($node) {
+					return $end_node->getId() !== $node->getId();
 				});
 			}
 
-			if (empty($to_nodes)) {
+			if (empty($end_nodes)) {
 
 			?>
-			<p><?php __(_m('edge_to_none', $edge_schema->getInSchema()->getName(), $edge_schema->getInSchema()->getNewPath(), _m('new_node_title', $edge_schema->getInSchema()->getName()))); ?></p>
+			<p><?php __(_m('edge_to_none', $edge_schema->getEndNodeSchema()->getName(), $edge_schema->getEndNodeSchema()->getNewPath(), _m('new_node_title', $edge_schema->getEndNodeSchema()->getName()))); ?></p>
 			<?php
 
 			} else {
@@ -47,13 +47,13 @@
 
 				?>
 				<label for="node-collection"><?php __(_m('edge_to_label')); ?></label>
-				<select name="to_node">
+				<select name="end_node">
 					<?php
 
-					foreach ($to_nodes as $to_node) {
+					foreach ($end_nodes as $end_node) {
 
 					?>
-					<option value="<?php __(_e($to_node->getId())); ?>"><?php __(_e($to_node->getTitle())); ?></option>
+					<option value="<?php __(_e($end_node->getId())); ?>"><?php __(_e($end_node->getTitle())); ?></option>
 					<?php
 
 					}

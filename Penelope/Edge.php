@@ -14,7 +14,7 @@ namespace Karwana\Penelope;
 
 class Edge extends Object {
 
-	private $from_node, $to_node;
+	private $start_node, $end_node;
 
 	private function formatPath($path) {
 		if (!$this->hasId()) {
@@ -44,19 +44,19 @@ class Edge extends Object {
 	}
 
 	public function getCollectionPath() {
-		$from_node = $this->getFromNode();
+		$start_node = $this->getFromNode();
 
-		if (!$from_node->hasId()) {
+		if (!$start_node->hasId()) {
 			throw new \LogicException('Cannot create collection path from node with no ID.');
 		}
 
 		// Sanity check. Perhaps assert() is more appropriate here.
-		if (!$this->schema->canRelateFrom($from_node->getSchema()->getName())) {
+		if (!$this->schema->canRelateFrom($start_node->getSchema()->getName())) {
 			throw new \LogicException('Cannot create collection path from unrelatable node.');
 		}
 
 		$path = $this->schema->getCollectionPath();
-		$path = preg_replace('/:node_id/', $from_node->getId(), $path);
+		$path = preg_replace('/:node_id/', $start_node->getId(), $path);
 
 		return $path;
 	}
@@ -78,8 +78,8 @@ class Edge extends Object {
 		// Preload the start and end nodes.
 		// Implicitly checks that the edge's relationships are permitted by the schema.
 		$edge_schema = $this->getSchema();
-		$this->to_node = $edge_schema->getInSchema()->get($this->client, $edge->getEndNode()->getId());
-		$this->from_node = $edge_schema->getOutSchema()->get($this->client, $edge->getStartNode()->getId());
+		$this->end_node = $edge_schema->getEndNodeSchema()->get($this->client, $edge->getEndNode()->getId());
+		$this->start_node = $edge_schema->getStartNodeSchema()->get($this->client, $edge->getStartNode()->getId());
 
 		$this->object = $edge;
 
@@ -91,7 +91,7 @@ class Edge extends Object {
 			$this->fetch();
 		}
 
-		return $this->from_node;
+		return $this->start_node;
 	}
 
 	public function getToNode() {
@@ -99,19 +99,19 @@ class Edge extends Object {
 			$this->fetch();
 		}
 
-		return $this->to_node;
+		return $this->end_node;
 	}
 
-	public function setRelationship(Node $from_node, Node $to_node) {
-		$to_name = $to_node->schema->getName();
-		$from_name = $from_node->schema->getName();
+	public function setRelationship(Node $start_node, Node $end_node) {
+		$to_name = $end_node->schema->getName();
+		$from_name = $start_node->schema->getName();
 
 		if (!$this->schema->canRelate($from_name, $to_name)) {
 			throw new Exceptions\SchemaException('Relationship between ' . $from_name . ' and ' . $to_name . ' forbidden by schema.');
 		}
 
-		$this->to_node = $to_node;
-		$this->from_node = $from_node;
+		$this->end_node = $end_node;
+		$this->start_node = $start_node;
 	}
 
 	public function save() {
@@ -126,8 +126,8 @@ class Edge extends Object {
 		}
 
 		$edge = $this->object;
-		$edge->setStartNode($this->from_node->getClientObject());
-		$edge->setEndNode($this->to_node->getClientObject());
+		$edge->setStartNode($this->start_node->getClientObject());
+		$edge->setEndNode($this->end_node->getClientObject());
 
 		parent::save();
 	}

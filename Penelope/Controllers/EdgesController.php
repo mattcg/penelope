@@ -47,16 +47,16 @@ class EdgesController extends ObjectController {
 		$transient_properties = array();
 		$has_errors = false;
 
-		$from_node = $this->getNodeByParams($node_schema_slug, $node_id);
-		$to_node = $this->getNodeByParams($edge_schema->getInSchema()->getSlug(), $app->request->post('to_node'));
+		$start_node = $this->getNodeByParams($node_schema_slug, $node_id);
+		$end_node = $this->getNodeByParams($edge_schema->getEndNodeSchema()->getSlug(), $app->request->post('end_node'));
 
 		// TODO: Move this check to the Edge object.
-		if ($from_node->getId() === $to_node->getId()) {
+		if ($start_node->getId() === $end_node->getId()) {
 			throw new Exceptions\SchemaException('A node may not have an edge to itself.');
 		}
 
 		try {
-			$edge->setRelationShip($from_node, $to_node);
+			$edge->setRelationShip($start_node, $end_node);
 		} catch (Exceptions\SchemaException $e) {
 			$this->renderNewForm($node_schema_slug, $node_id, $edge_schema_slug, $transient_properties, $e);
 			return;
@@ -76,7 +76,7 @@ class EdgesController extends ObjectController {
 			return;
 		}
 
-		$view_data = array('title' => $this->_m('edge_created_title', $edge->getTitle()), 'edge' => $edge, 'node' => $from_node);
+		$view_data = array('title' => $this->_m('edge_created_title', $edge->getTitle()), 'edge' => $edge, 'node' => $start_node);
 		$app->response->setStatus(201);
 		$app->response->headers->set('Location', $edge->getPath());
 		$app->render('edge_created', $view_data);
