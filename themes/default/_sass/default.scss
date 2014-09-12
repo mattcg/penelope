@@ -185,19 +185,9 @@ dl.object-properties {
 }
 
 ul.multivalue {
-	padding: 0;
-	list-style: none;
-
 	> li {
 		margin: 0.6em 0;
 	}
-}
-
-dd.multivalue > ul.multivalue > li {
-	background-color: #ddd;
-	display: inline-block;
-	padding: 0.2em 0.4em;
-	font-size: 0.8em;
 }
 
 dd.type-image img,
@@ -212,11 +202,11 @@ form.object img + input[type=checkbox] {
 	vertical-align: top;
 }
 
-dd.type-image.multivalue > ul.multivalue > li {
+dd.type-image.multivalue > ul.multivalue {
+	list-style: none;
 	padding: 0;
-	background: white;
 
-	> a > img {
+	> li > a > img {
 		display: block;
 		@include border-radius(0.4em);
 	}
