@@ -121,4 +121,12 @@ class Schema {
 			return $edge_schema->permitsStartNode($node_schema->getName());
 		});
 	}
+
+	public function getInEdges($node_name) {
+		$node_schema = $this->getNode($node_name);
+
+		return array_filter($this->getEdges(), function($edge_schema) use ($node_schema) {
+			return $edge_schema->permitsEndNode($node_schema->getName());
+		});
+	}
 }

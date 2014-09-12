@@ -21,7 +21,29 @@ class NodeController extends ObjectController {
 		$node_schema = $node->getSchema();
 
 		$view_data = array('title' => $node->getTitle(), 'node' => $node, 'node_schema' => $node_schema);
-		$view_data['edge_schemas'] = $this->schema->getOutEdges($node->getSchema()->getName());
+
+		$edge_schemas = $this->schema->getOutEdges($node_schema->getName());
+
+		$view_data['edge_schemas'] = $edge_schemas;
+		$view_data['edges'] = array();
+
+		foreach ($edge_schemas as $edge_schema) {
+			$view_data['edges'][$edge_schema->getName()] = $node->getOutEdges($edge_schema);;
+		}
+
+		$reverse_edge_schemas = $this->schema->getInEdges($node_schema->getName());
+
+		$view_data['reverse_edge_schemas'] = array();
+		$view_data['reverse_edges'] = array();
+
+		// Add reverse relationships, but only if a display name is specified.
+		foreach ($reverse_edge_schemas as $reverse_edge_schema) {
+			if ($reverse_edge_schema->hasOption('format.reverse_name')) {
+				$view_data['reverse_edge_schemas'][] = $reverse_edge_schema;
+				$view_data['reverse_edges'][$reverse_edge_schema->getName()] = $node->getInEdges($reverse_edge_schema);
+			}
+		}
+
 		$this->app->render('node', $view_data);
 	}
 
