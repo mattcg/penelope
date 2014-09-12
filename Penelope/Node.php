@@ -37,7 +37,7 @@ class Node extends Object {
 			throw new \LogicException('Cannot create new edge path for node with no ID.');
 		}
 
-		if (!$edge_schema->canRelateFrom($this->getSchema()->getName())) {
+		if (!$edge_schema->permitsStartNode($this->getSchema()->getName())) {
 			throw new \LogicException('Cannot create new edge path for unrelatable node.');
 		}
 
@@ -49,7 +49,7 @@ class Node extends Object {
 			throw new \LogicException('Cannot create edge collection path for node with no ID.');
 		}
 
-		if (!$edge_schema->canRelateFrom($this->getSchema()->getName())) {
+		if (!$edge_schema->permitsStartNode($this->getSchema()->getName())) {
 			throw new \LogicException('Cannot create edge collection path for unrelatable node.');
 		}
 
@@ -77,8 +77,28 @@ class Node extends Object {
 	}
 
 	public function getOutEdges(EdgeSchema $edge_schema) {
-		if (!$edge_schema->canRelateFrom($this->schema->getName())) {
-			throw new Exceptions\SchemaException('The schema for edges of type "' . $edge_schema->getName() . '" does not permit edges from nodes of type "' . $this->schema->getName() . '".');
+		return $this->getEdges($edge_schema, Neo4j\Relationship::DirectionOut);
+	}
+
+	public function getInEdges(EdgeSchema $edge_schema) {
+		return $this->getEdges($edge_schema, Neo4j\Relationship::DirectionIn);
+	}
+
+	public function getEdges(EdgeSchema $edge_schema, $direction = Neo4j\Relationship::DirectionAll) {
+		if (Neo4j\Relationship::DirectionOut === $direction) {
+			if (!$edge_schema->permitsStartNode($this->schema->getName())) {
+				throw new Exceptions\SchemaException('The schema for edges of type "' . $edge_schema->getName() . '" does not permit edges from nodes of type "' . $this->schema->getName() . '".');
+			}
+		} else if (Neo4j\Relationship::DirectionIn === $direction) {
+			if (!$edge_schema->permitsEndNode($this->schema->getName())) {
+				throw new Exceptions\SchemaException('The schema for edges of type "' . $edge_schema->getName() . '" does not permit edges to nodes of type "' . $this->schema->getName() . '".');
+			}
+		} else if (Neo4j\Relationship::DirectionAll === $direction) {
+			if (!$edge_schema->permitsEndNode($this->schema->getName()) and !$edge_schema->permitsStartNode($this->schema->getName())) {
+				throw new Exceptions\SchemaException('The schema for edges of type "' . $edge_schema->getName() . '" does not permit edges to or from nodes of type "' . $this->schema->getName() . '".');
+			}
+		} else {
+			throw new \RuntimeException('Invalid direction: "' . $direction . '".');
 		}
 
 		if (!$this->client_object) {
@@ -87,17 +107,17 @@ class Node extends Object {
 
 		// No need to worry about caching, as the Neo4j client takes care of this.
 		$edges = array();
-		$client_edges = $this->client_object->getRelationships(array($edge_schema->getName()), Neo4j\Relationship::DirectionOut);
+		$client_edges = $this->client_object->getRelationships(array($edge_schema->getName()), $direction);
 
 		foreach ($client_edges as $client_edge) {
 
-			// Only include edges permitted by the schema.
+			// Only include edges permitted by the schema (checks are made within object fetching logic).
 			// Note that if one of the edges doesn't match the schema, this probably indicates that the database is in an error state.
 			// In that case, trigger a notice.
-			if ($edge_schema->getEndNodeSchema()->envelopes($client_edge->getEndNode())) {
+			try {
 				$edges[] = $edge_schema->get($this->client, $client_edge->getId());
-			} else {
-				trigger_error('Edge with ID "' . $client_edge->getId() . '" has non-conforming relationship.');
+			} catch (Exceptions\SchemaException $e) {
+				trigger_error('Edge with ID "' . $client_edge->getId() . '" of type "' . $client_edge->getType() . '" does not conform to schema: ' . $e->getMessage());
 			}
 		}
 

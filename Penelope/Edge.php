@@ -21,12 +21,12 @@ class Edge extends Object {
 			throw new \LogicException('Cannot get path for edge with no ID.');
 		}
 
-		if (!$this->getFromNode()->hasId()) {
+		if (!$this->getStartNode()->hasId()) {
 			throw new \LogicException('Cannot get path from node with no ID.');
 		}
 
 		$path = preg_replace('/:edge_id/', $this->getId(), $path);
-		$path = preg_replace('/:node_id/', $this->getFromNode()->getId(), $path);
+		$path = preg_replace('/:node_id/', $this->getStartNode()->getId(), $path);
 
 		return $path;
 	}
@@ -44,14 +44,14 @@ class Edge extends Object {
 	}
 
 	public function getCollectionPath() {
-		$start_node = $this->getFromNode();
+		$start_node = $this->getStartNode();
 
 		if (!$start_node->hasId()) {
 			throw new \LogicException('Cannot create collection path from node with no ID.');
 		}
 
 		// Sanity check. Perhaps assert() is more appropriate here.
-		if (!$this->schema->canRelateFrom($start_node->getSchema()->getName())) {
+		if (!$this->schema->permitsStartNode($start_node->getSchema()->getName())) {
 			throw new \LogicException('Cannot create collection path from unrelatable node.');
 		}
 
@@ -86,7 +86,7 @@ class Edge extends Object {
 		return $client_edge;
 	}
 
-	public function getFromNode() {
+	public function getStartNode() {
 		if (!$this->client_object) {
 			$this->fetch();
 		}
@@ -94,7 +94,7 @@ class Edge extends Object {
 		return $this->start_node;
 	}
 
-	public function getToNode() {
+	public function getEndNode() {
 		if (!$this->client_object) {
 			$this->fetch();
 		}
@@ -106,7 +106,7 @@ class Edge extends Object {
 		$to_name = $end_node->schema->getName();
 		$from_name = $start_node->schema->getName();
 
-		if (!$this->schema->canRelate($from_name, $to_name)) {
+		if (!$this->schema->permits($from_name, $to_name)) {
 			throw new Exceptions\SchemaException('Relationship between ' . $from_name . ' and ' . $to_name . ' forbidden by schema.');
 		}
 

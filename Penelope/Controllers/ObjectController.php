@@ -105,7 +105,7 @@ abstract class ObjectController extends Controller {
 		}
 
 		// If the node with the given ID is not the start node of the edge with the given ID.
-		if ($edge->getFromNode()->getId() !== $node->getId()) {
+		if ($edge->getStartNode()->getId() !== $node->getId()) {
 			$this->render404(new Exceptions\NotFoundException('There is no edge from the given node.'));
 			$this->app->stop();
 		}

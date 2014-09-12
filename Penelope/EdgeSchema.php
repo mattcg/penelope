@@ -55,20 +55,20 @@ class EdgeSchema extends ObjectSchema {
 		return $client_edge->getType() === $this->getName();
 	}
 
-	public function canRelate($from_name, $to_name) {
-		if ($this->canRelateFrom($from_name) and $this->canRelateTo($to_name)) {
+	public function permits($start_name, $end_name) {
+		if ($this->permitsStartNode($start_name) and $this->permitsEndNode($end_name)) {
 			return true;
 		}
 
 		return false;
 	}
 
-	public function canRelateFrom($from_name) {
-		return $this->start_schema->getName() === $from_name;
+	public function permitsStartNode($start_name) {
+		return $this->start_schema->getName() === $start_name;
 	}
 
-	public function canRelateTo($to_name) {
-		return $this->end_schema->getName() === $to_name;
+	public function permitsEndNode($end_name) {
+		return $this->end_schema->getName() === $end_name;
 	}
 
 	public function getNewPath() {
