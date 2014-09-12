@@ -38,9 +38,14 @@ class NodeController extends ObjectController {
 
 		// Add reverse relationships, but only if a display name is specified.
 		foreach ($reverse_edge_schemas as $reverse_edge_schema) {
-			if ($reverse_edge_schema->hasOption('format.reverse_name')) {
+			if (!$reverse_edge_schema->hasOption('format.reverse_name')) {
+				continue;
+			}
+
+			$reverse_edges = $node->getInEdges($reverse_edge_schema);
+			if (!empty($reverse_edges)) {
 				$view_data['reverse_edge_schemas'][] = $reverse_edge_schema;
-				$view_data['reverse_edges'][$reverse_edge_schema->getName()] = $node->getInEdges($reverse_edge_schema);
+				$view_data['reverse_edges'][$reverse_edge_schema->getName()] = $reverse_edges;
 			}
 		}
 
