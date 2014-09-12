@@ -20,7 +20,7 @@ class NodesController extends ObjectController {
 	public function read($schema_slug) {
 		$node_schema = $this->getNodeSchemaBySlug($schema_slug);
 
-		$view_data = array('title' => $this->_m('node_collection_title', $node_schema->getName()), 'node_schema' => $node_schema);
+		$view_data = array('title' => $this->_m('node_collection_title', $node_schema->getDisplayName()), 'node_schema' => $node_schema);
 		$view_data['nodes'] = $node_schema->getCollection($this->client);
 
 		// Sort by title using Unicode Collation Algorithm rules.
@@ -64,7 +64,7 @@ class NodesController extends ObjectController {
 	public function renderNewForm($schema_slug, array $transient_properties = null, \Exception $e = null) {
 		$node_schema = $this->getNodeSchemaBySlug($schema_slug);
 
-		$view_data = array('title' => $this->_m('new_node_title', $node_schema->getName()), 'error' => $e);
+		$view_data = array('title' => $this->_m('new_node_title', $node_schema->getDisplayName()), 'error' => $e);
 		$view_data['properties'] = array();
 
 		foreach ($node_schema->getProperties() as $property_schema) {
