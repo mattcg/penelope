@@ -15,6 +15,14 @@
 
 		} else {
 
+			if ($prev_page) {
+
+		?>
+		<p><a class="button paging prev" href="?page=<?php __($prev_page); ?>"><?php __(_m('collection_prev_page')); ?></a></p>
+		<?php
+
+			}
+
 		?>
 		<nav class="collection nodes">
 			<ul>
@@ -32,6 +40,14 @@
 			</ul>
 		</nav>
 		<?php
+
+			if ($next_page) {
+
+		?>
+		<p><a class="button paging next" href="?page=<?php __($next_page); ?>"><?php __(_m('collection_next_page')); ?></a></p>
+		<?php
+
+			}
 
 		}
 

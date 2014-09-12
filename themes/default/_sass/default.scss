@@ -394,6 +394,26 @@ a.button.edit:before {
 	content: '\f044';
 }
 
+a.button.paging {
+	background-color: #ccc;
+}
+
+a.button.paging.next {
+	margin-top: 1em;
+}
+
+a.button.paging.next:before {
+	content: '\f063';
+}
+
+a.button.paging.prev {
+	margin-bottom: 1em;
+}
+
+a.button.paging.prev:before {
+	content: '\f062';
+}
+
 object.edge-svg {
 	display: block;
 	margin: 0 auto;

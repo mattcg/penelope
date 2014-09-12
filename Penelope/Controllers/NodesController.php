@@ -21,13 +21,30 @@ class NodesController extends ObjectController {
 		$node_schema = $this->getNodeSchemaBySlug($schema_slug);
 
 		$view_data = array('title' => $this->_m('node_collection_title', $node_schema->getDisplayName()), 'node_schema' => $node_schema);
-		$view_data['nodes'] = $node_schema->getCollection($this->client);
 
-		// Sort by title using Unicode Collation Algorithm rules.
-		$collator = \Collator::create('root');
-		usort($view_data['nodes'], function($a, $b) use ($collator) {
-			return $collator->compare($a->getTitle(), $b->getTitle());
-		});
+		$page = (int) $this->app->request->get('page');
+		if ($page < 1) {
+			$page = 1;
+		}
+
+		$total = $node_schema->getCollectionCount($this->client);
+		$limit = 20;
+
+		$skip = $limit * ($page - 1);
+
+		$view_data['nodes'] = $node_schema->getCollection($this->client, $skip, $limit);
+
+		if ($total and ($skip + $limit) < $total) {
+			$view_data['next_page'] = $page + 1;
+		} else {
+			$view_data['next_page'] = 0;
+		}
+
+		if ($page > 1) {
+			$view_data['prev_page'] = $page - 1;
+		} else {
+			$view_data['prev_page'] = 0;
+		}
 
 		$this->app->render('nodes', $view_data);
 	}

@@ -33,12 +33,32 @@ class NodeSchema extends ObjectSchema {
 		return $node;
 	}
 
-	public function getCollection(Neo4j\Client $client) {
-		$label = $client->makeLabel($this->getName());
-		$nodes = array();
+	public function getCollectionCount(Neo4j\Client $client) {
+		$query = new Neo4j\Cypher\Query($client, 'MATCH (n) WHERE n:' . $this->getName() . ' RETURN count(n)');
+		return (int) $query->getResultSet()[0][0];
+	}
 
-		foreach ($label->getNodes() as $client_node) {
-			$nodes[] = $this->get($client, $client_node->getId(), false);
+	public function getCollection(Neo4j\Client $client, $skip = null, $limit = null) {
+		$query_string = 'MATCH (n) WHERE n:' . $this->getName() . ' RETURN n';
+
+		$order_by = $this->getOption('collection.order_by');
+		if ($order_by) {
+			$query_string .= ' ORDER BY n.' . join(', n.', (array) $order_by);
+		}
+
+		if (is_int($skip) and $skip > 0) {
+			$query_string .= ' SKIP ' . $skip;
+		}
+
+		if (is_int($limit) and $limit > 0) {
+			$query_string .= ' LIMIT ' . $limit;
+		}
+
+		$query = new Neo4j\Cypher\Query($client, $query_string);
+		$nodes = array();
+		foreach ($query->getResultSet() as $row) {
+			$client_node = $row['n'];
+			$nodes[] = new Node($this, $client, $client_node);
 		}
 
 		return $nodes;
