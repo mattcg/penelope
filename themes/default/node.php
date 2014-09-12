@@ -21,7 +21,7 @@
 				<h1><?php __(_m('node_edges_title')); ?></h1>
 				<?php
 
-				if (empty($edge_schemas)) {
+				if (empty($edge_schemas) and empty($reverse_edge_schemas)) {
 
 				?>
 				<p><?php __(_m('node_edges_none_defined')); ?></p>
@@ -49,7 +49,9 @@
 						return $collator->compare($a_title, $b_title);
 					};
 
-					foreach ($edge_schemas as $edge_schema) {
+					if (!empty($edge_schemas)) {
+
+						foreach ($edge_schemas as $edge_schema) {
 
 				?>
 				<h2><?php __(_e($edge_schema->getDisplayName())); ?></h2>
@@ -88,15 +90,18 @@
 					</ul>
 				</nav>
 				<?php
+						}
 
 					}
 
-					foreach ($reverse_edge_schemas as $reverse_edge_schema) {
+					if (!empty($reverse_edge_schemas)) {
 
-						// Exclude edges munged into the previous list.
-						if ($reverse_edge_schema->getOption('format.reverse_name') === $reverse_edge_schema->getDisplayName() and isset($edges[$reverse_edge_schema->getName()])) {
-							continue;
-						}
+						foreach ($reverse_edge_schemas as $reverse_edge_schema) {
+
+							// Exclude edges munged into the previous list.
+							if ($reverse_edge_schema->getOption('format.reverse_name') === $reverse_edge_schema->getDisplayName() and isset($edges[$reverse_edge_schema->getName()])) {
+								continue;
+							}
 
 				?>
 				<h2><?php __(_e($reverse_edge_schema->getOption('format.reverse_name'))); ?></h2>
@@ -120,6 +125,7 @@
 					</ul>
 				</nav>
 				<?php
+						}
 
 					}
 
