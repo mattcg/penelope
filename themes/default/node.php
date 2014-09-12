@@ -109,6 +109,7 @@
 					<ul>
 						<?php
 
+						$reverse_edge_schema_edges = $reverse_edges[$reverse_edge_schema->getName()];
 						usort($reverse_edge_schema_edges, $collator_sorter);
 
 						foreach ($reverse_edge_schema_edges as $reverse_edge) {
