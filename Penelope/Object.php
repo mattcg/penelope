@@ -80,7 +80,7 @@ abstract class Object {
 
 	public function getDefaultTitle() {
 		if ($this->hasId()) {
-			return $this->schema->getName() . ' #' . $this->getId();
+			return $this->schema->getDisplayName() . ' #' . $this->getId();
 		}
 
 		return '';
