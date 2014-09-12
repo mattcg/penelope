@@ -24,7 +24,7 @@ if ($property->getSchema()->isMultiValue()) {
 
 ?>
 <select name="<?php __(_e($property->getName())); ?>">
-	<option value=""></option>
+	<option value=""><?php __(_m('option_none')); ?></option>
 	<?php
 
 	foreach ($property->getSchema()->getOption('allowed') as $allowed_value) {
