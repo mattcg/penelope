@@ -119,7 +119,7 @@ class Penelope extends OptionContainer {
 		Types\File::setSystemDirectory($directory);
 	}
 
-	public function defineEdge($name, $slug, $from_name, $to_name, array $properties = array(), array $options = null) {
+	public function defineEdge($name, $slug, $from_name, $to_name, array $properties = null, array $options = null) {
 		$edge_schema = $this->schema->addEdge($name, $slug, $from_name, $to_name, $properties, $options);
 		$from_schema = $this->schema->getNode($from_name);
 
@@ -180,7 +180,7 @@ class Penelope extends OptionContainer {
 		}, $this));
 	}
 
-	public function defineNode($name, $slug, array $properties = array(), array $options = null) {
+	public function defineNode($name, $slug, array $properties = null, array $options = null) {
 		$node_schema = $this->schema->addNode($name, $slug, $properties, $options);
 
 		$app = $this->app;

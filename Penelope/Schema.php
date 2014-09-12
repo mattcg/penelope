@@ -18,7 +18,7 @@ class Schema {
 
 	private $nodes = array(), $edges = array(), $node_slugs = array(), $edge_slugs = array();
 
-	public function addNode($name, $slug, array $properties, array $options = null) {
+	public function addNode($name, $slug, array $properties = null, array $options = null) {
 		if ($this->hasNode($name)) {
 			throw new \InvalidArgumentException('Node name "' . $name . '" already in use.');
 		}
@@ -70,7 +70,7 @@ class Schema {
 		}
 	}
 
-	public function addEdge($name, $slug, $from_name, $to_name, array $properties, array $options = null) {
+	public function addEdge($name, $slug, $from_name, $to_name, array $properties = null, array $options = null) {
 		if ($this->hasEdge($name)) {
 			throw new \InvalidArgumentException('Edge name "' . $name . '" already in use.');
 		}

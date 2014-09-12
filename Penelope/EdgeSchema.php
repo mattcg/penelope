@@ -20,7 +20,7 @@ class EdgeSchema extends ObjectSchema {
 
 	protected $path_formats = array('collection' => '/%s/%s/%s/', 'new' => '/%s/%s/%s/new', 'edit' => '/%s/%s/%s/%s/edit', 'object' => '/%s/%s/%s/%s', 'svg' => '/%s/%s/%s/%s/svg');
 
-	public function __construct($name, $slug, NodeSchema $start_schema, NodeSchema $end_schema, array $properties, array $options = null) {
+	public function __construct($name, $slug, NodeSchema $start_schema, NodeSchema $end_schema, array $properties = null, array $options = null) {
 		$this->end_schema = $end_schema;
 		$this->start_schema = $start_schema;
 		parent::__construct($name, $slug, $properties, $options);

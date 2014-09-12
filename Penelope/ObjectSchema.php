@@ -18,7 +18,7 @@ abstract class ObjectSchema extends OptionContainer {
 
 	protected $path_formats = array();
 
-	public function __construct($name, $slug, array $properties, array $options = null) {
+	public function __construct($name, $slug, array $properties = null, array $options = null) {
 		parent::__construct($options);
 
 		$this->name = $name;
@@ -26,8 +26,10 @@ abstract class ObjectSchema extends OptionContainer {
 
 		// Syntax for properties:
 		// array('my_property_1', 'my_property_2' => 'date', 'my_property_3' => array('type' => 'country', 'mode' => 'alpha-2'))
-		foreach ($properties as $name => $property) {
-			$this->defineProperty($name, $property);
+		if ($properties) {
+			foreach ($properties as $name => $property) {
+				$this->defineProperty($name, $property);
+			}
 		}
 	}
 
