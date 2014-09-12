@@ -37,7 +37,7 @@
 		<text class="label node-label" x="50" y="52.5" text-anchor="middle"><?php __(_e(mb_strimwidth($edge->getStartNode()->getTitle(), 0, 10, '…'))); ?></text>
 	</a>
 	<line x1="120" y1="50" x2="265" y2="50" marker-end="url(#triangle)" class="edge" />
-	<text class="label edge-label" x="200" y="35" text-anchor="middle"><?php __(_e($edge->getSchema()->getName())); ?></text>
+	<text class="label edge-label" x="200" y="35" text-anchor="middle"><?php __(_e($edge->getSchema()->getDisplayName())); ?></text>
 	<a xlink:href="<?php __(_e($edge->getEndNode()->getPath())); ?>" target="_top">
 		<circle cx="350" cy="50" r="45" class="node node-in" />
 		<text class="label node-label" x="350" y="52.5" text-anchor="middle"><?php __(_e(mb_strimwidth($edge->getEndNode()->getTitle(), 0, 10, '…'))); ?></text>

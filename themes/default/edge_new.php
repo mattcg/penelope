@@ -28,7 +28,7 @@
 			if (empty($end_nodes)) {
 
 			?>
-			<p><?php __(_m('edge_to_none', $edge_schema->getEndNodeSchema()->getName(), $edge_schema->getEndNodeSchema()->getNewPath(), _m('new_node_title', $edge_schema->getEndNodeSchema()->getName()))); ?></p>
+			<p><?php __(_m('edge_to_none', $edge_schema->getEndNodeSchema()->getDisplayName(), $edge_schema->getEndNodeSchema()->getNewPath(), _m('new_node_title', $edge_schema->getEndNodeSchema()->getDisplayName()))); ?></p>
 			<?php
 
 			} else {

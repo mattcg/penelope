@@ -6,7 +6,7 @@
 
 		?>
 		<div class="body">
-			<p><?php __(_m('view_edge_collection_link', $node->getEdgeCollectionPath($edge_schema), $edge_schema->getName())); ?></p>
+			<p><?php __(_m('view_edge_collection_link', $node->getEdgeCollectionPath($edge_schema), $edge_schema->getDisplayName())); ?></p>
 		</div>
 	</article>
 </main>

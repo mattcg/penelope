@@ -10,7 +10,7 @@
 		if (empty($edges)) {
 
 		?>
-		<p><?php __(_m('edge_collection_empty', $edge_schema->getName())); ?></p>
+		<p><?php __(_m('edge_collection_empty', $edge_schema->getDisplayName())); ?></p>
 		<?php
 
 		} else {

@@ -71,6 +71,15 @@ abstract class ObjectSchema extends OptionContainer {
 		return $this->name;
 	}
 
+	public function getDisplayName() {
+		$display_name = $this->getOption('format.name');
+		if ($display_name) {
+			return $display_name;
+		}
+
+		return $this->getName();
+	}
+
 	public function hasProperty($name) {
 		return isset($this->property_schemas[$name]);
 	}
