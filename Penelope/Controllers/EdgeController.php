@@ -50,6 +50,32 @@ class EdgeController extends ObjectController {
 		$this->app->render('edge_deleted', $viewdata);
 	}
 
+	public function update($node_schema_slug, $node_id, $edge_schema_slug, $edge_id) {
+		$edge = $this->getByParamsArray(func_get_args());
+		$transient_properties = array();
+		$has_errors = false;
+
+		$this->processProperties($edge, $this->app->request->put(), $transient_properties, $has_errors);
+
+		if ($has_errors) {
+			$this->app->response->setStatus(422);
+			$this->renderEditForm($node_schema_slug, $node_id, $edge_schema_slug, $edge_id);
+			return;
+		}
+
+		try {
+			$edge->save();
+		} catch (Exceptions\NotFoundException $e) { // Thrown when the node isn't found. Indicates an edit conflict in this case.
+			$this->render404(new NotFoundException('The edge was deleted by another user before it could be updated.'));
+			return;
+		} catch (\Exception $e) {
+			$this->renderEditForm($node_schema_slug, $node_id, $edge_schema_slug, $edge_id);
+			return;
+		}
+
+		$this->read($node_schema_slug, $node_id, $edge_schema_slug, $edge_id);
+	}
+
 	public function renderEditForm($node_schema_slug, $node_id, $edge_schema_slug, $edge_id, array $transient_properties = null, \Exception $e = null) {
 		$edge = $this->getEdgeByParams($node_schema_slug, $node_id, $edge_schema_slug, $edge_id);
 		$edge_schema = $edge->getSchema();
