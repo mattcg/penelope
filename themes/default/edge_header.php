@@ -16,7 +16,7 @@
 
 			?>
 			<li class="edit"><a class="button edit" href="<?php __(_e($edge->getEditPath())); ?>" title="<?php __(_a('edit_edge_button_title', $edge->getTitle())); ?>"><?php __(_m('edit_edge_button_text')); ?></a></li>
-			<li class="view"><a class="view" href="<?php __(_e($edge->getPath())); ?>" title="<?php __(_a('view_edge_button_title')); ?>"><?php __(_m('view_edge_button_text')); ?></a></li>
+			<li class="view"><a class="button view" href="<?php __(_e($edge->getPath())); ?>" title="<?php __(_a('view_edge_button_title')); ?>"><?php __(_m('view_edge_button_text')); ?></a></li>
 			<?php
 
 			}
