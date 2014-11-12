@@ -8,10 +8,8 @@
 				$node_schema = $node->getSchema();
 			}
 
-			$schema_name = $node_schema->getName();
-
 			?>
-			<li class="new"><a class="button new" href="<?php __(_e($node_schema->getNewPath())); ?>" title="<?php __(_a('new_node_button_title', $schema_name)); ?>"><?php __(_m('new_node_button_text')) ?></a></li>
+			<li class="new"><a class="button new" href="<?php __(_e($node_schema->getNewPath())); ?>" title="<?php __(_a('new_node_button_title', $node_schema->getDisplayName())); ?>"><?php __(_m('new_node_button_text')) ?></a></li>
 			<?php
 
 			if (isset($node)) {
@@ -24,7 +22,7 @@
 			}
 
 			?>
-			<li class="collection"><a class="button collection" href="<?php __(_e($node_schema->getCollectionPath())); ?>" title="<?php __(_a('view_node_collection_button_title', $schema_name)); ?>"><?php __(_m('view_node_collection_button_text')); ?></a></li>
+			<li class="collection"><a class="button collection" href="<?php __(_e($node_schema->getCollectionPath())); ?>" title="<?php __(_a('view_node_collection_button_title', $node_schema->getDisplayName())); ?>"><?php __(_m('view_node_collection_button_text')); ?></a></li>
 		</ul>
 	</nav>
 </header>

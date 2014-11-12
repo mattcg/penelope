@@ -113,7 +113,7 @@ class EdgesController extends ObjectController {
 		$edge_schema = $this->getEdgeSchemaBySlugs($node_schema_slug, $edge_schema_slug);
 		$node = $this->getNodeByParams($node_schema_slug, $node_id);
 
-		$view_data = array('title' => $this->_m('new_edge_title', $edge_schema->getName(), $node->getTitle()), 'error' => $e);
+		$view_data = array('title' => $this->_m('new_edge_title', $edge_schema->getDisplayName(), $node->getTitle()), 'error' => $e);
 		$view_data['node'] = $node;
 		$view_data['properties'] = array();
 
