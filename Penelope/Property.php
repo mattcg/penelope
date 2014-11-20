@@ -33,14 +33,14 @@ class Property {
 	}
 
 	public function clearValue() {
-		$this->setValue(null);
+		$this->value = null;
 	}
 
 	public function setValue($value) {
 		$value = $this->filterValue($value);
 
 		if (is_null($value)) {
-			$this->value = null;
+			$this->clearValue();
 			return;
 		}
 
@@ -72,7 +72,7 @@ class Property {
 
 	public function setSerializedValue($value) {
 		if (is_null($value)) {
-			$this->setValue($value);
+			$this->clearValue();
 			return;
 		}
 
