@@ -27,7 +27,7 @@ class DefaultTheme extends Slim\View {
 		parent::__construct();
 
 		$this->app = $app;
-		$this->resources = array('css' => array('css/default.css'), 'js' => array('js/default.js'));
+		$this->resources = array();
 
 		if (!$messageformat) {
 			$messageformat = new MessageFormat($this->getDefaultTemplatesDirectory() . DIRECTORY_SEPARATOR . '_lang', 'en');
