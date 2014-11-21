@@ -101,7 +101,7 @@ class Penelope extends OptionContainer {
 			if ($theme->hasResource($resource_path)) {
 				$controller->read($theme->getResourcePath($resource_path));
 			} else {
-				$controller->render404(new Exceptions\Exception('Unknown resource "' . implode(DIRECTORY_SEPARATOR, $resource_path) . '".'));
+				$controller->render404(new Exceptions\Exception('Unknown resource "' . implode('/', $resource_path) . '".'));
 			}
 
 		}, $this))->name($theme::ROUTE_NAME);
