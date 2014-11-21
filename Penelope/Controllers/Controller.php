@@ -44,7 +44,7 @@ abstract class Controller {
 		$view = $this->app->view();
 
 		if (!($view instanceof DefaultTheme)) {
-			return $message_key;
+			return func_get_arg(0);
 		}
 
 		return call_user_func_array(array($view, '_m'), func_get_args());
