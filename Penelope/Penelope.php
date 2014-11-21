@@ -78,7 +78,7 @@ class Penelope extends OptionContainer {
 		$old_theme = $this->getTheme();
 		$this->app->view($theme);
 
-		$pattern = '/' . $theme::ROUTE_SLUG . '/:resource_type/:file_name';
+		$pattern = '/' . $theme::ROUTE_SLUG . '/:resource_path+';
 
 		// Slim doesn't allow a named route to be removed or overwritten once added, so some trickery is needed to rename it.
 		if ($old_theme) {
@@ -88,7 +88,7 @@ class Penelope extends OptionContainer {
 			return;
 		}
 
-		$this->app->get($pattern, Closure::bind(function($resource_type, $file_name) {
+		$this->app->get($pattern, Closure::bind(function(array $resource_path) {
 			$theme = $this->getTheme();
 
 			// Pass if not an instance or child of the default theme, as DefaultTheme#renderResource won't be present.
@@ -98,10 +98,10 @@ class Penelope extends OptionContainer {
 			}
 
 			$controller = new Controllers\FileController($this->app);
-			if ($theme->hasResource($resource_type, $file_name)) {
-				$controller->read($theme->getResourcePath($resource_type, $file_name));
+			if ($theme->hasResource($resource_path)) {
+				$controller->read($theme->getResourcePath($resource_path));
 			} else {
-				$controller->render404(new Exceptions\Exception('Unknown resource "' . $file_name . '".'));
+				$controller->render404(new Exceptions\Exception('Unknown resource "' . $resource_path . '".'));
 			}
 
 		}, $this))->name($theme::ROUTE_NAME);

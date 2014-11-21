@@ -27,8 +27,7 @@ class DefaultTheme extends Slim\View {
 		parent::__construct();
 
 		$this->app = $app;
-		$this->resources['css'] = array('default.css');
-		$this->resources['js'] = array('default.js');
+		$this->resources = array('css' => array('css/default.css'), 'js' => array('js/default.js'));
 
 		if (!$messageformat) {
 			$messageformat = new MessageFormat($this->getDefaultTemplatesDirectory() . DIRECTORY_SEPARATOR . '_lang', 'en');
@@ -46,31 +45,36 @@ class DefaultTheme extends Slim\View {
 		$this->messageformat = $messageformat;
 	}
 
-	public function addResource($resource_type, $file_name) {
-		if (!isset($this->resources[$resource_type])) {
-			throw new \InvalidArgumentException('Invalid resource type "' . $resource_type . '". Permitted types are ' . implode(', ', array_keys($this->resources)) . '.');
-		}
+	public function registerResource($resource_type, $resource_path) {
 
 		// NOOP if the resource already exists.
-		if (!in_array($file_name, $this->resources[$resource_type])) {
-			$this->resources[$resource_type][] = $file_name;
+		if (!isset($this->resources[$resource_type]) or !in_array($resource_path, $this->resources[$resource_type])) {
+			$this->resources[$resource_type][] = $resource_path;
 		}
 	}
 
-	public function hasResource($resource_type, $file_name) {
-		return (isset($this->resources[$resource_type]) and in_array($file_name, $this->resources[$resource_type], true));
+	public function getRegisteredResources() {
+		return $this->resources;
+	}
+
+	public function hasResource($resource_path) {
+		return file_exists($this->getResourcePath($resource_path));
+	}
+
+	public function getResourcePath($resource_path) {
+		if (is_array($resource_path)) {
+			$resource_path = implode(DIRECTORY_SEPARATOR, $resource_path);
+		}
+
+		return $this->getTemplatePath(implode(DIRECTORY_SEPARATOR, array('resources', $resource_path)));
+	}
+
+	public function getResourceUrl($resource_path) {
+		return $this->app->urlFor(static::ROUTE_NAME, array('resource_path' => $resource_path));
 	}
 
 	public function getDefaultTemplatesDirectory() {
 		return implode(DIRECTORY_SEPARATOR, array(__DIR__, '..', 'themes', 'default'));
-	}
-
-	public function getResourcePath($resource_type, $file_name) {
-		if (!$this->hasResource($resource_type, $file_name)) {
-			throw new \InvalidArgumentException('Unknown resource "' . $file_name . '".');
-		}
-
-		return $this->getTemplatePath(implode(DIRECTORY_SEPARATOR, array('resources', $resource_type, $file_name)));
 	}
 
 	public function getTemplatePath($relative_path) {
@@ -85,16 +89,10 @@ class DefaultTheme extends Slim\View {
 		return $path;
 	}
 
-	public function getTemplatePathname($file) {
-		return $this->getTemplatePath($file);
-	}
+	public function getTemplatePathname($relative_path) {
 
-	public function getResourceUrl($resource_type, $file_name) {
-		if (!$this->hasResource($resource_type, $file_name)) {
-			throw new \InvalidArgumentException('Unknown resource "' . $file_name . '".');
-		}
-
-		return $this->app->urlFor(static::ROUTE_NAME, array('resource_type' => $resource_type, 'file_name' => $file_name));
+		// Required to override Slim's own getTemplatePathname.
+		return $this->getTemplatePath($relative_path);
 	}
 
 	public function render($template, $data = null) {
@@ -116,9 +114,9 @@ class DefaultTheme extends Slim\View {
 		}
 
 		$resources = $this->resources;
-		foreach ($resources as $resource_type => $files) {
-			foreach ($files as $i => $file) {
-				$resources[$resource_type][$i] = $this->getResourceUrl($resource_type, $file);
+		foreach ($resources as $resource_type => $resource_paths) {
+			foreach ($resource_paths as $i => $resource_path) {
+				$resources[$resource_type][$i] = $this->getResourceUrl($resource_path);
 			}
 		}
 
