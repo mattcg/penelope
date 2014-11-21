@@ -1,5 +1,7 @@
-		<footer>
-			<p><?php __(_m('application_footer')); ?></p>
-		</footer>
+		<?php
+
+		require __path('footer_footer.php');
+
+		?>
 	</body>
 </html>
