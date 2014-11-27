@@ -125,6 +125,20 @@ class Penelope extends OptionContainer {
 		Types\File::setSystemDirectory($directory);
 	}
 
+	public function addPage($name, $slug, $template, $title_key, \Closure $view_data_generator = null) {
+		$this->app->get('/' . $slug, Closure::bind(function() use ($view_data_generator) {
+
+			if ($view_data_generator) {
+				$this->app->render($template, $view_data_generator());
+			} else {
+				$this->app->render($template);
+			}
+
+		}, $this))->name($name);
+
+		$this->app->view->appendData(array('pages' => array($name => $title_key)));
+	}
+
 	public function defineEdge($name, $slug, $from_name, $to_name, array $properties = null, array $options = null) {
 		$edge_schema = $this->schema->addEdge($name, $slug, $from_name, $to_name, $properties, $options);
 		$from_schema = $this->schema->getNode($from_name);
