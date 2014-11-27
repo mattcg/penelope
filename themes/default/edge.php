@@ -1,4 +1,4 @@
-<main class="object edge">
+<main class="view object edge">
 	<article class="object edge <?php __class('edge-' . $edge->getSchema()->getName()); ?>">
 		<?php
 

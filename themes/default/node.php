@@ -1,24 +1,52 @@
-<main class="object node">
+<main class="view object node">
 	<article class="object node <?php __class('node-' . $node->getSchema()->getName()); ?>">
 		<?php
 
 		require __path('node_header.php');
 
 		?>
-		<div class="body">
+		<div class="main-body object node">
+			<?php
+
+			if (isset($body_property_name)) {
+				$property = $node->getProperty($body_property_name);
+				if ($property->hasValue()) {
+
+			?>
+			<div class="object-body">
+			<?php
+
+				require __path('types/' . $property->getSchema()->getType() . '.php');
+
+			?>
+			</div>
+			<?php
+
+				}
+			}
+
+			?>
 			<dl class="object-properties node-properties">
 			<?php
 
 			foreach ($node->getProperties() as $property) {
-				require 'property.php';
+				if (isset($abstract_property_name) and $abstract_property_name === $property->getName()) {
+					continue;
+				}
+
+				if (isset($body_property_name) and $body_property_name === $property->getName()) {
+					continue;
+				}
+
+				require __path('property.php');
 			}
 
 			?>
 			</dl>
 		</div>
-		<footer class="object node">
+		<footer class="main-footer object node">
 			<section class="edges">
-				<h1><?php __(_m('node_edges_title')); ?></h1>
+				<h1 class="section-title"><?php __(_m('node_edges_title')); ?></h1>
 				<?php
 
 				if (empty($edge_schemas) and empty($reverse_edge_schemas)) {
@@ -71,17 +99,20 @@
 
 						foreach ($edge_schema_edges as $edge) {
 
+							// Switch based on context and direction, handling reverse edges.
+							if ($node->getId() === $edge->getEndNode()->getId()) {
+								$related_node = $edge->getStartNode();
+							} else {
+								$related_node = $edge->getEndNode();
+							}
+
 						?>
-						<li class="object"><a href="<?php __(_e($edge->getPath())); ?>" title="<?php __(_e($edge->getTitle())); ?>"><?php
-
-						// Switch based on context and direction, handling reverse edges.
-						if ($node->getId() === $edge->getEndNode()->getId()) {
-							__(_e($edge->getStartNode()->getTitle()));
-						} else {
-							__(_e($edge->getEndNode()->getTitle()));
-						}
-
-						?></a></li>
+						<li class="object <?php __class('object-type-' . $related_node->getSchema()->getName()); ?>">
+							<a class="object-link" href="<?php __(_e($edge->getPath())); ?>" title="<?php __(_e($edge->getTitle())); ?>">
+								<h1 class="object-title"><?php __(_e($related_node->getTitle())); ?></h1>
+								<h2 class="object-subtitle"><?php __(_e($related_node->getSchema()->getDisplayName())); ?></h2>
+							</a>
+						</li>
 						<?php
 
 						}
@@ -113,9 +144,15 @@
 						usort($reverse_edge_schema_edges, $collator_sorter);
 
 						foreach ($reverse_edge_schema_edges as $reverse_edge) {
+							$related_node = $reverse_edge->getStartNode();
 
 						?>
-						<li class="object"><a href="<?php __(_e($reverse_edge->getPath())); ?>" title="<?php __(_e($reverse_edge->getTitle())); ?>"><?php __(_e($reverse_edge->getStartNode()->getTitle())); ?></a></li>
+						<li class="object <?php __class('object-type-' . $related_node->getSchema()->getName()); ?>">
+							<a class="object-link" href="<?php __(_e($reverse_edge->getPath())); ?>" title="<?php __(_e($reverse_edge->getTitle())); ?>">
+								<h1 class="object-title"><?php __(_e($related_node->getTitle())); ?></h1>
+								<h2 class="object-subtitle"><?php __(_e($related_node->getSchema()->getDisplayName())); ?></h2>
+							</a>
+						</li>
 						<?php
 
 						}

@@ -5,7 +5,7 @@
 		require __path('node_header.php');
 
 		?>
-		<div class="body">
+		<div class="main-body object node">
 			<?php
 
 			if (!empty($error)) {
@@ -31,12 +31,12 @@
 				?>
 				<input type="hidden" name="_METHOD" value="PUT">
 				<hr>
-				<input type="submit" value="<?php __(_m('update_node_button_text')); ?>">
+				<input class="crud-button update" type="submit" value="<?php __(_m('update_node_button_text')); ?>">
 			</form>
 
 			<form class="delete object node <?php __class('node-' . $node_schema->getName()); ?>" action="<?php __(_e($node->getPath())); ?>" method="POST">
 				<input type="hidden" name="_METHOD" value="DELETE">
-				<input type="submit" value="<?php __(_m('delete_node_button_text')); ?>">
+				<input class="crud-button delete" type="submit" value="<?php __(_m('delete_node_button_text')); ?>">
 			</form>
 		</div>
 	</article>

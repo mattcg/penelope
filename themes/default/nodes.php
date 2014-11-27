@@ -4,7 +4,7 @@
 	require __path('node_header.php');
 
 	?>
-	<div class="body">
+	<div class="main-body">
 		<?php
 
 		if (empty($nodes)) {
@@ -31,7 +31,12 @@
 				foreach ($nodes as $node) {
 
 				?>
-				<li class="object"><a href="<?php __(_e($node->getPath())); ?>" title="<?php __(_e($node->getTitle())); ?>"><?php __(_e($node->getTitle())); ?></a></li>
+				<li class="object <?php __class('object-type-' . $node->getSchema()->getName()); ?>">
+					<a class="object-link" href="<?php __(_e($node->getPath())); ?>" title="<?php __(_e($node->getTitle())); ?>">
+						<h1 class="object-title"><?php __(_e($node->getTitle())); ?></h1>
+						<h2 class="object-subtitle"><?php __(_e($node->getSchema()->getDisplayName())); ?></h2>
+					</a>
+				</li>
 				<?php
 
 				}

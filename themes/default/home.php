@@ -2,7 +2,7 @@
 	<header>
 		<h1><?php __($title); ?></h1>
 	</header>
-	<div class="body">
+	<div class="main-body home">
 		<?php
 
 		if (empty($node_schemas)) {

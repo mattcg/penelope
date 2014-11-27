@@ -5,7 +5,7 @@
 		require __path('node_header.php');
 
 		?>
-		<div class="body">
+		<div class="main-body object node">
 			<?php
 
 			if (!empty($error)) {
@@ -30,7 +30,7 @@
 
 				?>
 				<hr>
-				<input type="submit" value="<?php __(_m('create_node_button_text')); ?>">
+				<input class="crud-button create" type="submit" value="<?php __(_m('create_node_button_text')); ?>">
 			</form>
 		</div>
 	</article>

@@ -39,6 +39,7 @@ class SearchController extends Controller {
 		if ($query) {
 			$view_data['title'] = $this->_m('search_title', $query);
 			$view_data['nodes'] = $this->query($query);
+			$view_data['result_count'] = count($view_data['nodes']);
 		} else {
 			$view_data['title'] = $this->_m('search_title_no_q', $query);
 		}
