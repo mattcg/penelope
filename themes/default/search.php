@@ -1,6 +1,20 @@
 <main class="collection nodes search">
 	<header class="main-header search">
-		<nav class="breadcrumb" itemprop="breadcrumb"><a class="main-type" href="/"><?php __(_m('search_breadcrumb')); ?></a> <span class="divider">→</span> <?php __(_e($query)); ?></nav>
+		<nav class="breadcrumb" itemprop="breadcrumb">
+			<a class="main-type" href="/"><?php __(_m('search_breadcrumb')); ?></a>
+			<?php
+
+			if ($query) {
+
+			?>
+			<span class="divider">→</span>
+			<?php
+
+				__(_e($query));
+			}
+
+			?>
+		</nav>
 		<p class="search-result-count"><?php __(_m('search_result_count', $result_count)); ?></p>
 	</header>
 	<div class="main-body search">

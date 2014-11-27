@@ -59,7 +59,7 @@
 			}
 
 			?>
-			<li class="collection"><a class="crud-button collection" href="<?php __(_e($node_schema->getCollectionPath())); ?>" title="<?php __(_a('view_node_collection_button_title', $node_schema->getDisplayName())); ?>"><?php __(_m('view_node_collection_button_text')); ?></a></li>
+			<li class="collection"><a class="crud-button collection" href="<?php __(_e($node_schema->getCollectionPath())); ?>" title="<?php __(_a('view_node_collection_button_title', $node_schema->getDisplayName(0))); ?>"><?php __(_m('view_node_collection_button_text')); ?></a></li>
 		</ul>
 	</nav>
 </header>
