@@ -55,11 +55,17 @@ class Penelope extends OptionContainer {
 			$controller->read($file_name);
 		}, $this));
 
+		if ($this->hasOption('search.slug')) {
+			$search_slug = $this->getOption('search.slug');
+		} else {
+			$search_slug = 'search';
+		}
+
 		// Set up the search controller.
-		$app->get('/search', Closure::bind(function() {
+		$app->get('/' . $search_slug, Closure::bind(function() {
 			$controller = new Controllers\SearchController($this->app, $this->schema, $this->client);
 			$controller->run();
-		}, $this));
+		}, $this))->name('search');
 	}
 
 	public function getClient() {
