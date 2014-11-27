@@ -26,7 +26,7 @@
 			}
 
 			?>
-			<dl class="object-properties node-properties">
+			<dl class="object-properties node-properties" title="<?php __(_m('object_properties_title')); ?>">
 			<?php
 
 			foreach ($node->getProperties() as $property) {
