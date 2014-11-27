@@ -20,7 +20,7 @@ class NodesController extends ObjectController {
 	public function read($schema_slug) {
 		$node_schema = $this->getNodeSchemaBySlug($schema_slug);
 
-		$view_data = array('title' => $this->_m('node_collection_title', $node_schema->getDisplayName()), 'node_schema' => $node_schema);
+		$view_data = array('title' => $this->_m('node_collection_title', $node_schema->getDisplayName(0)), 'node_schema' => $node_schema);
 
 		$page = (int) $this->app->request->get('page');
 		if ($page < 1) {
