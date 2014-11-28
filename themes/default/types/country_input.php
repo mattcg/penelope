@@ -31,7 +31,7 @@ if ($property->getSchema()->isMultiValue()) {
 		foreach (Country::getCodes() as $code) {
 
 ?>
-	<option value="<?php __($code); ?>"><?php __(_m(Country::getName($code, __locale()))); ?></option>
+	<option value="<?php __($code); ?>"><?php __(_e(Country::getName($code, __locale()))); ?></option>
 <?php
 
 		}
@@ -49,7 +49,7 @@ if ($property->getSchema()->isMultiValue()) {
 foreach (Country::getCodes() as $code) {
 
 ?>
-	<option value="<?php __($code); ?>"<?php if ($property->hasValue() and 0 === strcasecmp($property->getValue(), $code)) { ?> selected<?php } ?>><?php __(Country::getName($code, __locale())); ?></option>
+	<option value="<?php __($code); ?>"<?php if ($property->hasValue() and 0 === strcasecmp($property->getValue(), $code)) { ?> selected<?php } ?>><?php __(_e(Country::getName($code, __locale()))); ?></option>
 <?php
 
 }
