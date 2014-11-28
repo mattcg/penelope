@@ -14,6 +14,12 @@ function _e($string) {
 	return $app->view()->_e($string);
 }
 
+function _s($string) {
+
+	// Strip tags. For use with outputting messages as tag attributes.
+	return _e(strip_tags($string));
+}
+
 function _m() {
 	global $app;
 

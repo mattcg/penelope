@@ -1,14 +1,40 @@
-<header class="object edge">
-	<h1><?php __($title); ?></h1>
+<header class="main-header object edge">
+	<?php
+
+	if (!isset($edge_schema)) {
+		$edge_schema = $edge->getSchema();
+	}
+
+	if (!isset($node_schema)) {
+		$node_schema = $node->getSchema();
+	}
+
+	?>
+	<nav class="breadcrumb" itemprop="breadcrumb">
+		<a class="main-type" href="<?php __(_e($node_schema->getCollectionPath())); ?>"><?php __($node_schema->getDisplayName(0)); ?></a>
+		<span class="divider">→</span>
+		<a href="<?php __(_e($node->getPath())); ?>" title="<?php __(_e($node->getTitle())); ?>"><?php __(_e($node->getTitle())); ?></a>
+		<span class="divider">→</span>
+		<a href="<?php __(_e($node->getEdgeCollectionPath($edge_schema))); ?>" title="<?php __(_a('edge_collection_title', $edge_schema->getDisplayName(), $node->getTitle())); ?>"><?php __($edge_schema->getDisplayName(0)); ?></a>
+		<?php
+
+		if (isset($edge)) {
+			$end_node = $edge->getEndNode();
+
+		?>
+		<span class="divider">→</span>
+		<a href="<?php __(_e($end_node->getPath())); ?>" title="<?php __(_e($end_node->getTitle())); ?>"><?php __(_e($end_node->getTitle())); ?></a>
+		<?php
+
+		}
+
+		?>
+	</nav>
+	<div class="main-title-group">
+		<h1 class="main-title"><?php __($title); ?></h1>
+	</div>
 	<nav class="crud">
 		<ul>
-			<?php
-
-			if (!isset($edge_schema)) {
-				$edge_schema = $edge->getSchema();
-			}
-
-			?>
 			<li class="new"><a class="button new" href="<?php __(_e($node->getNewEdgePath($edge_schema))); ?>" title="<?php __(_a('new_edge_button_title', $edge_schema->getDisplayName(), $node->getTitle())); ?>"><?php __(_m('new_edge_button_text')); ?></a></li>
 			<?php
 

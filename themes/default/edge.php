@@ -5,8 +5,7 @@
 		require __path('edge_header.php');
 
 		?>
-		<div class="body">
-			<object class="svg edge-svg" data="<?php __(_e($edge->getSvgPath())); ?>" height="100" width="400" type="image/svg+xml"></object>
+		<div class="main-body">
 			<dl class="object-properties edge-properties">
 			<?php
 

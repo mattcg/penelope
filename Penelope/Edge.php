@@ -35,10 +35,6 @@ class Edge extends Object {
 		return $this->formatPath($this->schema->getPath());
 	}
 
-	public function getSvgPath() {
-		return $this->formatPath($this->schema->getSvgPath());
-	}
-
 	public function getEditPath() {
 		return $this->formatPath($this->schema->getEditPath());
 	}

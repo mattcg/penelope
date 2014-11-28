@@ -7,7 +7,7 @@
 
 	?>
 	<nav class="breadcrumb" itemprop="breadcrumb">
-		<a class="main-type" href="/<?php __(_e($node_schema->getSlug())); ?>/"><?php __($node_schema->getDisplayName(0)); ?></a>
+		<a class="main-type" href="<?php __(_e($node_schema->getCollectionPath())); ?>"><?php __($node_schema->getDisplayName(0)); ?></a>
 		<?php
 
 		if (isset($node)) {

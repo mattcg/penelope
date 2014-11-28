@@ -195,11 +195,6 @@ class Penelope extends OptionContainer {
 			$this->app->controller->read($from_slug, $node_id, $edge_slug, $edge_id);
 		}, $this));
 
-		// Same as above, but with SVG path.
-		$app->get($edge_schema->getSvgPath(), $edge_middleware, Closure::bind(function($node_id, $edge_id) use ($from_slug, $edge_slug) {
-			$this->app->controller->readSvg($from_slug, $node_id, $edge_slug, $edge_id);
-		}, $this));
-
 		// Delete the edge, with the given schema name ID, coming from the node with the given schema name and ID.
 		$app->delete($edge_path, $edge_middleware, Closure::bind(function($node_id, $edge_id) use ($from_slug, $edge_slug) {
 			$this->app->controller->delete($from_slug, $node_id, $edge_slug, $edge_id);

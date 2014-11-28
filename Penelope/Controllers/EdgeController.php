@@ -23,7 +23,7 @@ class EdgeController extends ObjectController {
 	public function read($node_schema_slug, $node_id, $edge_schema_slug, $edge_id) {
 		$edge = $this->getByParamsArray(func_get_args());
 
-		$viewdata = array('title' => $this->_m('edge_title', $edge->getSchema()->getDisplayName(), $edge->getStartNode()->getTitle(), $edge->getEndNode()->getTitle()));
+		$viewdata = array('title' => $edge->getTitle());
 
 		$viewdata['edge'] = $edge;
 		$viewdata['node'] = $this->getNodeByParams($node_schema_slug, $node_id);
@@ -31,18 +31,11 @@ class EdgeController extends ObjectController {
 		$this->app->render('edge', $viewdata);
 	}
 
-	public function readSvg($node_schema_slug, $node_id, $edge_schema_slug, $edge_id) {
-		$edge = $this->getByParamsArray(func_get_args());
-
-		$this->app->response->headers->set('Content-Type', 'image/svg+xml');
-		$this->app->render('edge_svg', array('edge' => $edge, 'bookends' => false));
-	}
-
 	public function delete($node_schema_slug, $node_id, $edge_schema_slug, $edge_id) {
 		$edge = $this->getByParamsArray(func_get_args());
 		$edge->delete();
 
-		$viewdata = array('title' => $this->_m('edge_deleted_title', $edge->getSchema()->getDisplayName(), $edge->getStartNode()->getTitle(), $edge->getEndNode()->getTitle()));
+		$viewdata = array('title' => $this->_m('edge_deleted_title', $edge->getTitle()));
 		$viewdata['node'] = $this->getNodeByParams($node_schema_slug, $node_id);
 		$viewdata['edge_schema'] = $edge->getSchema();
 
@@ -81,7 +74,7 @@ class EdgeController extends ObjectController {
 
 		$view_data = array('error' => $e);
 
-		$view_data['title'] = $this->_m('edit_edge_title', $edge_schema->getDisplayName(), $edge->getStartNode()->getTitle(), $edge->getEndNode()->getTitle());
+		$view_data['title'] = $this->_m('edit_edge_title', $edge->getTitle());
 		$view_data['edge_schema'] = $edge_schema;
 		$view_data['edge'] = $edge;
 		$view_data['node'] = $this->getNodeByParams($node_schema_slug, $node_id);

@@ -4,7 +4,7 @@
 	require __path('edge_header.php');
 
 	?>
-	<div class="body">
+	<div class="main-body">
 		<?php
 
 		if (empty($edges)) {
@@ -21,9 +21,16 @@
 				<?php
 
 				foreach ($edges as $edge) {
+					$related_node = $edge->getEndNode();
 
 				?>
-				<li class="object"><a href="<?php __(_e($edge->getPath())); ?>" title="<?php __(_e($edge->getTitle())); ?>"><?php __(_e($edge->getTitle())); ?></a></li>
+				<li class="object <?php __class('object-type-' . $related_node->getSchema()->getName()); ?>">
+					<a class="object-link" href="<?php __(_e($related_node->getPath())); ?>" title="<?php __(_s($related_node->getTitle())); ?>">
+						<h1 class="object-title"><?php __(_e($related_node->getTitle())); ?></h1>
+						<h2 class="object-subtitle"><?php __(_e($related_node->getSchema()->getDisplayName())); ?></h2>
+					</a>
+					<a class="edge-link" href="<?php __(_e($edge->getPath())); ?>" title="<?php __(_s($edge->getTitle())); ?>"><?php __(_m('node_edge_link_title')); ?></a>
+				</li>
 				<?php
 
 				}

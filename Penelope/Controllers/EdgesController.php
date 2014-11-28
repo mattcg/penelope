@@ -76,7 +76,7 @@ class EdgesController extends ObjectController {
 			return;
 		}
 
-		$view_data = array('title' => $this->_m('edge_created_title', $edge_schema->getDisplayName(), $edge->getStartNode()->getTitle(), $edge->getEndNode()->getTitle()), 'edge' => $edge, 'node' => $start_node);
+		$view_data = array('title' => $this->_m('edge_created_title', $edge->getTitle()), 'edge' => $edge, 'node' => $start_node);
 		$app->response->setStatus(201);
 		$app->response->headers->set('Location', $edge->getPath());
 		$app->render('edge_created', $view_data);
@@ -88,7 +88,7 @@ class EdgesController extends ObjectController {
 		$edge_schema = $this->getEdgeSchemaBySlugs($node_schema_slug, $edge_schema_slug);
 		$edges = $this->getEdgesByParams($node_schema_slug, $node_id, $edge_schema_slug);
 
-		$view_data = array('title' => $this->_m('edge_collection_title', $edge_schema->getName(), $node->getTitle()));
+		$view_data = array('title' => $this->_m('edge_collection_title', $edge_schema->getDisplayName(), $node->getTitle()));
 		$view_data['node'] = $node;
 		$view_data['edge_schema'] = $edge_schema;
 		$view_data['edges'] = $edges;
