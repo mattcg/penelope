@@ -154,7 +154,7 @@
 				?>
 				<h2 class="edge-schema-title<?php
 
-				if (empty($edge_schema_edges)) {
+				if (empty($reverse_edge_schema_edges)) {
 					__(' ' . __class('no-edges', false));
 				}
 
