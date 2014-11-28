@@ -136,8 +136,9 @@ class Penelope extends OptionContainer {
 		Types\File::setSystemDirectory($directory);
 	}
 
-	public function addPage($name, $slug, $template, $title_key, \Closure $view_data_generator = null) {
-		$this->app->get('/' . $slug, Closure::bind(function() use ($view_data_generator) {
+	// TODO: Figure out a way of avoiding use of the title key.
+	public function addPage($name, $slug, $template, $title_key, \Closure $view_data_generator) {
+		$this->app->get('/' . $slug, Closure::bind(function() use ($template, $view_data_generator) {
 
 			if ($view_data_generator) {
 				$this->app->render($template, $view_data_generator());
