@@ -36,7 +36,7 @@ abstract class ObjectController extends Controller {
 
 		// Validate the format of the given node ID.
 		if (!ctype_digit($node_id)) {
-			$this->render404(new \InvalidArgumentException('Invalid node ID "' . $node_id . '".'));
+			$this->app->notFound(new \InvalidArgumentException('Invalid node ID "' . $node_id . '".'));
 			$this->app->stop();
 		}
 
@@ -45,12 +45,12 @@ abstract class ObjectController extends Controller {
 
 		// If the node with the given ID doesn't exist.
 		} catch (Exceptions\NotFoundException $e) {
-			$this->render404($e);
+			$this->app->notFound($e);
 			$this->app->stop();
 
 		// If the node with the given ID exists, but doesn't match the given schema.
 		} catch (Exceptions\SchemaException $e) {
-			$this->render404($e);
+			$this->app->notFound($e);
 			$this->app->stop();
 		}
 
@@ -63,7 +63,7 @@ abstract class ObjectController extends Controller {
 
 		// If the node schema with the given slug doesn't exist.
 		} catch (\InvalidArgumentException $e) {
-			$this->render404($e);
+			$this->app->notFound($e);
 			$this->app->stop();
 		}
 
@@ -74,7 +74,7 @@ abstract class ObjectController extends Controller {
 
 		// Validate the format of the given edge ID.
 		if (!ctype_digit($edge_id)) {
-			$this->render404(new \InvalidArgumentException('Invalid edge ID "' . $edge_id . '".'));
+			$this->app->notFound(new \InvalidArgumentException('Invalid edge ID "' . $edge_id . '".'));
 			$this->app->stop();
 		}
 
@@ -93,20 +93,20 @@ abstract class ObjectController extends Controller {
 
 		// If the edge with the given ID doesn't exist.
 		} catch (Exceptions\NotFoundException $e) {
-			$this->render404($e);
+			$this->app->notFound($e);
 			$this->app->stop();
 
 		// If the edge with the given ID exists, but:
 		//  - it doesn't match the given schema
 		//  - its related nodes don't match its own schema
 		} catch (Exceptions\SchemaException $e) {
-			$this->render404($e);
+			$this->app->notFound($e);
 			$this->app->stop();
 		}
 
 		// If the node with the given ID is not the start node of the edge with the given ID.
 		if ($edge->getStartNode()->getId() !== $node->getId()) {
-			$this->render404(new Exceptions\NotFoundException('There is no edge from the given node.'));
+			$this->app->notFound(new Exceptions\NotFoundException('There is no edge from the given node.'));
 			$this->app->stop();
 		}
 
@@ -120,7 +120,7 @@ abstract class ObjectController extends Controller {
 
 		// If the edge schema with the given slug doesn't exist.
 		} catch (\InvalidArgumentException $e) {
-			$this->render404($e);
+			$this->app->notFound($e);
 			$this->app->stop();
 		}
 
@@ -128,7 +128,7 @@ abstract class ObjectController extends Controller {
 
 		// If the edge's schema defines relationships from nodes of a different schema.
 		if ($start_node_schema->getSlug() !== $node_schema_slug) {
-			$this->render404(new Exceptions\SchemaException('The schema for edges of type "' . $edge_schema->getName() . '" does not permit relationships with nodes of the given type.'));
+			$this->app->notFound(new Exceptions\SchemaException('The schema for edges of type "' . $edge_schema->getName() . '" does not permit relationships with nodes of the given type.'));
 			$this->app->stop();
 		}
 

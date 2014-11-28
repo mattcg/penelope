@@ -66,6 +66,17 @@ class Penelope extends OptionContainer {
 			$controller = new Controllers\SearchController($this->app, $this->schema, $this->client);
 			$controller->run();
 		}, $this))->name('search');
+
+		// Set up a default handler for 404 errors.
+		// Only Penelope application-generated exceptions are permitted.
+		$app->notFound(function(Exceptions\Exception $e = null) {
+			if (!$e) {
+				$e = new Exceptions\NotFoundException('The requested page cannot be found.');
+			}
+
+			$controller = new Controllers\Controller($this->app);
+			$this->app->render('error', array('title' => $controller->_m('error_404_title'), 'error' => $e), 404);
+		});
 	}
 
 	public function getClient() {
@@ -107,7 +118,7 @@ class Penelope extends OptionContainer {
 			if ($theme->hasResource($resource_path)) {
 				$controller->read($theme->getResourcePath($resource_path));
 			} else {
-				$controller->render404(new Exceptions\Exception('Unknown resource "' . implode('/', $resource_path) . '".'));
+				$$this->getApp()->notFound(new Exceptions\Exception('Unknown resource "' . implode('/', $resource_path) . '".'));
 			}
 
 		}, $this))->name($theme::ROUTE_NAME);

@@ -19,7 +19,7 @@ class FileController extends Controller {
 
 	public function read($system_path) {
 		if (!is_readable($system_path)) {
-			$this->render404(new Exceptions\Exception('The requested file is unreadable or does not exist at "' . $system_path . '".'));
+			$this->app->notFound(new Exceptions\Exception('The requested file is unreadable or does not exist at "' . $system_path . '".'));
 			return;
 		}
 

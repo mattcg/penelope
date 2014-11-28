@@ -22,7 +22,7 @@ class UploadController extends FileController {
 		// Null is returned if the given file name is invalid.
 		// TODO: `File::getSystemPath` should throw an exception and it should be handled here.
 		if (!$system_path) {
-			$this->render404();
+			$this->app->notFound();
 			return;
 		}
 

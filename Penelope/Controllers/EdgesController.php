@@ -31,7 +31,7 @@ class EdgesController extends ObjectController {
 
 		// If the edge schema does not define relationships from nodes of the given type.
 		} catch (Exceptions\SchemaException $e) {
-			$this->render404($e);
+			$this->app->notFound($e);
 			$this->app->stop();
 		}
 

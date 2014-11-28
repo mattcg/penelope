@@ -65,7 +65,7 @@ class EdgeController extends ObjectController {
 		try {
 			$edge->save();
 		} catch (Exceptions\NotFoundException $e) { // Thrown when the node isn't found. Indicates an edit conflict in this case.
-			$this->render404(new NotFoundException('The edge was deleted by another user before it could be updated.'));
+			$this->app->notFound(new NotFoundException('The edge was deleted by another user before it could be updated.'));
 			return;
 		} catch (\Exception $e) {
 			$this->renderEditForm($node_schema_slug, $node_id, $edge_schema_slug, $edge_id);

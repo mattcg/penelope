@@ -14,20 +14,14 @@ namespace Karwana\Penelope\Controllers;
 
 use Slim;
 
-use Karwana\Penelope\Exceptions;
 use Karwana\Penelope\DefaultTheme;
 
-abstract class Controller {
+class Controller {
 
 	protected $app;
 
 	public function __construct(Slim\Slim $app) {
 		$this->app = $app;
-	}
-
-	// Only Penelope application-generated exceptions are permitted.
-	public function render404(Exceptions\Exception $e) {
-		$this->app->render('error/404', array('title' => 'Not found', 'error' => $e), 404);
 	}
 
 	public function _e($string) {

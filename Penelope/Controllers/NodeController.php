@@ -87,7 +87,7 @@ class NodeController extends ObjectController {
 		try {
 			$node->save();
 		} catch (Exceptions\NotFoundException $e) { // Thrown when the node isn't found. Indicates an edit conflict in this case.
-			$this->render404(new NotFoundException('The node was deleted by another user before it could be updated.'));
+			$this->app->notFound(new NotFoundException('The node was deleted by another user before it could be updated.'));
 			return;
 		} catch (\Exception $e) {
 			$this->renderEditForm($schema_slug, $node_id, $transient_properties, $e);
