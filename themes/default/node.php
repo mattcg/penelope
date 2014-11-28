@@ -166,7 +166,7 @@
 								<h1 class="object-title"><?php __(_e($related_node->getTitle())); ?></h1>
 								<h2 class="object-subtitle"><?php __(_e($related_node->getSchema()->getDisplayName())); ?></h2>
 							</a>
-							<a class="edge-link" href="<?php __(_e($edge->getPath())); ?>" title="<?php __(_s($edge->getTitle())); ?>"><?php __(_m('node_edge_link_title')); ?></a>
+							<a class="edge-link" href="<?php __(_e($reverse_edge->getPath())); ?>" title="<?php __(_s($reverse_edge->getTitle())); ?>"><?php __(_m('node_edge_link_title')); ?></a>
 						</li>
 						<?php
 
