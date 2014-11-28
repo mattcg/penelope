@@ -144,7 +144,7 @@
 							$reverse_edge_schema_edges = $reverse_edges[$reverse_edge_schema->getName()];
 
 				?>
-				<h2 class="edge_schema_title<?php
+				<h2 class="edge-schema-title<?php
 
 				if (empty($edge_schema_edges)) {
 					__(' ' . __class('no-edges', false));
