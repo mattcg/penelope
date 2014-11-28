@@ -10,10 +10,10 @@ if ($property->getSchema()->isMultiValue()) {
 	<option value=""></option>
 <?php
 
-		foreach (Country::getCountries() as $country) {
+		foreach (Country::getCodes() as $code) {
 
 ?>
-	<option value="<?php __($country['code']); ?>"<?php if (0 === strcasecmp($value, $country['code'])) { ?> selected<?php } ?>><?php __(_m('countries.' . $country['code'])); ?></option>
+	<option value="<?php __($code); ?>"<?php if (0 === strcasecmp($value, $code)) { ?> selected<?php } ?>><?php __(_e(Country::getName($code, __locale()))); ?></option>
 <?php
 
 		}
@@ -28,10 +28,10 @@ if ($property->getSchema()->isMultiValue()) {
 	<option value=""></option>
 <?php
 
-		foreach (Country::getCountries() as $country) {
+		foreach (Country::getCodes() as $code) {
 
 ?>
-	<option value="<?php __($country['code']); ?>"><?php __(_m('countries.' . $country['code'])); ?></option>
+	<option value="<?php __($code); ?>"><?php __(_m(Country::getName($code, __locale()))); ?></option>
 <?php
 
 		}
@@ -46,10 +46,10 @@ if ($property->getSchema()->isMultiValue()) {
 	<option value=""></option>
 <?php
 
-foreach (Country::getCountries() as $country) {
+foreach (Country::getCodes() as $code) {
 
 ?>
-	<option value="<?php __($country['code']); ?>"<?php if ($property->hasValue() and 0 === strcasecmp($property->getValue(), $country['code'])) { ?> selected<?php } ?>><?php __(_m('countries.' . $country['code'])); ?></option>
+	<option value="<?php __($code); ?>"<?php if ($property->hasValue() and 0 === strcasecmp($property->getValue(), $code)) { ?> selected<?php } ?>><?php __(Country::getName($code, __locale())); ?></option>
 <?php
 
 }

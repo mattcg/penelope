@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="<?php __($locale); ?>"<?php
+<html lang="<?php __(__locale()); ?>"<?php
 
 	if (isset($document_classes)) {
 

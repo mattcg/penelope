@@ -11,7 +11,7 @@ if ($property->getSchema()->isMultiValue()) {
 	foreach ($property->getValue() as $value) {
 
 	?>
-	<li><?php __(_m('countries.' . $value)); ?></li>
+	<li><?php __(_e(Country::getName($value, __locale()))); ?></li>
 	<?php
 
 	}
@@ -22,7 +22,7 @@ if ($property->getSchema()->isMultiValue()) {
 
 } else {
 
-	__(_m('countries.' . $property->getValue()));
+	__(_e(Country::getName($property->getValue(), __locale())));
 
 }
 

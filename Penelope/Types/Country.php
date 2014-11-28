@@ -18,44 +18,264 @@ use Karwana\Penelope\Exceptions;
 
 class Country extends Type {
 
-	public static function getCountries() {
-		$countries = array();
-		foreach (ISO3166::getAll() as $country) {
-			$countries[] = array('name' => $country['name'], 'code' => $country['alpha3']);
-		}
+	private static $map = array(
+		'AFG' => 'AF',
+		'ALA' => 'AX',
+		'ALB' => 'AL',
+		'DZA' => 'DZ',
+		'ASM' => 'AS',
+		'AND' => 'AD',
+		'AGO' => 'AO',
+		'AIA' => 'AI',
+		'ATA' => 'AQ',
+		'ATG' => 'AG',
+		'ARG' => 'AR',
+		'ARM' => 'AM',
+		'ABW' => 'AW',
+		'AUS' => 'AU',
+		'AUT' => 'AT',
+		'AZE' => 'AZ',
+		'BHS' => 'BS',
+		'BHR' => 'BH',
+		'BGD' => 'BD',
+		'BRB' => 'BB',
+		'BLR' => 'BY',
+		'BEL' => 'BE',
+		'BLZ' => 'BZ',
+		'BEN' => 'BJ',
+		'BMU' => 'BM',
+		'BTN' => 'BT',
+		'BOL' => 'BO',
+		'BES' => 'BQ',
+		'BIH' => 'BA',
+		'BWA' => 'BW',
+		'BVT' => 'BV',
+		'BRA' => 'BR',
+		'IOT' => 'IO',
+		'BRN' => 'BN',
+		'BGR' => 'BG',
+		'BFA' => 'BF',
+		'BDI' => 'BI',
+		'KHM' => 'KH',
+		'CMR' => 'CM',
+		'CAN' => 'CA',
+		'CPV' => 'CV',
+		'CYM' => 'KY',
+		'CAF' => 'CF',
+		'TCD' => 'TD',
+		'CHL' => 'CL',
+		'CHN' => 'CN',
+		'CXR' => 'CX',
+		'CCK' => 'CC',
+		'COL' => 'CO',
+		'COM' => 'KM',
+		'COG' => 'CG',
+		'COD' => 'CD',
+		'COK' => 'CK',
+		'CRI' => 'CR',
+		'HRV' => 'HR',
+		'CUB' => 'CU',
+		'CUW' => 'CW',
+		'CYP' => 'CY',
+		'CZE' => 'CZ',
+		'CIV' => 'CI',
+		'DNK' => 'DK',
+		'DJI' => 'DJ',
+		'DMA' => 'DM',
+		'DOM' => 'DO',
+		'ECU' => 'EC',
+		'EGY' => 'EG',
+		'SLV' => 'SV',
+		'GNQ' => 'GQ',
+		'ERI' => 'ER',
+		'EST' => 'EE',
+		'ETH' => 'ET',
+		'FLK' => 'FK',
+		'FRO' => 'FO',
+		'FJI' => 'FJ',
+		'FIN' => 'FI',
+		'FRA' => 'FR',
+		'GUF' => 'GF',
+		'PYF' => 'PF',
+		'ATF' => 'TF',
+		'GAB' => 'GA',
+		'GMB' => 'GM',
+		'GEO' => 'GE',
+		'DEU' => 'DE',
+		'GHA' => 'GH',
+		'GIB' => 'GI',
+		'GRC' => 'GR',
+		'GRL' => 'GL',
+		'GRD' => 'GD',
+		'GLP' => 'GP',
+		'GUM' => 'GU',
+		'GTM' => 'GT',
+		'GGY' => 'GG',
+		'GIN' => 'GN',
+		'GNB' => 'GW',
+		'GUY' => 'GY',
+		'HTI' => 'HT',
+		'HMD' => 'HM',
+		'VAT' => 'VA',
+		'HND' => 'HN',
+		'HKG' => 'HK',
+		'HUN' => 'HU',
+		'ISL' => 'IS',
+		'IND' => 'IN',
+		'IDN' => 'ID',
+		'IRN' => 'IR',
+		'IRQ' => 'IQ',
+		'IRL' => 'IE',
+		'IMN' => 'IM',
+		'ISR' => 'IL',
+		'ITA' => 'IT',
+		'JAM' => 'JM',
+		'JPN' => 'JP',
+		'JEY' => 'JE',
+		'JOR' => 'JO',
+		'KAZ' => 'KZ',
+		'KEN' => 'KE',
+		'KIR' => 'KI',
+		'PRK' => 'KP',
+		'KOR' => 'KR',
+		'KWT' => 'KW',
+		'KGZ' => 'KG',
+		'LAO' => 'LA',
+		'LVA' => 'LV',
+		'LBN' => 'LB',
+		'LSO' => 'LS',
+		'LBR' => 'LR',
+		'LBY' => 'LY',
+		'LIE' => 'LI',
+		'LTU' => 'LT',
+		'LUX' => 'LU',
+		'MAC' => 'MO',
+		'MKD' => 'MK',
+		'MDG' => 'MG',
+		'MWI' => 'MW',
+		'MYS' => 'MY',
+		'MDV' => 'MV',
+		'MLI' => 'ML',
+		'MLT' => 'MT',
+		'MHL' => 'MH',
+		'MTQ' => 'MQ',
+		'MRT' => 'MR',
+		'MUS' => 'MU',
+		'MYT' => 'YT',
+		'MEX' => 'MX',
+		'FSM' => 'FM',
+		'MDA' => 'MD',
+		'MCO' => 'MC',
+		'MNG' => 'MN',
+		'MNE' => 'ME',
+		'MSR' => 'MS',
+		'MAR' => 'MA',
+		'MOZ' => 'MZ',
+		'MMR' => 'MM',
+		'NAM' => 'NA',
+		'NRU' => 'NR',
+		'NPL' => 'NP',
+		'NLD' => 'NL',
+		'NCL' => 'NC',
+		'NZL' => 'NZ',
+		'NIC' => 'NI',
+		'NER' => 'NE',
+		'NGA' => 'NG',
+		'NIU' => 'NU',
+		'NFK' => 'NF',
+		'MNP' => 'MP',
+		'NOR' => 'NO',
+		'OMN' => 'OM',
+		'PAK' => 'PK',
+		'PLW' => 'PW',
+		'PSE' => 'PS',
+		'PAN' => 'PA',
+		'PNG' => 'PG',
+		'PRY' => 'PY',
+		'PER' => 'PE',
+		'PHL' => 'PH',
+		'PCN' => 'PN',
+		'POL' => 'PL',
+		'PRT' => 'PT',
+		'PRI' => 'PR',
+		'QAT' => 'QA',
+		'ROU' => 'RO',
+		'RUS' => 'RU',
+		'RWA' => 'RW',
+		'REU' => 'RE',
+		'BLM' => 'BL',
+		'SHN' => 'SH',
+		'KNA' => 'KN',
+		'LCA' => 'LC',
+		'MAF' => 'MF',
+		'SPM' => 'PM',
+		'VCT' => 'VC',
+		'WSM' => 'WS',
+		'SMR' => 'SM',
+		'STP' => 'ST',
+		'SAU' => 'SA',
+		'SEN' => 'SN',
+		'SRB' => 'RS',
+		'SYC' => 'SC',
+		'SLE' => 'SL',
+		'SGP' => 'SG',
+		'SXM' => 'SX',
+		'SVK' => 'SK',
+		'SVN' => 'SI',
+		'SLB' => 'SB',
+		'SOM' => 'SO',
+		'ZAF' => 'ZA',
+		'SGS' => 'GS',
+		'SSD' => 'SS',
+		'ESP' => 'ES',
+		'LKA' => 'LK',
+		'SDN' => 'SD',
+		'SUR' => 'SR',
+		'SJM' => 'SJ',
+		'SWZ' => 'SZ',
+		'SWE' => 'SE',
+		'CHE' => 'CH',
+		'SYR' => 'SY',
+		'TWN' => 'TW',
+		'TJK' => 'TJ',
+		'TZA' => 'TZ',
+		'THA' => 'TH',
+		'TLS' => 'TL',
+		'TGO' => 'TG',
+		'TKL' => 'TK',
+		'TON' => 'TO',
+		'TTO' => 'TT',
+		'TUN' => 'TN',
+		'TUR' => 'TR',
+		'TKM' => 'TM',
+		'TCA' => 'TC',
+		'TUV' => 'TV',
+		'UGA' => 'UG',
+		'UKR' => 'UA',
+		'ARE' => 'AE',
+		'GBR' => 'GB',
+		'USA' => 'US',
+		'UMI' => 'UM',
+		'URY' => 'UY',
+		'UZB' => 'UZ',
+		'VUT' => 'VU',
+		'VEN' => 'VE',
+		'VNM' => 'VN',
+		'VGB' => 'VG',
+		'VIR' => 'VI',
+		'WLF' => 'WF',
+		'ESH' => 'EH',
+		'YEM' => 'YE',
+		'ZMB' => 'ZM',
+		'ZWE' => 'ZW'
+	);
 
-		return $countries;
+	public static function getCodes() {
+		return array_keys(self::$map);
 	}
 
-	public static function getCountryName($code) {
-		try {
-			$country = ISO3166::getByAlpha3($code);
-		} catch (\Exception $e) {
-			$country = null;
-		}
-
-		if (!$country) {
-			throw new Exceptions\TypeException('Invalid code "' . $code . '".');
-		}
-
-		return $country['name'];
-	}
-
-	public static function getCountryCode($name) {
-
-		// Special case for Venezuela, which is stored as 'Venezuela, Bolivarian Republic of'.
-		if (0 === strcasecmp('Venezuela', $name)) {
-			return 'VEN';
-		}
-
-		foreach (ISO3166::getAll() as $country) {
-			if (0 === strcasecmp($country['name'], $name) or
-
-				// Some country names use the 'The' prefix. These are stored as, for exampled 'United States (the)' in the underlying database.
-				0 === strcasecmp($country['name'], $name . ' (the)')) {
-				return $country['alpha3'];
-			}
-		}
+	public static function getName($code, $locale) {
+		return \Locale::getDisplayRegion('und-' . self::$map[$code], $locale);
 	}
 
 	public static function unserialize($value) {
@@ -76,9 +296,7 @@ class Country extends Type {
 			return true;
 		}
 
-		try {
-			$valid = (bool) ISO3166::getByAlpha3($value);
-		} catch (\Exception $e) {}
+		$valid = isset(self::$map[$value]);
 
 		if (!$valid) {
 			$message = 'The specified country code does not exist.';

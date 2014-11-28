@@ -89,3 +89,9 @@ function __formenc(Penelope\ObjectSchema $object_schema) {
 
 	__('application/x-www-form-urlencoded');
 }
+
+function __locale() {
+	global $app;
+
+	return $app->view->getMessageFormat()->getLocale();
+}

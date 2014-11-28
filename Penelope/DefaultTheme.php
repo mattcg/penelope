@@ -121,7 +121,7 @@ class DefaultTheme extends Slim\View {
 		}
 
 		if (false !== $this->data->get('bookends')) {
-			$header = parent::render('header.php', array('resources' => $resources, 'locale' => $this->messageformat->getLocale()));
+			$header = parent::render('header.php', array('resources' => $resources));
 			$footer = parent::render('footer.php');
 
 			return $header . parent::render($template . '.php') . $footer;
