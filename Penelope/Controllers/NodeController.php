@@ -34,9 +34,15 @@ class NodeController extends ObjectController {
 
 		$view_data['edge_schemas'] = $edge_schemas;
 		$view_data['edges'] = array();
+		$has_edges = false;
 
 		foreach ($edge_schemas as $edge_schema) {
-			$view_data['edges'][$edge_schema->getName()] = $node->getOutEdges($edge_schema);;
+			$edges = $node->getOutEdges($edge_schema);
+			$view_data['edges'][$edge_schema->getName()] = $edges;
+
+			if (!empty($edges)) {
+				$has_edges = true;
+			}
 		}
 
 		$reverse_edge_schemas = $this->schema->getInEdges($node_schema->getName());
@@ -54,8 +60,11 @@ class NodeController extends ObjectController {
 			if (!empty($reverse_edges)) {
 				$view_data['reverse_edge_schemas'][] = $reverse_edge_schema;
 				$view_data['reverse_edges'][$reverse_edge_schema->getName()] = $reverse_edges;
+				$has_edges = true;
 			}
 		}
+
+		$view_data['has_edges'] = $has_edges;
 
 		$this->app->render('node', $view_data);
 	}

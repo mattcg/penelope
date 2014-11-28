@@ -57,6 +57,14 @@
 
 				} else {
 
+					if (!$has_edges) {
+
+					?>
+				<p><?php __(_m('node_edges_none')); ?></p>
+					<?php
+
+					}
+
 					// Sort by title using Unicode Collation Algorithm rules.
 					$collator = \Collator::create('root');
 					$collator_sorter = function($a, $b) use ($collator, $node) {
@@ -95,7 +103,7 @@
 					__(' ' . __class('no-edges', false));
 				}
 
-				?>"><?php __(_e($edge_schema->getDisplayName())); ?></h2>
+				?>"><?php __(_e($edge_schema->getDisplayName(0))); ?></h2>
 				<nav class="collection edges <?php __class('edges-' . $edge_schema->getName()); ?>">
 					<ul>
 						<li class="new"><a class="button new" href="<?php __(_e($node->getNewEdgePath($edge_schema))); ?>" title="<?php __(_a('new_edge_button_title', $edge_schema->getDisplayName(), $node->getTitle())); ?> "><?php __(_m('new_edge_button_text')); ?></a></li>
