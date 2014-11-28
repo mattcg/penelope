@@ -62,10 +62,20 @@
 			<li class="collection"><a class="crud-button collection" href="<?php __(_e($node_schema->getCollectionPath())); ?>" title="<?php __(_a('view_node_collection_button_title', $node_schema->getDisplayName(0))); ?>"><?php __(_m('view_node_collection_button_text')); ?></a></li>
 		</ul>
 	</nav>
+	<?php
+
+	if (isset($node)) {
+
+	?>
 	<nav class="sections">
 		<ol>
 			<li><a href="#main"><?php __(_m('node_main_title')); ?></a></li>
 			<li><a href="#edges"><?php __(_m('node_edges_title')); ?></a></li>
 		</ol>
 	</nav>
+	<?php
+
+	}
+
+	?>
 </header>
