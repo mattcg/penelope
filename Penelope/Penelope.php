@@ -49,12 +49,14 @@ class Penelope extends OptionContainer {
 			$controller->read();
 		}, $this));
 
+		// TODO: Make the uploads slug configurable using the same suggested method as for search (below).
 		// Set up the uploads route.
 		$app->get('/uploads/:file_name', Closure::bind(function($file_name) {
 			$controller = new Controllers\UploadController($this->app);
 			$controller->read($file_name);
 		}, $this));
 
+		// TODO: Use the same technique using getPathFormat as used by ObjectSchema. Perhaps hive off those methods into a separate PathFormatter class.
 		if ($this->hasOption('search.slug')) {
 			$search_slug = $this->getOption('search.slug');
 		} else {
