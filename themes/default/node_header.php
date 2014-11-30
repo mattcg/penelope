@@ -21,13 +21,28 @@
 
 		?>
 	</nav>
-	<div class="main-title-group">
+	<?php
+
+	if (isset($node) and $option = $node_schema->getOption('format.figure') and $node->getProperty($option)->hasValue()) {
+		$has_figure = true;
+	} else {
+		$has_figure = false;
+	}
+
+	?>
+	<div class="main-title-group<?php
+
+	if ($has_figure) {
+		__(' contains-figure');
+	}
+
+	?>">
 		<a name="main"><h1 class="main-title"><?php __($title); ?></h1></a>
 		<?php
 
-		if (isset($abstract_property_name)) {
-			$property = $node->getProperty($abstract_property_name);
-			if ($property->hasValue()) {
+		if (isset($node)) {
+			$option = $node_schema->getOption('format.abstract');
+			if ($option and $property = $node->getProperty($option) and $property->hasValue()) {
 
 		?>
 		<div class="main-abstract">
@@ -40,6 +55,24 @@
 		<?php
 
 			}
+		}
+
+		?>
+		<?php
+
+		if ($has_figure) {
+			$property = $node->getProperty($node_schema->getOption('format.figure'));
+
+		?>
+		<div class="main-figure">
+		<?php
+
+			require __path('types/' . $property->getSchema()->getType() . '.php');
+
+		?>
+		</div>
+		<?php
+
 		}
 
 		?>

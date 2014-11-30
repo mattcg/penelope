@@ -8,9 +8,8 @@
 		<div class="main-body object node">
 			<?php
 
-			if (isset($body_property_name)) {
-				$property = $node->getProperty($body_property_name);
-				if ($property->hasValue()) {
+			$option = $node_schema->getOption('format.body');
+			if ($option and $property = $node->getProperty($option) and $property->hasValue()) {
 
 			?>
 			<div class="object-body">
@@ -22,19 +21,27 @@
 			</div>
 			<?php
 
-				}
 			}
 
 			?>
 			<dl class="object-properties node-properties" title="<?php __(_m('object_properties_title')); ?>">
 			<?php
 
-			foreach ($node->getProperties() as $property) {
-				if (isset($abstract_property_name) and $abstract_property_name === $property->getName()) {
-					continue;
-				}
+			$hidden_properties = array();
+			if ($node_schema->hasOption('format.abstract')) {
+				$hidden_properties[] = $node_schema->getOption('format.abstract');
+			}
 
-				if (isset($body_property_name) and $body_property_name === $property->getName()) {
+			if ($node_schema->hasOption('format.body')) {
+				$hidden_properties[] = $node_schema->getOption('format.body');
+			}
+
+			if ($node_schema->hasOption('format.figure')) {
+				$hidden_properties[] = $node_schema->getOption('format.figure');
+			}
+
+			foreach ($node->getProperties() as $property) {
+				if (in_array($property->getName(), $hidden_properties, true)) {
 					continue;
 				}
 

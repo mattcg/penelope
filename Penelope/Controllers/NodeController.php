@@ -22,14 +22,6 @@ class NodeController extends ObjectController {
 
 		$view_data = array('title' => $node->getTitle(), 'node' => $node, 'node_schema' => $node_schema);
 
-		if ($abstract_property_name = $node_schema->getOption('fields.abstract')) {
-			$view_data['abstract_property_name'] = $abstract_property_name;
-		}
-
-		if ($body_property_name = $node_schema->getOption('fields.body')) {
-			$view_data['body_property_name'] = $body_property_name;
-		}
-
 		$edge_schemas = $this->schema->getOutEdges($node_schema->getName());
 
 		$view_data['edge_schemas'] = $edge_schemas;
