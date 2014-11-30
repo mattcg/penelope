@@ -2,6 +2,17 @@
 
 use Karwana\Penelope\Types\Country;
 
+$countries = array();
+foreach (Country::getCodes() as $code) {
+	$countries[$code] = Country::getName($code, __locale());
+}
+
+// Sort by country name using Unicode Collation Algorithm rules.
+$collator = \Collator::create('root');
+uasort($countries, function($a, $b) use ($collator) {
+	return $collator->compare($a, $b);
+});
+
 if ($property->getSchema()->isMultiValue()) {
 	foreach ((array) $property->getValue() as $value) {
 
@@ -10,10 +21,10 @@ if ($property->getSchema()->isMultiValue()) {
 	<option value=""></option>
 <?php
 
-		foreach (Country::getCodes() as $code) {
+		foreach ($countries as $code => $name) {
 
 ?>
-	<option value="<?php __($code); ?>"<?php if (0 === strcasecmp($value, $code)) { ?> selected<?php } ?>><?php __(_e(Country::getName($code, __locale()))); ?></option>
+	<option value="<?php __($code); ?>"<?php if (0 === strcasecmp($value, $code)) { ?> selected<?php } ?>><?php __(_e($name)); ?></option>
 <?php
 
 		}
@@ -28,10 +39,10 @@ if ($property->getSchema()->isMultiValue()) {
 	<option value=""></option>
 <?php
 
-		foreach (Country::getCodes() as $code) {
+		foreach ($countries as $code => $name) {
 
 ?>
-	<option value="<?php __($code); ?>"><?php __(_e(Country::getName($code, __locale()))); ?></option>
+	<option value="<?php __($code); ?>"><?php __(_e($name)); ?></option>
 <?php
 
 		}
@@ -46,10 +57,10 @@ if ($property->getSchema()->isMultiValue()) {
 	<option value=""></option>
 <?php
 
-foreach (Country::getCodes() as $code) {
+foreach ($countries as $code => $name) {
 
 ?>
-	<option value="<?php __($code); ?>"<?php if ($property->hasValue() and 0 === strcasecmp($property->getValue(), $code)) { ?> selected<?php } ?>><?php __(_e(Country::getName($code, __locale()))); ?></option>
+	<option value="<?php __($code); ?>"<?php if ($property->hasValue() and 0 === strcasecmp($property->getValue(), $code)) { ?> selected<?php } ?>><?php __(_e($name)); ?></option>
 <?php
 
 }
