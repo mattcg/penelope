@@ -16,9 +16,14 @@
 		} else {
 
 			if ($prev_page) {
+				if (isset($properties)) {
+					$query_string = http_build_query(array('qp' => $properties, 'p' => $prev_page));
+				} else {
+					$query_string = http_build_query(array('p' => $prev_page));
+				}
 
 		?>
-		<p><a class="crud-button paging prev" href="?p=<?php __($prev_page); ?>"><?php __(_m('collection_prev_page')); ?></a></p>
+		<p><a class="crud-button paging prev" href="?<?php __($query_string); ?>"><?php __(_m('collection_prev_page')); ?></a></p>
 		<?php
 
 			}
@@ -47,9 +52,14 @@
 		<?php
 
 			if ($next_page) {
+				if (isset($properties)) {
+					$query_string = http_build_query(array('qp' => $properties, 'p' => $next_page));
+				} else {
+					$query_string = http_build_query(array('p' => $next_page));
+				}
 
 		?>
-		<p><a class="crud-button paging next" href="?p=<?php __($next_page); ?>"><?php __(_m('collection_next_page')); ?></a></p>
+		<p><a class="crud-button paging next" href="?<?php __($query_string); ?>"><?php __(_m('collection_next_page')); ?></a></p>
 		<?php
 
 			}

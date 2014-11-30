@@ -34,6 +34,7 @@ class NodesController extends ObjectController {
 		// Check whether individual properties are being queried.
 		// Example: /people/?qp[countries_of_operation]=USA&p[first_name]=Arturo
 		if ($properties = $request->get('qp') and is_array($properties)) {
+			$view_data['properties'] = $properties;
 			$view_data['nodes'] = $node_schema->searchCollection($this->client, $properties, $skip, $limit);
 			$total = $node_schema->getCollectionSearchCount($this->client, $properties);
 		} else {
