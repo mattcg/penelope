@@ -34,29 +34,72 @@ class NodeSchema extends ObjectSchema {
 	}
 
 	public function getCollectionCount(Neo4j\Client $client) {
-		$query = new Neo4j\Cypher\Query($client, 'MATCH (n) WHERE n:' . $this->getName() . ' RETURN count(n)');
+		$query = $this->buildQuery($client, null, null, null, 'count');
 		return (int) $query->getResultSet()[0][0];
 	}
 
 	public function getCollection(Neo4j\Client $client, $skip = null, $limit = null) {
-		$query_string = 'MATCH (n) WHERE n:' . $this->getName() . ' RETURN n';
+		$query = $this->buildQuery($client, null, $skip, $limit);
+		return $this->convertResultSet($client, $query->getResultSet());
+	}
 
-		$order_by = $this->getOption('collection.order_by');
-		if ($order_by) {
-			$query_string .= ' ORDER BY n.' . join(', n.', (array) $order_by);
+	public function getCollectionSearchCount(Neo4j\Client $client, array $properties) {
+		$query = $this->buildQuery($client, $properties, null, null, 'count');
+		return (int) $query->getResultSet()[0][0];
+	}
+
+	public function searchCollection(Neo4j\Client $client, array $properties, $skip = null, $limit = null) {
+		$query = $this->buildQuery($client, $properties, $skip, $limit);
+		return $this->convertResultSet($client, $query->getResultSet());
+	}
+
+	private function buildQuery(Neo4j\Client $client, array $properties = null, $skip = null, $limit = null, $aggregate = null) {
+		$query_string = 'MATCH (n:' . $this->getName() . ')';
+		$params = array();
+
+		$i = 0;
+		$query_parts = array();
+		foreach ((array) $properties as $name => $value) {
+			if (!$this->hasProperty($name)) {
+				throw new \InvalidArgumentException('Unknown property "' . $name . '".');
+			}
+
+			$params['value_' . $i] = $value;
+			$query_parts[] = 'ANY (m IN {value_' . $i . '} WHERE m IN n.' . $name . ')';
+			$i++;
 		}
 
-		if (is_int($skip) and $skip > 0) {
-			$query_string .= ' SKIP ' . $skip;
+		if (!empty($query_parts)) {
+			$query_string .=  ' WHERE ' . join(' AND ', $query_parts);
 		}
 
-		if (is_int($limit) and $limit > 0) {
-			$query_string .= ' LIMIT ' . $limit;
+		if ($aggregate) {
+			$query_string .= ' RETURN ' . $aggregate . '(n)';
+		} else {
+			$query_string .= ' RETURN (n)';
+
+			// Order by only makes sense when not using aggregate.
+			$order_by = $this->getOption('collection.order_by');
+			if ($order_by) {
+				$query_string .= ' ORDER BY n.' . join(', n.', (array) $order_by);
+			}
+
+			// Aggregate results would be unexpected when using limit.
+			if (is_int($skip) and $skip > 0) {
+				$query_string .= ' SKIP ' . $skip;
+			}
+
+			if (is_int($limit) and $limit > 0) {
+				$query_string .= ' LIMIT ' . $limit;
+			}
 		}
 
-		$query = new Neo4j\Cypher\Query($client, $query_string);
+		return new Neo4j\Cypher\Query($client, $query_string, $params);
+	}
+
+	private function convertResultSet(Neo4j\Client $client, Neo4j\Query\ResultSet $result_set) {
 		$nodes = array();
-		foreach ($query->getResultSet() as $row) {
+		foreach ($result_set as $row) {
 			$client_node = $row['n'];
 			$nodes[] = new Node($this, $client, $client_node);
 		}

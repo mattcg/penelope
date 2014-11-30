@@ -19,20 +19,26 @@ class NodesController extends ObjectController {
 
 	public function read($schema_slug) {
 		$node_schema = $this->getNodeSchemaBySlug($schema_slug);
+		$request = $this->app->request;
 
 		$view_data = array('title' => $this->_m('node_collection_title', $node_schema->getDisplayName(0)), 'node_schema' => $node_schema);
 
-		$page = (int) $this->app->request->get('page');
+		$page = (int) $request->get('page');
 		if ($page < 1) {
 			$page = 1;
 		}
 
-		$total = $node_schema->getCollectionCount($this->client);
 		$limit = 20;
-
 		$skip = $limit * ($page - 1);
 
-		$view_data['nodes'] = $node_schema->getCollection($this->client, $skip, $limit);
+		// Example: /people/?p[countries_of_operation]=USA&p[first_name]=Arturo
+		if ($properties = $request->get('p') and is_array($properties)) {
+			$view_data['nodes'] = $node_schema->searchCollection($this->client, $properties, $skip, $limit);
+			$total = $node_schema->getCollectionSearchCount($this->client, $properties);
+		} else {
+			$view_data['nodes'] = $node_schema->getCollection($this->client, $skip, $limit);
+			$total = $node_schema->getCollectionCount($this->client);
+		}
 
 		if ($total and ($skip + $limit) < $total) {
 			$view_data['next_page'] = $page + 1;

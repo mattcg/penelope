@@ -37,19 +37,9 @@ class SearchController extends Controller {
 		$query = trim($request->get('q'));
 		$view_data = array('query' => $query);
 
-		if (!$query) {
-
-			// Example: /search?p[countries_of_operation]=USA&p[first_name]=Arturo&s=PERSON
-			$properties = $request->get('p');
-			$schema_name = $request->get('s');
-		}
-
 		if ($query) {
-			$view_data['title'] = $this->_m('search_title_no_q');
+			$view_data['title'] = $this->_m('search_title', $query);
 			$client_nodes = $this->queryFulltext($query);
-		} else if (is_array($properties) and !empty($properties) and $schema_name) {
-			$view_data['title'] = 'Custom search';
-			$client_nodes = $this->queryProperties($schema_name, $properties);
 		} else {
 			$view_data['title'] = $this->_m('search_title_no_q');
 		}
@@ -59,12 +49,6 @@ class SearchController extends Controller {
 			// Map client node objects.
 			$view_data['nodes'] = array();
 			foreach ($client_nodes as $client_node) {
-
-				// Cypher queries return Row objects. Index lookups return Nodes.
-				if ($client_node instanceof Neo4j\Query\Row) {
-					$client_node = $client_node[0];
-				}
-
 				$node_schema = $this->schema->getByClientNode($client_node);
 				if ($node_schema) {
 					$view_data['nodes'][] = new Node($node_schema, $this->client, $client_node);
@@ -79,36 +63,6 @@ class SearchController extends Controller {
 		}
 
 		$this->app->render('search', $view_data);
-	}
-
-	private function queryProperties($schema_name, array $properties) {
-		if (!$this->schema->hasNode($schema_name)) {
-			return;
-		}
-
-		$node_schema = $this->schema->getNode($schema_name);
-
-		$query = 'MATCH (n:' . $schema_name . ') WHERE ';
-		$params = array();
-
-		$i = 0;
-		$query_parts = array();
-		foreach ($properties as $name => $value) {
-			if ($node_schema->hasProperty($name)) {
-				$params['value_' . $i] = $value;
-				$query_parts[] = 'ANY (m IN {value_' . $i . '} WHERE m IN n.' . $name . ')';
-				$i++;
-			}
-		}
-
-		if (empty($query_parts)) {
-			return;
-		}
-
-		$query .=  join(' AND ', $query_parts) . ' RETURN n';
-
-		$query = new Neo4j\Cypher\Query($this->client, $query, $params);
-		return $query->getResultSet();
 	}
 
 	private function queryFulltext($query) {
