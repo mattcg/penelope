@@ -23,7 +23,7 @@ class NodesController extends ObjectController {
 
 		$view_data = array('title' => $this->_m('node_collection_title', $node_schema->getDisplayName(0)), 'node_schema' => $node_schema);
 
-		$page = (int) $request->get('page');
+		$page = (int) $request->get('p');
 		if ($page < 1) {
 			$page = 1;
 		}
@@ -31,8 +31,9 @@ class NodesController extends ObjectController {
 		$limit = 20;
 		$skip = $limit * ($page - 1);
 
-		// Example: /people/?p[countries_of_operation]=USA&p[first_name]=Arturo
-		if ($properties = $request->get('p') and is_array($properties)) {
+		// Check whether individual properties are being queried.
+		// Example: /people/?qp[countries_of_operation]=USA&p[first_name]=Arturo
+		if ($properties = $request->get('qp') and is_array($properties)) {
 			$view_data['nodes'] = $node_schema->searchCollection($this->client, $properties, $skip, $limit);
 			$total = $node_schema->getCollectionSearchCount($this->client, $properties);
 		} else {

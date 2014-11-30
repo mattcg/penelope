@@ -18,7 +18,7 @@
 			if ($prev_page) {
 
 		?>
-		<p><a class="button paging prev" href="?page=<?php __($prev_page); ?>"><?php __(_m('collection_prev_page')); ?></a></p>
+		<p><a class="crud-button paging prev" href="?p=<?php __($prev_page); ?>"><?php __(_m('collection_prev_page')); ?></a></p>
 		<?php
 
 			}
@@ -49,7 +49,7 @@
 			if ($next_page) {
 
 		?>
-		<p><a class="button paging next" href="?page=<?php __($next_page); ?>"><?php __(_m('collection_next_page')); ?></a></p>
+		<p><a class="crud-button paging next" href="?p=<?php __($next_page); ?>"><?php __(_m('collection_next_page')); ?></a></p>
 		<?php
 
 			}
