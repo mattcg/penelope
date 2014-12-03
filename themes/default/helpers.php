@@ -79,6 +79,16 @@ function __path($file) {
 	return $app->view()->getTemplatePathname($file);
 }
 
+function __optional_require($file) {
+	global $app;
+
+	$path = __path($file);
+
+	if (is_file($path)) {
+		require $path;
+	}
+}
+
 function __formenc(Penelope\ObjectSchema $object_schema) {
 	foreach ($object_schema->getProperties() as $property_schema) {
 		if (in_array($property_schema->getType(), array('file', 'image'))) {
