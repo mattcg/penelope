@@ -20,17 +20,21 @@ abstract class Object {
 
 	private $got_properties;
 
-	public function __construct(ObjectSchema $object_schema, $id = null) {
+	public function __construct(ObjectSchema $object_schema, $id = null, Neo4j\PropertyContainer $client_object = null) {
 		$this->schema = $object_schema;
 		$this->client = $object_schema->getClient();
 
-		if ($id instanceof Neo4j\PropertyContainer) {
-			$this->client_object = $id;
-			$this->id = $this->client_object->getId();
+		if ($client_object) {
+			if ($client_object->getId() !== $id) {
+				throw new \InvalidArgumentException('IDs do not match.');
+			}
+
+			$this->client_object = $client_object;
+			$this->id = $id;
 		} else if (is_int($id) or ctype_digit($id)) {
 			$this->id = (int) $id;
-		} else if (!is_null($id)) {
-			throw new \InvalidArgumentException('Expecting either a client object or integer ID.');
+		} else if ($id) {
+			throw new \InvalidArgumentException('Invalid ID.');
 		}
 	}
 

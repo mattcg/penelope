@@ -16,6 +16,10 @@ use Everyman\Neo4j;
 
 class Node extends Object {
 
+	public function __construct(NodeSchema $node_schema, $id = null, Neo4j\Node $client_node = null) {
+		parent::__construct($node_schema, $id, $client_node);
+	}
+
 	public function getPath() {
 		if (!$this->hasId()) {
 			throw new \LogicException('Cannot create path for node with no ID.');
@@ -115,7 +119,7 @@ class Node extends Object {
 			// Note that if one of the edges doesn't match the schema, this probably indicates that the database is in an error state.
 			// In that case, trigger a notice.
 			try {
-				$edges[] = $edge_schema->get($client_edge->getId());
+				$edges[] = $edge_schema->wrap($client_edge);
 			} catch (Exceptions\SchemaException $e) {
 				trigger_error('Edge with ID "' . $client_edge->getId() . '" of type "' . $client_edge->getType() . '" does not conform to schema: ' . $e->getMessage());
 			}

@@ -35,8 +35,8 @@ class NodeSchema extends ObjectSchema {
 		return $node;
 	}
 
-	public function wrap(Neo4j\PropertyContainer $client_node = null) {
-		return new Node($this, $client_node);
+	public function wrap(Neo4j\Node $client_node = null) {
+		return new Node($this, $client_node->getId(), $client_node);
 	}
 
 	public function create() {

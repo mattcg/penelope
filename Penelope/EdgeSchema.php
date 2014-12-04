@@ -46,8 +46,8 @@ class EdgeSchema extends ObjectSchema {
 		return $edge;
 	}
 
-	public function wrap(Neo4j\PropertyContainer $client_edge = null) {
-		return new Edge($this, $client_edge);
+	public function wrap(Neo4j\Relationship $client_edge = null) {
+		return new Edge($this, $client_edge->getId(), $client_edge);
 	}
 
 	public function create() {
