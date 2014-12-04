@@ -18,7 +18,7 @@ class NodeSchema extends ObjectSchema {
 
 	protected $path_formats = array('collection' => '/%s/', 'new' => '/%s/new', 'edit' => '/%s/%s/edit', 'object' => '/%s/%s');
 
-	public function get($id, $fetch = true) {
+	public function get($id) {
 		$node = new Node($this, $id);
 
 		// Preload data before returning.
@@ -26,15 +26,17 @@ class NodeSchema extends ObjectSchema {
 		//  - the node does not exist
 		// SchemaException will be thrown if:
 		//  - there's a mismatch between the requested node and the given schema
-		if ($fetch) {
-			$node->fetch();
-		}
+		$node->fetch();
 
 		return $node;
 	}
 
-	public function create(Neo4j\PropertyContainer $client_node = null) {
+	public function wrap(Neo4j\PropertyContainer $client_node = null) {
 		return new Node($this, $client_node);
+	}
+
+	public function create() {
+		return new Node($this);
 	}
 
 	public function getCollectionCount() {
@@ -105,7 +107,7 @@ class NodeSchema extends ObjectSchema {
 		$nodes = array();
 		foreach ($result_set as $row) {
 			$client_node = $row['n'];
-			$nodes[] = $this->create($client_node);
+			$nodes[] = $this->wrap($client_node);
 		}
 
 		return $nodes;

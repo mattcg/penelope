@@ -27,7 +27,7 @@ class EdgeSchema extends ObjectSchema {
 		parent::__construct($client, $name, $slug, $properties, $options);
 	}
 
-	public function get($id, $fetch = true) {
+	public function get($id) {
 		$edge = new Edge($this, $id);
 
 		// Preload data before returning.
@@ -37,15 +37,17 @@ class EdgeSchema extends ObjectSchema {
 		//  - there's a mismatch between the requested edge and the given schema
 		//  - the start node type doesn't match the edge schema
 		//  - the end node type doesn't match the edge schema
-		if ($fetch) {
-			$edge->fetch();
-		}
+		$edge->fetch();
 
 		return $edge;
 	}
 
-	public function create(Neo4j\PropertyContainer $client_edge = null) {
+	public function wrap(Neo4j\PropertyContainer $client_edge = null) {
 		return new Edge($this, $client_edge);
+	}
+
+	public function create() {
+		return new Edge($this);
 	}
 
 	public function getStartNodeSchema() {

@@ -51,7 +51,7 @@ class SearchController extends Controller {
 			foreach ($client_nodes as $client_node) {
 				$node_schema = $this->schema->getByClientNode($client_node);
 				if ($node_schema) {
-					$view_data['nodes'][] = $node_schema->create($client_node);
+					$view_data['nodes'][] = $node_schema->wrap($client_node);
 				}
 			}
 		}
