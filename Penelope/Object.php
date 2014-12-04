@@ -29,6 +29,8 @@ abstract class Object {
 			$this->id = $this->client_object->getId();
 		} else if (is_int($id) or ctype_digit($id)) {
 			$this->id = (int) $id;
+		} else if (!is_null($id)) {
+			throw new \InvalidArgumentException('Expecting either a client object or integer ID.');
 		}
 	}
 
