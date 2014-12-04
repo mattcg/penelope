@@ -97,6 +97,20 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
 		$node->fetch();
 	}
 
+	public function testFetch_throwsForNodeWithUnknownId() {
+		$this->setExpectedException('Karwana\Penelope\Exceptions\NotFoundException', 'No node with ID "' . PHP_INT_MAX . '"');
+		$node = static::$schema->getNode('TEST_PERSON')->get(PHP_INT_MAX);
+	}
+
+	public function testFetch_throwsForNodeWithMismatchingId() {
+		$car_node = static::$schema->getNode('TEST_CAR')->create();
+		$car_node->save();
+
+		$this->setExpectedException('Karwana\Penelope\Exceptions\SchemaException', 'Node with ID "' . $car_node->getId() . '" exists, but does not match schema "TEST_PERSON".');
+
+		$person_node = static::$schema->getNode('TEST_PERSON')->get($car_node->getId());
+	}
+
 	public function testSave_savesNode() {
 		$node_a = static::$schema->getNode('TEST_PERSON')->create();
 
