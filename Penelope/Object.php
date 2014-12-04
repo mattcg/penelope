@@ -113,17 +113,22 @@ abstract class Object {
 	public function save() {
 
 		// Fetch the object if it hasn't been fetched yet.
-		if (!$this->client_object) {
-			$this->fetch();
-		}
-
-		$object = $this->client_object;
+		$client_object = $this->getClientObject();
 		foreach ($this->properties as $property) {
-			$object->setProperty($property->getName(), $property->getSerializedValue());
+			$client_object->setProperty($property->getName(), $property->getSerializedValue());
 		}
 
-		$object->save();
-		$this->id = $object->getId();
+		$client_object->save();
+		$this->id = $client_object->getId();
+	}
+
+	public function delete() {
+		$client_object = $this->getClientObject();
+
+		// TODO: Handle error when the object no longer exists because of a race condition.
+		$client_object->delete();
+		$this->id = null;
+		$this->client_object = null;
 	}
 
 	private function loadProperties() {

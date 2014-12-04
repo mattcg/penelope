@@ -127,15 +127,4 @@ class Edge extends Object {
 
 		parent::save();
 	}
-
-	public function delete() {
-		$client_edge = $this->client->getRelationship($this->id);
-		if (!$client_edge) {
-			throw new Exceptions\NotFoundException('Nonexistent edge "' . $this->id . '".');
-		}
-
-		$client_edge->delete();
-		$this->id = null;
-		$this->client_object = null;
-	}
 }

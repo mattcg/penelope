@@ -157,10 +157,7 @@ class Node extends Object {
 	}
 
 	public function delete() {
-		$client_node = $this->client->getNode($this->id);
-		if (!$client_node) {
-			throw new Exceptions\NotFoundException('Nonexistent node "' . $this->id . '".');
-		}
+		$client_node = $this->getClientObject();
 
 		// Remove the full text index.
 		$index = new Neo4j\Index\NodeFulltextIndex($this->client, 'full_text');
@@ -175,8 +172,6 @@ class Node extends Object {
 			}
 		}
 
-		$client_node->delete();
-		$this->id = null;
-		$this->client_object = null;
+		parent::delete();
 	}
 }
