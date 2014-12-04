@@ -19,14 +19,11 @@ class Edge extends Object {
 	private $start_node, $end_node;
 
 	public function __construct(EdgeSchema $edge_schema, $id = null, Neo4j\Relationship $client_edge = null) {
-		if ($client_edge) {
-
-			// Implicitly checks that the edge's relationships are permitted by the schema.
-			$this->end_node = $edge_schema->getEndNodeSchema()->wrap($client_edge->getEndNode());
-			$this->start_node = $edge_schema->getStartNodeSchema()->wrap($client_edge->getStartNode());
-		}
-
 		parent::__construct($edge_schema, $id, $client_edge);
+
+		if ($client_edge) {
+			$this->setStartAndEndNodes();
+		}
 	}
 
 	private function formatPath($path) {
@@ -84,15 +81,21 @@ class Edge extends Object {
 			throw new Exceptions\SchemaException('Edge with ID "' . $this->id . '" exists, but does not match schema "' . $this->schema->getName() . '".');
 		}
 
-		// Preload the start and end nodes.
-		// Implicitly checks that the edge's relationships are permitted by the schema.
-		$edge_schema = $this->getSchema();
-		$this->end_node = $edge_schema->getEndNodeSchema()->wrap($client_edge->getEndNode());
-		$this->start_node = $edge_schema->getStartNodeSchema()->wrap($client_edge->getStartNode());
-
 		$this->client_object = $client_edge;
+		$this->setStartAndEndNodes();
 
 		return $client_edge;
+	}
+
+	private function setStartAndEndNodes() {
+
+		// Attach the start and end nodes.
+		// Implicitly checks that the edge's relationships are permitted by the schema.
+		$edge_schema = $this->getSchema();
+		$client_edge = $this->client_object;
+
+		$this->end_node = $edge_schema->getEndNodeSchema()->wrap($client_edge->getEndNode());
+		$this->start_node = $edge_schema->getStartNodeSchema()->wrap($client_edge->getStartNode());
 	}
 
 	public function getStartNode() {
