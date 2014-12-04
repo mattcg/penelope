@@ -30,8 +30,10 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testSave_savesNode() {
-		$node_schema = new NodeSchema('Test Node Schema', 'test-node-schema', array('test-property'));
-		$node_a = new Node($node_schema, $this->getClient());
+		$client = $this->getClient();
+
+		$node_schema = new NodeSchema($client, 'Test Node Schema', 'test-node-schema', array('test-property'));
+		$node_a = new Node($node_schema, $client);
 
 		$this->assertNull($node_a->getId());
 
@@ -42,8 +44,10 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testDelete_deletesNode() {
-		$node_schema = new NodeSchema('Test Node Schema', 'test-node-schema', array('test-property'));
-		$node_a = new Node($node_schema, $this->getClient());
+		$client = $this->getClient();
+
+		$node_schema = new NodeSchema($client, 'Test Node Schema', 'test-node-schema', array('test-property'));
+		$node_a = new Node($node_schema, $client);
 
 		$node_a->save();
 
@@ -57,11 +61,12 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testDelete_deletesNodeWithRelationship() {
+		$client = $this->getClient();
 
-		$node_schema = new NodeSchema('Test Node Schema', 'test-node-schema', array('test-property'));
+		$node_schema = new NodeSchema($client, 'Test Node Schema', 'test-node-schema', array('test-property'));
 
 		// Create an edge.
-		$edge_schema = new EdgeSchema('Test Edge Schema', 'test-edge-schema', $node_schema, $node_schema, array('test-property'));
+		$edge_schema = new EdgeSchema($client, 'Test Edge Schema', 'test-edge-schema', $node_schema, $node_schema, array('test-property'));
 		$edge = new Edge($edge_schema, $this->getClient());
 
 		$this->assertNull($edge->getId());
