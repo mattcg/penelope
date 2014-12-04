@@ -113,6 +113,7 @@ class Node extends Object {
 		$edges = array();
 		$client_edges = $this->client_object->getRelationships(array($edge_schema->getName()), $direction);
 
+		// TODO: Return an EdgeCollection that automatically wraps the client objects on access instead of looping and creating them all that once here.
 		foreach ($client_edges as $client_edge) {
 
 			// Only include edges permitted by the schema (checks are made within object fetching logic).
