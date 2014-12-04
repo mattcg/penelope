@@ -12,17 +12,20 @@
 
 namespace Karwana\Penelope;
 
+use Everyman\Neo4j;
+
 abstract class ObjectSchema extends OptionContainer {
 
-	protected $name, $slug, $property_schemas = array();
+	protected $client, $name, $slug, $property_schemas = array();
 
 	protected $path_formats = array();
 
-	public function __construct($name, $slug, array $properties = null, array $options = null) {
+	public function __construct(Neo4j\Client $client, $name, $slug, array $properties = null, array $options = null) {
 		parent::__construct($options);
 
 		$this->name = $name;
 		$this->slug = $slug;
+		$this->client = $client;
 
 		// Syntax for properties:
 		// array('my_property_1', 'my_property_2' => 'date', 'my_property_3' => array('type' => 'country', 'mode' => 'alpha-2'))

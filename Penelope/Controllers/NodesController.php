@@ -35,11 +35,11 @@ class NodesController extends ObjectController {
 		// Example: /people/?qp[countries_of_operation]=USA&p[first_name]=Arturo
 		if ($properties = $request->get('qp') and is_array($properties)) {
 			$view_data['properties'] = $properties;
-			$view_data['nodes'] = $node_schema->searchCollection($this->client, $properties, $skip, $limit);
-			$total = $node_schema->getCollectionSearchCount($this->client, $properties);
+			$view_data['nodes'] = $node_schema->searchCollection($properties, $skip, $limit);
+			$total = $node_schema->getCollectionSearchCount($properties);
 		} else {
-			$view_data['nodes'] = $node_schema->getCollection($this->client, $skip, $limit);
-			$total = $node_schema->getCollectionCount($this->client);
+			$view_data['nodes'] = $node_schema->getCollection($skip, $limit);
+			$total = $node_schema->getCollectionCount();
 		}
 
 		if ($total and ($skip + $limit) < $total) {

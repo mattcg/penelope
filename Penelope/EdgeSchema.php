@@ -20,14 +20,15 @@ class EdgeSchema extends ObjectSchema {
 
 	protected $path_formats = array('collection' => '/%s/%s/%s/', 'new' => '/%s/%s/%s/new', 'edit' => '/%s/%s/%s/%s/edit', 'object' => '/%s/%s/%s/%s');
 
-	public function __construct($name, $slug, NodeSchema $start_schema, NodeSchema $end_schema, array $properties = null, array $options = null) {
+	public function __construct(Neo4j\Client $client, $name, $slug, NodeSchema $start_schema, NodeSchema $end_schema, array $properties = null, array $options = null) {
 		$this->end_schema = $end_schema;
 		$this->start_schema = $start_schema;
-		parent::__construct($name, $slug, $properties, $options);
+
+		parent::__construct($client, $name, $slug, $properties, $options);
 	}
 
-	public function get(Neo4j\Client $client, $id, $fetch = true) {
-		$edge = new Edge($this, $client, $id);
+	public function get($id, $fetch = true) {
+		$edge = new Edge($this, $this->client, $id);
 
 		// Preload data before returning.
 		// NotFoundException will be thrown if:

@@ -18,8 +18,8 @@ class NodeSchema extends ObjectSchema {
 
 	protected $path_formats = array('collection' => '/%s/', 'new' => '/%s/new', 'edit' => '/%s/%s/edit', 'object' => '/%s/%s');
 
-	public function get(Neo4j\Client $client, $id, $fetch = true) {
-		$node = new Node($this, $client, $id);
+	public function get($id, $fetch = true) {
+		$node = new Node($this, $this->client, $id);
 
 		// Preload data before returning.
 		// NotFoundException will be thrown if:
@@ -33,27 +33,27 @@ class NodeSchema extends ObjectSchema {
 		return $node;
 	}
 
-	public function getCollectionCount(Neo4j\Client $client) {
-		$query = $this->buildQuery($client, null, null, null, 'count');
+	public function getCollectionCount() {
+		$query = $this->buildQuery(null, null, null, 'count');
 		return (int) $query->getResultSet()[0][0];
 	}
 
-	public function getCollection(Neo4j\Client $client, $skip = null, $limit = null) {
-		$query = $this->buildQuery($client, null, $skip, $limit);
-		return $this->convertResultSet($client, $query->getResultSet());
+	public function getCollection($skip = null, $limit = null) {
+		$query = $this->buildQuery(null, $skip, $limit);
+		return $this->convertResultSet($query->getResultSet());
 	}
 
-	public function getCollectionSearchCount(Neo4j\Client $client, array $properties) {
-		$query = $this->buildQuery($client, $properties, null, null, 'count');
+	public function getCollectionSearchCount(array $properties) {
+		$query = $this->buildQuery($properties, null, null, 'count');
 		return (int) $query->getResultSet()[0][0];
 	}
 
-	public function searchCollection(Neo4j\Client $client, array $properties, $skip = null, $limit = null) {
-		$query = $this->buildQuery($client, $properties, $skip, $limit);
-		return $this->convertResultSet($client, $query->getResultSet());
+	public function searchCollection(array $properties, $skip = null, $limit = null) {
+		$query = $this->buildQuery($properties, $skip, $limit);
+		return $this->convertResultSet($query->getResultSet());
 	}
 
-	private function buildQuery(Neo4j\Client $client, array $properties = null, $skip = null, $limit = null, $aggregate = null) {
+	private function buildQuery(array $properties = null, $skip = null, $limit = null, $aggregate = null) {
 		$query_string = 'MATCH (n:' . $this->getName() . ')';
 		$params = array();
 
@@ -94,14 +94,14 @@ class NodeSchema extends ObjectSchema {
 			}
 		}
 
-		return new Neo4j\Cypher\Query($client, $query_string, $params);
+		return new Neo4j\Cypher\Query($this->client, $query_string, $params);
 	}
 
-	private function convertResultSet(Neo4j\Client $client, Neo4j\Query\ResultSet $result_set) {
+	private function convertResultSet(Neo4j\Query\ResultSet $result_set) {
 		$nodes = array();
 		foreach ($result_set as $row) {
 			$client_node = $row['n'];
-			$nodes[] = new Node($this, $client, $client_node);
+			$nodes[] = new Node($this, $this->client, $client_node);
 		}
 
 		return $nodes;

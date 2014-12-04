@@ -41,7 +41,7 @@ abstract class ObjectController extends Controller {
 		}
 
 		try {
-			$node = $node_schema->get($this->client, $node_id);
+			$node = $node_schema->get($node_id);
 
 		// If the node with the given ID doesn't exist.
 		} catch (Exceptions\NotFoundException $e) {
@@ -89,7 +89,7 @@ abstract class ObjectController extends Controller {
 		$node = $this->getNodeByParams($node_schema_slug, $node_id);
 
 		try {
-			$edge = $edge_schema->get($this->client, $edge_id);
+			$edge = $edge_schema->get($edge_id);
 
 		// If the edge with the given ID doesn't exist.
 		} catch (Exceptions\NotFoundException $e) {

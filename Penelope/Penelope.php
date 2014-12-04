@@ -33,7 +33,7 @@ class Penelope extends OptionContainer {
 
 		$this->app = $app;
 		$this->client = $client;
-		$this->schema = new Schema();
+		$this->schema = new Schema($client);
 
 		if ($theme) {
 			$this->setTheme($theme);

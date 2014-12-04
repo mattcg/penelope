@@ -115,7 +115,7 @@ class Node extends Object {
 			// Note that if one of the edges doesn't match the schema, this probably indicates that the database is in an error state.
 			// In that case, trigger a notice.
 			try {
-				$edges[] = $edge_schema->get($this->client, $client_edge->getId());
+				$edges[] = $edge_schema->get($client_edge->getId());
 			} catch (Exceptions\SchemaException $e) {
 				trigger_error('Edge with ID "' . $client_edge->getId() . '" of type "' . $client_edge->getType() . '" does not conform to schema: ' . $e->getMessage());
 			}

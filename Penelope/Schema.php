@@ -16,7 +16,11 @@ use Everyman\Neo4j;
 
 class Schema {
 
-	private $nodes = array(), $edges = array(), $node_slugs = array(), $edge_slugs = array();
+	private $client, $nodes = array(), $edges = array(), $node_slugs = array(), $edge_slugs = array();
+
+	public function __construct(Neo4j\Client $client) {
+		$this->client = $client;
+	}
 
 	public function addNode($name, $slug, array $properties = null, array $options = null) {
 		if ($this->hasNode($name)) {
@@ -27,7 +31,7 @@ class Schema {
 			throw new \InvalidArgumentException('Node slug "' . $slug . '" already in use.');
 		}
 
-		$schema = new NodeSchema($name, $slug, $properties, $options);
+		$schema = new NodeSchema($this->client, $name, $slug, $properties, $options);
 		$this->nodes[$name] = $schema;
 		$this->node_slugs[$slug] = $name;
 
@@ -79,7 +83,7 @@ class Schema {
 			throw new \InvalidArgumentException('Edge slug "' . $slug . '" already in use.');
 		}
 
-		$schema = new EdgeSchema($name, $slug, $this->getNode($from_name), $this->getNode($to_name), $properties, $options);
+		$schema = new EdgeSchema($this->client, $name, $slug, $this->getNode($from_name), $this->getNode($to_name), $properties, $options);
 		$this->edges[$name] = $schema;
 		$this->edge_slugs[$slug] = $name;
 
