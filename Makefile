@@ -3,3 +3,4 @@ test: vendor
 
 vendor: composer.json
 	composer update --prefer-dist
+	touch $@

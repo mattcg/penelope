@@ -33,6 +33,10 @@ class NodeSchema extends ObjectSchema {
 		return $node;
 	}
 
+	public function create() {
+		return new Node($this, $this->client);
+	}
+
 	public function getCollectionCount() {
 		$query = $this->buildQuery(null, null, null, 'count');
 		return (int) $query->getResultSet()[0][0];

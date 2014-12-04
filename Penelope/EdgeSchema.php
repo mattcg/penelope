@@ -44,6 +44,10 @@ class EdgeSchema extends ObjectSchema {
 		return $edge;
 	}
 
+	public function create() {
+		return new Edge($this, $this->client);
+	}
+
 	public function getStartNodeSchema() {
 		return $this->start_schema;
 	}

@@ -12,42 +12,45 @@
 
 use Everyman\Neo4j;
 
-use Karwana\Penelope\Node;
-use Karwana\Penelope\Edge;
-use Karwana\Penelope\NodeSchema;
-use Karwana\Penelope\EdgeSchema;
+use Karwana\Penelope\Schema;
 
 class NodeTest extends \PHPUnit_Framework_TestCase {
 
-	private function getClient() {
-		static $client;
+	private static $schema, $client;
 
-		if (!$client) {
-			$client = new Neo4j\Client('localhost', 7474);
-		}
+	public static function setUpBeforeClass() {
+		$client = static::$client = new Neo4j\Client('localhost', 7474);
+		$schema = static::$schema = new Schema($client);
 
-		return $client;
+		$schema->addNode('TEST', 'test-node', array('test-property'));
+		$schema->addEdge('TEST_EDGE', 'test-edge', 'TEST', 'TEST', array('test-property'));
+	}
+
+	public function testGetPath_throwsForNodeWithNoId() {
+		$this->setExpectedException('LogicException');
+		$node = static::$schema->getNode('TEST')->create();
+		$node->getPath();
+	}
+
+	public function testGetPath_returnsPath() {
+		$node = static::$schema->getNode('TEST')->create();
+		$node->save();
+		$this->assertEquals('/test-node/' . $node->getId(), $node->getPath());
 	}
 
 	public function testSave_savesNode() {
-		$client = $this->getClient();
-
-		$node_schema = new NodeSchema($client, 'Test Node Schema', 'test-node-schema', array('test-property'));
-		$node_a = new Node($node_schema, $client);
+		$node_a = static::$schema->getNode('TEST')->create();
 
 		$this->assertNull($node_a->getId());
 
 		$node_a->save();
 
 		$this->assertNotNull($node_a->getId());
-		$this->assertInstanceOf('Everyman\\Neo4j\Node', $this->getClient()->getNode($node_a->getId()));
+		$this->assertInstanceOf('Everyman\\Neo4j\Node', static::$client->getNode($node_a->getId()));
 	}
 
 	public function testDelete_deletesNode() {
-		$client = $this->getClient();
-
-		$node_schema = new NodeSchema($client, 'Test Node Schema', 'test-node-schema', array('test-property'));
-		$node_a = new Node($node_schema, $client);
+		$node_a = static::$schema->getNode('TEST')->create();
 
 		$node_a->save();
 
@@ -57,27 +60,24 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
 		$node_a->delete();
 
 		$this->assertNull($node_a->getId());
-		$this->assertNull($this->getClient()->getNode($node_a_id));
+		$this->assertNull(static::$client->getNode($node_a_id));
 	}
 
 	public function testDelete_deletesNodeWithRelationship() {
-		$client = $this->getClient();
-
-		$node_schema = new NodeSchema($client, 'Test Node Schema', 'test-node-schema', array('test-property'));
+		$node_schema = static::$schema->getNode('TEST');
 
 		// Create an edge.
-		$edge_schema = new EdgeSchema($client, 'Test Edge Schema', 'test-edge-schema', $node_schema, $node_schema, array('test-property'));
-		$edge = new Edge($edge_schema, $this->getClient());
+		$edge = static::$schema->getEdge('TEST_EDGE')->create();
 
 		$this->assertNull($edge->getId());
 
 		// Create the nodes.
-		$node_a = new Node($node_schema, $this->getClient());
+		$node_a = $node_schema->create();
 		$node_a->save();
 
 		$this->assertNotNull($node_a->getId());
 
-		$node_b = new Node($node_schema, $this->getClient());
+		$node_b = $node_schema->create();
 		$node_b->save();
 
 		$this->assertNotNull($node_b->getId());
