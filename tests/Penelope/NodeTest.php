@@ -13,6 +13,7 @@
 use Everyman\Neo4j;
 
 use Karwana\Penelope\Schema;
+use Karwana\Penelope\Node;
 
 class NodeTest extends \PHPUnit_Framework_TestCase {
 
@@ -109,6 +110,46 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
 		$this->setExpectedException('Karwana\Penelope\Exceptions\SchemaException', 'Node with ID "' . $car_node->getId() . '" exists, but does not match schema "TEST_PERSON".');
 
 		$person_node = static::$schema->getNode('TEST_PERSON')->get($car_node->getId());
+	}
+
+	public function testFetch_returnsClientNode() {
+		$car_node = static::$schema->getNode('TEST_CAR')->create();
+		$car_node->save();
+
+		$id = $car_node->getId();
+
+		$car_node = new Node(static::$schema->getNode('TEST_CAR'), $id);
+		$client_object = $car_node->fetch();
+
+		$this->assertInstanceOf('Everyman\\Neo4j\Node', $client_object);
+		$this->assertEquals($id, $client_object->getId());
+	}
+
+	public function testGetOutEdges_throwsForInvalidSchema() {
+		$this->setExpectedException('Karwana\Penelope\Exceptions\SchemaException', 'The schema for edges of type "TEST_FRIEND" does not permit edges from nodes of type "TEST_CAR".');
+
+		$car_node = static::$schema->getNode('TEST_CAR')->create();
+		$friend_edge_schema = static::$schema->getEdge('TEST_FRIEND');
+
+		$car_node->getOutEdges($friend_edge_schema);
+	}
+
+	public function testGetInEdges_throwsForInvalidSchema() {
+		$this->setExpectedException('Karwana\Penelope\Exceptions\SchemaException', 'The schema for edges of type "TEST_FRIEND" does not permit edges to nodes of type "TEST_CAR".');
+
+		$car_node = static::$schema->getNode('TEST_CAR')->create();
+		$friend_edge_schema = static::$schema->getEdge('TEST_FRIEND');
+
+		$car_node->getInEdges($friend_edge_schema);
+	}
+
+	public function testGetEdges_throwsForInvalidSchema() {
+		$this->setExpectedException('Karwana\Penelope\Exceptions\SchemaException', 'The schema for edges of type "TEST_FRIEND" does not permit edges to or from nodes of type "TEST_CAR".');
+
+		$car_node = static::$schema->getNode('TEST_CAR')->create();
+		$friend_edge_schema = static::$schema->getEdge('TEST_FRIEND');
+
+		$car_node->getEdges($friend_edge_schema);
 	}
 
 	public function testSave_savesNode() {
