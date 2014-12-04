@@ -152,6 +152,42 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
 		$car_node->getEdges($friend_edge_schema);
 	}
 
+	public function testGetEdges_returnsEdges() {
+		$person_schema = static::$schema->getNode('TEST_PERSON');
+
+		$person_a = $person_schema->create();
+		$person_b = $person_schema->create();
+
+		$person_a->save();
+		$person_b->save();
+
+		$friend_edge_schema = static::$schema->getEdge('TEST_FRIEND');
+
+		$friend_edge = $friend_edge_schema->create();
+		$friend_edge->setRelationship($person_a, $person_b);
+		$friend_edge->save();
+
+		// Recreate the object from scratch.
+		$node = new Node($person_schema, $person_a->getId());
+
+		$edges = $node->getEdges($friend_edge_schema);
+		$this->assertCount(1, $edges);
+
+		$edge = $edges[0];
+		$this->assertEquals('TEST_FRIEND', $edge->getSchema()->getName());
+		$this->assertEquals($person_a->getId(), $edge->getStartNode()->getId());
+		$this->assertEquals($person_b->getId(), $edge->getEndNode()->getId());
+	}
+
+	public function testGetEdges_throwsOnInvalidDirection() {
+		$direction = '💩';
+
+		$this->setExpectedException('RuntimeException', 'Invalid direction: "' . $direction . '".');
+
+		$edge_schema = static::$schema->getEdge('TEST_FRIEND');
+		static::$schema->getNode('TEST_PERSON')->create()->getEdges($edge_schema, $direction);
+	}
+
 	public function testSave_savesNode() {
 		$node_a = static::$schema->getNode('TEST_PERSON')->create();
 
