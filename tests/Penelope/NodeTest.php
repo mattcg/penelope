@@ -22,24 +22,83 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
 		$client = static::$client = new Neo4j\Client('localhost', 7474);
 		$schema = static::$schema = new Schema($client);
 
-		$schema->addNode('TEST', 'test-node', array('test-property'));
-		$schema->addEdge('TEST_EDGE', 'test-edge', 'TEST', 'TEST', array('test-property'));
+		$schema->addNode('TEST_PERSON', 'test-person');
+		$schema->addEdge('TEST_FRIEND', 'test-friend', 'TEST_PERSON', 'TEST_PERSON');
+
+		$schema->addNode('TEST_CAR', 'test-car');
+		$schema->addEdge('TEST_OWNER', 'test-owner', 'TEST_CAR', 'TEST_PERSON');
 	}
 
 	public function testGetPath_throwsForNodeWithNoId() {
-		$this->setExpectedException('LogicException');
-		$node = static::$schema->getNode('TEST')->create();
+		$this->setExpectedException('LogicException', 'Cannot create path for node with no ID.');
+		$node = static::$schema->getNode('TEST_PERSON')->create();
 		$node->getPath();
 	}
 
 	public function testGetPath_returnsPath() {
-		$node = static::$schema->getNode('TEST')->create();
+		$node = static::$schema->getNode('TEST_PERSON')->create();
 		$node->save();
-		$this->assertEquals('/test-node/' . $node->getId(), $node->getPath());
+		$this->assertEquals('/test-person/' . $node->getId(), $node->getPath());
+	}
+
+	public function testGetEditPath_throwsForNodeWithNoId() {
+		$this->setExpectedException('LogicException', 'Cannot create edit path for node with no ID.');
+		$node = static::$schema->getNode('TEST_PERSON')->create();
+		$node->getEditPath();
+	}
+
+	public function testGetEditPath_returnsPath() {
+		$node = static::$schema->getNode('TEST_PERSON')->create();
+		$node->save();
+		$this->assertEquals('/test-person/' . $node->getId() . '/edit', $node->getEditPath());
+	}
+
+	public function testGetNewEdgePath_throwsForNodeWithNoId() {
+		$this->setExpectedException('LogicException', 'Cannot create new edge path for node with no ID.');
+		$node = static::$schema->getNode('TEST_PERSON')->create();
+		$node->getNewEdgePath(static::$schema->getEdge('TEST_FRIEND'));
+	}
+
+	public function testGetNewEdgePath_throwsForUnrelatableSchema() {
+		$this->setExpectedException('LogicException', 'Cannot create new edge path for unrelatable node.');
+		$node = static::$schema->getNode('TEST_PERSON')->create();
+		$node->save();
+		$node->getNewEdgePath(static::$schema->getEdge('TEST_OWNER'));
+	}
+
+	public function testGetNewEdgePath_returnsPath() {
+		$node = static::$schema->getNode('TEST_PERSON')->create();
+		$node->save();
+		$this->assertEquals('/test-person/' . $node->getId() . '/test-friend/new', $node->getNewEdgePath(static::$schema->getEdge('TEST_FRIEND')));
+	}
+
+	public function testGetEdgeCollectionPath_throwsForNodeWithNoId() {
+		$this->setExpectedException('LogicException', 'Cannot create edge collection path for node with no ID.');
+		$node = static::$schema->getNode('TEST_PERSON')->create();
+		$node->getEdgeCollectionPath(static::$schema->getEdge('TEST_FRIEND'));
+	}
+
+	public function testGetEdgeCollectionPath_throwsForUnrelatableSchema() {
+		$this->setExpectedException('LogicException', 'Cannot create edge collection path for unrelatable node.');
+		$node = static::$schema->getNode('TEST_PERSON')->create();
+		$node->save();
+		$node->getEdgeCollectionPath(static::$schema->getEdge('TEST_OWNER'));
+	}
+
+	public function testGetEdgeCollectionPath_returnsPath() {
+		$node = static::$schema->getNode('TEST_PERSON')->create();
+		$node->save();
+		$this->assertEquals('/test-person/' . $node->getId() . '/test-friend/', $node->getEdgeCollectionPath(static::$schema->getEdge('TEST_FRIEND')));
+	}
+
+	public function testFetch_throwsForNodeWithNoId() {
+		$this->setExpectedException('LogicException', 'Cannot fetch without ID.');
+		$node = static::$schema->getNode('TEST_PERSON')->create();
+		$node->fetch();
 	}
 
 	public function testSave_savesNode() {
-		$node_a = static::$schema->getNode('TEST')->create();
+		$node_a = static::$schema->getNode('TEST_PERSON')->create();
 
 		$this->assertNull($node_a->getId());
 
@@ -50,7 +109,7 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testDelete_deletesNode() {
-		$node_a = static::$schema->getNode('TEST')->create();
+		$node_a = static::$schema->getNode('TEST_PERSON')->create();
 
 		$node_a->save();
 
@@ -64,10 +123,10 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testDelete_deletesNodeWithRelationship() {
-		$node_schema = static::$schema->getNode('TEST');
+		$node_schema = static::$schema->getNode('TEST_PERSON');
 
 		// Create an edge.
-		$edge = static::$schema->getEdge('TEST_EDGE')->create();
+		$edge = static::$schema->getEdge('TEST_FRIEND')->create();
 
 		$this->assertNull($edge->getId());
 
