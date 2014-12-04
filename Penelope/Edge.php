@@ -74,8 +74,8 @@ class Edge extends Object {
 		// Preload the start and end nodes.
 		// Implicitly checks that the edge's relationships are permitted by the schema.
 		$edge_schema = $this->getSchema();
-		$this->end_node = $edge_schema->getEndNodeSchema()->get($this->client, $client_edge->getEndNode()->getId());
-		$this->start_node = $edge_schema->getStartNodeSchema()->get($this->client, $client_edge->getStartNode()->getId());
+		$this->end_node = $edge_schema->getEndNodeSchema()->get($client_edge->getEndNode()->getId());
+		$this->start_node = $edge_schema->getStartNodeSchema()->get($client_edge->getStartNode()->getId());
 
 		$this->client_object = $client_edge;
 
