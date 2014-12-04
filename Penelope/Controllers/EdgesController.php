@@ -50,11 +50,6 @@ class EdgesController extends ObjectController {
 		$start_node = $this->getNodeByParams($node_schema_slug, $node_id);
 		$end_node = $this->getNodeByParams($edge_schema->getEndNodeSchema()->getSlug(), $app->request->post('end_node'));
 
-		// TODO: Move this check to the Edge object.
-		if ($start_node->getId() === $end_node->getId()) {
-			throw new Exceptions\SchemaException('A node may not have an edge to itself.');
-		}
-
 		try {
 			$edge->setRelationShip($start_node, $end_node);
 		} catch (Exceptions\SchemaException $e) {

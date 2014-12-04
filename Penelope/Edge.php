@@ -115,6 +115,10 @@ class Edge extends Object {
 	}
 
 	public function setRelationship(Node $start_node, Node $end_node) {
+		if ($start_node->getId() === $end_node->getId()) {
+			throw new Exceptions\SchemaException('A node may not have an edge to itself.');
+		}
+
 		$to_name = $end_node->schema->getName();
 		$from_name = $start_node->schema->getName();
 
