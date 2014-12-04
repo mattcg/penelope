@@ -162,7 +162,7 @@ abstract class ObjectController extends Controller {
 			}
 
 			try {
-				$object->setProperty($name, $transient_property->getValue());
+				$object->getProperty($name)->setValue($transient_property->getValue());
 			} catch (Exceptions\TypeException $e) {
 				$transient_property->setError($e);
 				$has_errors = true;
@@ -216,7 +216,7 @@ abstract class ObjectController extends Controller {
 		}
 
 		try {
-			$object->setProperty($name, $transient_property->getValue());
+			$object->getProperty($name)->setValue($transient_property->getValue());
 		} catch (Exceptions\TypeException $e) {
 			$transient_property->setError($e);
 			$has_errors = true;

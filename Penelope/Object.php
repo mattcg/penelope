@@ -86,10 +86,6 @@ abstract class Object {
 		return '';
 	}
 
-	public function setProperty($name, $value) {
-		$this->getProperty($name)->setValue($value);
-	}
-
 	public function getProperty($name) {
 		if (!$this->schema->hasProperty($name)) {
 			throw new \InvalidArgumentException('Unknown property "' . $name . '".');
