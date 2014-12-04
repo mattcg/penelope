@@ -16,13 +16,13 @@ use Everyman\Neo4j;
 
 abstract class Object {
 
-	protected $id, $schema, $client_object, $properties = array();
+	protected $client, $id, $schema, $client_object, $properties = array();
 
 	private $got_properties;
 
-	public function __construct(ObjectSchema $object_schema, Neo4j\Client $client, $id = null) {
+	public function __construct(ObjectSchema $object_schema, $id = null) {
 		$this->schema = $object_schema;
-		$this->client = $client;
+		$this->client = $object_schema->getClient();
 
 		if ($id instanceof Neo4j\PropertyContainer) {
 			$this->client_object = $id;

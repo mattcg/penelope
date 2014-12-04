@@ -36,6 +36,10 @@ abstract class ObjectSchema extends OptionContainer {
 		}
 	}
 
+	public function getClient() {
+		return $this->client;
+	}
+
 	public function defineProperty($name, $property) {
 
 		// Default to 'text' type.

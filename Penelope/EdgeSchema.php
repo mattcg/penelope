@@ -28,7 +28,7 @@ class EdgeSchema extends ObjectSchema {
 	}
 
 	public function get($id, $fetch = true) {
-		$edge = new Edge($this, $this->client, $id);
+		$edge = new Edge($this, $id);
 
 		// Preload data before returning.
 		// NotFoundException will be thrown if:
@@ -44,8 +44,8 @@ class EdgeSchema extends ObjectSchema {
 		return $edge;
 	}
 
-	public function create() {
-		return new Edge($this, $this->client);
+	public function create(Neo4j\PropertyContainer $client_edge = null) {
+		return new Edge($this, $client_edge);
 	}
 
 	public function getStartNodeSchema() {

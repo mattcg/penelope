@@ -42,7 +42,7 @@ class EdgesController extends ObjectController {
 		$app = $this->app;
 
 		$edge_schema = $this->getEdgeSchemaBySlugs($node_schema_slug, $edge_schema_slug);
-		$edge = new Edge($edge_schema, $this->client);
+		$edge = $edge_schema->create();
 
 		$transient_properties = array();
 		$has_errors = false;

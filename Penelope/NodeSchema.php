@@ -19,7 +19,7 @@ class NodeSchema extends ObjectSchema {
 	protected $path_formats = array('collection' => '/%s/', 'new' => '/%s/new', 'edit' => '/%s/%s/edit', 'object' => '/%s/%s');
 
 	public function get($id, $fetch = true) {
-		$node = new Node($this, $this->client, $id);
+		$node = new Node($this, $id);
 
 		// Preload data before returning.
 		// NotFoundException will be thrown if:
@@ -33,8 +33,8 @@ class NodeSchema extends ObjectSchema {
 		return $node;
 	}
 
-	public function create() {
-		return new Node($this, $this->client);
+	public function create(Neo4j\PropertyContainer $client_node = null) {
+		return new Node($this, $client_node);
 	}
 
 	public function getCollectionCount() {
@@ -105,7 +105,7 @@ class NodeSchema extends ObjectSchema {
 		$nodes = array();
 		foreach ($result_set as $row) {
 			$client_node = $row['n'];
-			$nodes[] = new Node($this, $this->client, $client_node);
+			$nodes[] = $this->create($client_node);
 		}
 
 		return $nodes;

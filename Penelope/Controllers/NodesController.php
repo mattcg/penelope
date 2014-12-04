@@ -59,7 +59,7 @@ class NodesController extends ObjectController {
 
 	public function create($schema_slug) {
 		$node_schema = $this->getNodeSchemaBySlug($schema_slug);
-		$node = new Node($node_schema, $this->client);
+		$node = $node_schema->create();
 
 		$transient_properties = array();
 		$has_errors = false;
