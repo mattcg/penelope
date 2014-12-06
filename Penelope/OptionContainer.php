@@ -30,6 +30,14 @@ class OptionContainer {
 		}
 	}
 
+	public function setOption($name, $value) {
+		$this->options[$name] = $value;
+	}
+
+	public function clearOption($name) {
+		unset($this->options[$name]);
+	}
+
 	public function getOptions() {
 		return $this->options;
 	}
