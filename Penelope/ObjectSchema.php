@@ -109,7 +109,7 @@ abstract class ObjectSchema extends OptionContainer {
 		return $this->property_schemas[$name];
 	}
 
-	protected function getPathFormat($type = 'object') {
+	public function getPathFormat($type = 'object') {
 		if (!isset($this->path_formats[$type])) {
 			throw new \InvalidArgumentException('Invalid path type "' . $type . '".');
 		}
