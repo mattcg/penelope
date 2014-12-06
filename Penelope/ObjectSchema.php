@@ -27,12 +27,8 @@ abstract class ObjectSchema extends OptionContainer {
 		$this->slug = $slug;
 		$this->client = $client;
 
-		// Syntax for properties:
-		// array('my_property_1', 'my_property_2' => 'date', 'my_property_3' => array('type' => 'country', 'mode' => 'alpha-2'))
 		if ($properties) {
-			foreach ($properties as $name => $property) {
-				$this->defineProperty($name, $property);
-			}
+			$this->defineProperties($properties);
 		}
 	}
 
@@ -40,17 +36,35 @@ abstract class ObjectSchema extends OptionContainer {
 		return $this->client;
 	}
 
-	public function defineProperty($name, $property) {
+	public function defineProperties(array $properties) {
+
+		// Syntax for properties:
+		// array('my_property_1', 'my_property_2' => 'date', 'my_property_3' => array('type' => 'country', 'mode' => 'alpha-2'))
+		foreach ($properties as $name => $property) {
+
+			// Properties with no name key, where the value is the name.
+			if (is_int($name)) {
+				$name = $property;
+				$property = null;
+			}
+
+			$this->defineProperty($name, $property);
+		}
+	}
+
+	public function defineProperty($name, $property = null) {
 
 		// Default to 'text' type.
 		$type = 'text';
 		$is_multi_value = false;
 		$options = array();
 
+		if (!is_string($name)) {
+			throw new \InvalidArgumentException('Invalid property definition.');
+		}
+
 		// Check for property with no type definition.
-		if (is_int($name)) {
-			$name = $property;
-		} else if (is_string($property)) {
+		if (is_string($property)) {
 			$type = $property;
 		} else if (is_array($property)) {
 			if (!empty($property['type'])) {
@@ -60,8 +74,6 @@ abstract class ObjectSchema extends OptionContainer {
 			// If there are any other keys besides the type, set them as options.
 			unset($property['type']);
 			$options = $property;
-		} else {
-			throw new \InvalidArgumentException('Invalid property definition at index "' . $name . '".');
 		}
 
 		if (substr($type, -2) === '[]') {

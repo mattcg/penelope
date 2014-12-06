@@ -124,6 +124,66 @@ class NodeSchemaTest extends \PHPUnit_Framework_TestCase {
 	/**
 	 * @dataProvider nodeSchemaProvider
 	 */
+	public function testDefineProperty_usesTextTypeByDefault($node_schema) {
+		$node_schema->defineProperty('test');
+		$this->assertTrue($node_schema->hasProperty('test'));
+		$this->assertEquals('test', $node_schema->getProperty('test')->getName());
+		$this->assertEquals('text', $node_schema->getProperty('test')->getType());
+	}
+
+
+	/**
+	 * @dataProvider nodeSchemaProvider
+	 */
+	public function testDefineProperty_allowsTypeToBeSpecified($node_schema) {
+		$node_schema->defineProperty('test', array('type' => 'date'));
+		$this->assertTrue($node_schema->hasProperty('test'));
+		$this->assertEquals('test', $node_schema->getProperty('test')->getName());
+		$this->assertEquals('date', $node_schema->getProperty('test')->getType());
+	}
+
+
+	/**
+	 * @dataProvider nodeSchemaProvider
+	 */
+	public function testDefineProperty_throwsExceptionForInvalidDefinition($node_schema) {
+		$this->setExpectedException('InvalidArgumentException', 'Invalid property definition.');
+		$node_schema->defineProperty(0);
+	}
+
+
+	/**
+	 * @dataProvider nodeSchemaProvider
+	 */
+	public function testDefineProperty_allowsMultiValueTypeToBeSpecified($node_schema) {
+		$node_schema->defineProperty('test', array('type' => 'date[]'));
+		$this->assertEquals('date', $node_schema->getProperty('test')->getType());
+		$this->assertTrue($node_schema->getProperty('test')->isMultiValue());
+	}
+
+
+	/**
+	 * @dataProvider nodeSchemaProvider
+	 */
+	public function testDefineProperties_definesProperties($node_schema) {
+		$node_schema->defineProperties(array('test1', 'test2' => array('type' => 'date')));
+		$this->assertTrue($node_schema->hasProperty('test1'));
+		$this->assertTrue($node_schema->hasProperty('test2'));
+		$this->assertEquals('text', $node_schema->getProperty('test1')->getType());
+		$this->assertEquals('date', $node_schema->getProperty('test2')->getType());
+	}
+
+	public function testConstructor_definesProperties() {
+		$schema = $this->getSchema();
+		$node_schema = $schema->addNode('Person', 'people', array('test'));
+		$this->assertTrue($node_schema->hasProperty('test'));
+		$this->assertEquals('text', $node_schema->getProperty('test')->getType());
+	}
+
+
+	/**
+	 * @dataProvider nodeSchemaProvider
+	 */
 	public function testGetPathFormat_throwsExceptionForUnkownType($node_schema) {
 		$this->setExpectedException('InvalidArgumentException', 'Invalid path type "test".');
 		$node_schema->getPathFormat('test');
