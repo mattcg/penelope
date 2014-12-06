@@ -10,6 +10,8 @@
  * @since      File available since Release 1.0.0
  */
 
+namespace Karwana\Penelope\Tests;
+
 use Everyman\Neo4j;
 
 use Karwana\Penelope\Schema;
