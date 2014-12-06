@@ -16,10 +16,14 @@ use Everyman\Neo4j;
 
 class Schema {
 
-	private $client, $nodes = array(), $edges = array(), $node_slugs = array(), $edge_slugs = array();
+	private $client, $nodes = array(), $edges = array(), $slugs = array();
 
 	public function __construct(Neo4j\Client $client) {
 		$this->client = $client;
+	}
+
+	public function getClient() {
+		return $this->client;
 	}
 
 	public function addNode($name, $slug, array $properties = null, array $options = null) {
@@ -27,19 +31,23 @@ class Schema {
 			throw new \InvalidArgumentException('Node name "' . $name . '" already in use.');
 		}
 
-		if ($this->hasNodeWithSlug($slug)) {
-			throw new \InvalidArgumentException('Node slug "' . $slug . '" already in use.');
+		if (isset($this->slugs[$slug])) {
+			throw new \InvalidArgumentException('Slug "' . $slug . '" already in use.');
 		}
 
 		$schema = new NodeSchema($this->client, $name, $slug, $properties, $options);
 		$this->nodes[$name] = $schema;
-		$this->node_slugs[$slug] = $name;
+		$this->slugs[$slug] = $name;
 
 		return $schema;
 	}
 
 	public function hasNodeWithSlug($slug) {
-		return isset($this->node_slugs[$slug]);
+		if (isset($this->slugs[$slug]) and $this->hasNode($this->slugs[$slug])) {
+			return true;
+		}
+
+		return false;
 	}
 
 	public function getNodeBySlug($slug) {
@@ -47,7 +55,7 @@ class Schema {
 			throw new \InvalidArgumentException('Unknown node slug "' . $slug . '".');
 		}
 
-		return $this->getNode($this->node_slugs[$slug]);
+		return $this->getNode($this->slugs[$slug]);
 	}
 
 	public function hasNode($name) {
@@ -79,19 +87,23 @@ class Schema {
 			throw new \InvalidArgumentException('Edge name "' . $name . '" already in use.');
 		}
 
-		if ($this->hasEdgeWithSlug($slug)) {
-			throw new \InvalidArgumentException('Edge slug "' . $slug . '" already in use.');
+		if (isset($this->slugs[$slug])) {
+			throw new \InvalidArgumentException('Slug "' . $slug . '" already in use.');
 		}
 
 		$schema = new EdgeSchema($this->client, $name, $slug, $this->getNode($from_name), $this->getNode($to_name), $properties, $options);
 		$this->edges[$name] = $schema;
-		$this->edge_slugs[$slug] = $name;
+		$this->slugs[$slug] = $name;
 
 		return $schema;
 	}
 
 	public function hasEdgeWithSlug($slug) {
-		return isset($this->edge_slugs[$slug]);
+		if (isset($this->slugs[$slug]) and $this->hasEdge($this->slugs[$slug])) {
+			return true;
+		}
+
+		return false;
 	}
 
 	public function getEdgeBySlug($slug) {
@@ -99,7 +111,7 @@ class Schema {
 			throw new \InvalidArgumentException('Unknown edge slug "' . $slug . '".');
 		}
 
-		return $this->getEdge($this->edge_slugs[$slug]);
+		return $this->getEdge($this->slugs[$slug]);
 	}
 
 	public function hasEdge($name) {
