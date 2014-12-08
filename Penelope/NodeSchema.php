@@ -110,8 +110,7 @@ class NodeSchema extends ObjectSchema {
 	private function convertResultSet(Neo4j\Query\ResultSet $result_set) {
 		$nodes = array();
 		foreach ($result_set as $row) {
-			$client_node = $row['n'];
-			$nodes[] = $this->wrap($client_node);
+			$nodes[] = $this->wrap($row['n']);
 		}
 
 		return $nodes;

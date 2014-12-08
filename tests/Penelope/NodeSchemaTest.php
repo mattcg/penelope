@@ -236,4 +236,48 @@ class NodeSchemaTest extends \PHPUnit_Framework_TestCase {
 		$node_schema->setOption('path.format.collection', '/%s/todos');
 		$this->assertEquals('/people/todos', $node_schema->getCollectionPath());
 	}
+
+
+	/**
+	 * @dataProvider nodeSchemaProvider
+	 */
+	public function testGetCollectionCount_returnsCount($node_schema) {
+		$transport = $node_schema->getClient()->getTransport();
+		$transport->setResponse(200, array(), array('columns' => array('count(n)'), 'data' => array(array(100))));
+
+		$count = $node_schema->getCollectionCount();
+		$this->assertEquals(100, $count);
+
+		$last_request = $transport->getLastRequest();
+		$this->assertEquals(array('method' => 'POST', 'path' => 'cypher', 'data' => array('query' => 'MATCH (n:Person) RETURN count(n)')), $last_request);
+	}
+
+
+	/**
+	 * @dataProvider nodeSchemaProvider
+	 */
+	public function testGetCollection_returnsCollection($node_schema) {
+		$transport = $node_schema->getClient()->getTransport();
+		$transport->setResponse(200, array(), array(
+			'columns' => array('n'),
+			'data' => array(
+				array(array(
+					'self' => 'http://localhost:7474/db/data/node/1',
+					'metadata' => array('id' => 1, 'labels' => array('Person')),
+					'data' => array('born' => 1964, 'name' => 'Keanu Reeves')
+				)),
+				array(array(
+					'self' => 'http://localhost:7474/db/data/node/2',
+					'metadata' => array('id' => 2, 'labels' => array('Person')),
+					'data' => array('born' => 1967, 'name' => 'Carrie-Anne Moss')
+				))
+			))
+		);
+
+		$collection = $node_schema->getCollection();
+		$this->assertCount(2, $collection);
+
+		$last_request = $transport->getLastRequest();
+		$this->assertEquals(array('method' => 'POST', 'path' => 'cypher', 'data' => array('query' => 'MATCH (n:Person) RETURN (n)')), $last_request);
+	}
 }

@@ -21,8 +21,12 @@ class MockTransport extends BaseTransport {
 	public function makeRequest($method, $path, $data = array()) {
 
 		// Return server info.
-		if ($this->response and '/' === $path) {
-			return array('code' => '200', 'headers' => array(), 'data' => array('neo4j_version' => '2.1.6'));
+		if ('/' === $path) {
+			return array(
+				'code'    => '200',
+				'headers' => array(),
+				'data'    => array('neo4j_version' => '2.1.6', 'cypher'  => 'cypher')
+			);
 		}
 
 		if (!$this->response) {
