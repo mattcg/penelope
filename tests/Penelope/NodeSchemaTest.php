@@ -278,6 +278,231 @@ class NodeSchemaTest extends \PHPUnit_Framework_TestCase {
 		$this->assertCount(2, $collection);
 
 		$last_request = $transport->getLastRequest();
-		$this->assertEquals(array('method' => 'POST', 'path' => 'cypher', 'data' => array('query' => 'MATCH (n:Person) RETURN (n)')), $last_request);
+		$this->assertEquals(array(
+			'method' => 'POST',
+			'path' => 'cypher',
+			'data' => array(
+				'query' => 'MATCH (n:Person) RETURN (n)'
+			)),
+			$last_request
+		);
+	}
+
+
+	/**
+	 * @dataProvider nodeSchemaProvider
+	 */
+	public function testGetCollection_returnsOrderedCollection($node_schema) {
+		$transport = $node_schema->getClient()->getTransport();
+		$transport->setResponse(200, array(), array(
+			'columns' => array('n'),
+			'data' => array(
+				array(array(
+					'self' => 'http://localhost:7474/db/data/node/2',
+					'metadata' => array('id' => 2, 'labels' => array('Person')),
+					'data' => array('born' => 1967, 'name' => 'Carrie-Anne Moss')
+				)),
+				array(array(
+					'self' => 'http://localhost:7474/db/data/node/1',
+					'metadata' => array('id' => 1, 'labels' => array('Person')),
+					'data' => array('born' => 1964, 'name' => 'Keanu Reeves')
+				))
+			))
+		);
+
+		$node_schema->setOption('collection.order_by', array('name', 'born'));
+		$collection = $node_schema->getCollection();
+		$this->assertCount(2, $collection);
+
+		$last_request = $transport->getLastRequest();
+		$this->assertEquals(array(
+			'method' => 'POST',
+			'path' => 'cypher',
+			'data' => array(
+				'query' => 'MATCH (n:Person) RETURN (n) ORDER BY n.name, n.born'
+			)),
+			$last_request
+		);
+	}
+
+
+	/**
+	 * @dataProvider nodeSchemaProvider
+	 */
+	public function testGetCollection_returnsPagedCollectionWithLimitSet($node_schema) {
+		$transport = $node_schema->getClient()->getTransport();
+		$transport->setResponse(200, array(), array(
+			'columns' => array('n'),
+			'data' => array(
+				array(array(
+					'self' => 'http://localhost:7474/db/data/node/1',
+					'metadata' => array('id' => 1, 'labels' => array('Person')),
+					'data' => array('born' => 1964, 'name' => 'Keanu Reeves')
+				))
+			))
+		);
+
+		$collection = $node_schema->getCollection(null, 0, 1);
+		$this->assertCount(1, $collection);
+
+		$last_request = $transport->getLastRequest();
+		$this->assertEquals(array(
+			'method' => 'POST',
+			'path' => 'cypher',
+			'data' => array(
+				'query' => 'MATCH (n:Person) RETURN (n) LIMIT 1'
+			)),
+			$last_request
+		);
+	}
+
+
+	/**
+	 * @dataProvider nodeSchemaProvider
+	 */
+	public function testGetCollection_returnsPagedCollectionWithSkipAndLimitSet($node_schema) {
+		$transport = $node_schema->getClient()->getTransport();
+		$transport->setResponse(200, array(), array(
+			'columns' => array('n'),
+			'data' => array(
+				array(array(
+					'self' => 'http://localhost:7474/db/data/node/2',
+					'metadata' => array('id' => 2, 'labels' => array('Person')),
+					'data' => array('born' => 1967, 'name' => 'Carrie-Anne Moss')
+				))
+			))
+		);
+
+		$collection = $node_schema->getCollection(null, 1, 1);
+		$this->assertCount(1, $collection);
+
+		$last_request = $transport->getLastRequest();
+		$this->assertEquals(array(
+			'method' => 'POST',
+			'path' => 'cypher',
+			'data' => array(
+				'query' => 'MATCH (n:Person) RETURN (n) SKIP 1 LIMIT 1'
+			)),
+			$last_request
+		);
+	}
+
+
+	/**
+	 * @dataProvider nodeSchemaProvider
+	 */
+	public function testGetCollection_returnsPagedCollectionWithSkipSet($node_schema) {
+		$transport = $node_schema->getClient()->getTransport();
+		$transport->setResponse(200, array(), array(
+			'columns' => array('n'),
+			'data' => array(
+				array(array(
+					'self' => 'http://localhost:7474/db/data/node/2',
+					'metadata' => array('id' => 2, 'labels' => array('Person')),
+					'data' => array('born' => 1967, 'name' => 'Carrie-Anne Moss')
+				))
+			))
+		);
+
+		$collection = $node_schema->getCollection(null, 1);
+		$this->assertCount(1, $collection);
+
+		$last_request = $transport->getLastRequest();
+		$this->assertEquals(array(
+			'method' => 'POST',
+			'path' => 'cypher',
+			'data' => array(
+				'query' => 'MATCH (n:Person) RETURN (n) SKIP 1'
+			)),
+			$last_request
+		);
+	}
+
+
+	/**
+	 * @dataProvider nodeSchemaProvider
+	 */
+	public function testGetCollection_returnsSearchResults($node_schema) {
+		$transport = $node_schema->getClient()->getTransport();
+		$transport->setResponse(200, array(), array(
+			'columns' => array('n'),
+			'data' => array(
+				array(array(
+					'self' => 'http://localhost:7474/db/data/node/1',
+					'metadata' => array('id' => 1, 'labels' => array('Person')),
+					'data' => array('born' => 1964, 'name' => 'Keanu Reeves')
+				))
+			))
+		);
+
+		$node_schema->defineProperty('name');
+		$collection = $node_schema->getCollection(array('name' => 'Keanu Reeves'));
+		$this->assertCount(1, $collection);
+
+		$last_request = $transport->getLastRequest();
+		$this->assertEquals(array(
+			'method' => 'POST',
+			'path' => 'cypher',
+			'data' => array(
+				'query' => 'MATCH (n:Person) WHERE ANY (m IN {value_0} WHERE m IN n.name) RETURN (n)',
+				'params' => array('value_0' => 'Keanu Reeves')
+			)),
+			$last_request
+		);
+	}
+
+
+	/**
+	 * @dataProvider nodeSchemaProvider
+	 */
+	public function testGetCollectionCount_returnsSearchCount($node_schema) {
+		$transport = $node_schema->getClient()->getTransport();
+		$transport->setResponse(200, array(), array('columns' => array('count(n)'), 'data' => array(array(1))));
+
+		$node_schema->defineProperty('name');
+		$count = $node_schema->getCollectionCount(array('name' => 'Keanu Reeves'));
+		$this->assertEquals(1, $count);
+
+		$last_request = $transport->getLastRequest();
+		$this->assertEquals(array(
+			'method' => 'POST',
+			'path' => 'cypher',
+			'data' => array(
+				'query' => 'MATCH (n:Person) WHERE ANY (m IN {value_0} WHERE m IN n.name) RETURN count(n)',
+				'params' => array('value_0' => 'Keanu Reeves')
+			)),
+			$last_request
+		);
+	}
+
+
+	/**
+	 * @dataProvider nodeSchemaProvider
+	 */
+	public function testGetCollectionCount_returnsCountForEmptySearch($node_schema) {
+		$transport = $node_schema->getClient()->getTransport();
+		$transport->setResponse(200, array(), array('columns' => array('count(n)'), 'data' => array(array(1))));
+
+		$count = $node_schema->getCollectionCount(array());
+		$this->assertEquals(1, $count);
+
+		$last_request = $transport->getLastRequest();
+		$this->assertEquals(array(
+			'method' => 'POST',
+			'path' => 'cypher',
+			'data' => array(
+				'query' => 'MATCH (n:Person) RETURN count(n)'
+			)),
+			$last_request
+		);
+	}
+
+
+	/**
+	 * @dataProvider nodeSchemaProvider
+	 */
+	public function testGetCollection_throwsExceptionIfPropertyIsUnknown($node_schema) {
+		$this->setExpectedException('InvalidArgumentException', 'Unknown property "name".');
+		$node_schema->getCollection(array('name' => 'Keanu Reeves'));
 	}
 }

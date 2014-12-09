@@ -43,22 +43,12 @@ class NodeSchema extends ObjectSchema {
 		return new Node($this);
 	}
 
-	public function getCollectionCount() {
-		$query = $this->buildQuery(null, null, null, 'count');
-		return (int) $query->getResultSet()[0][0];
-	}
-
-	public function getCollection($skip = null, $limit = null) {
-		$query = $this->buildQuery(null, $skip, $limit);
-		return $this->convertResultSet($query->getResultSet());
-	}
-
-	public function getCollectionSearchCount(array $properties) {
+	public function getCollectionCount(array $properties = null) {
 		$query = $this->buildQuery($properties, null, null, 'count');
 		return (int) $query->getResultSet()[0][0];
 	}
 
-	public function searchCollection(array $properties, $skip = null, $limit = null) {
+	public function getCollection(array $properties = null, $skip = null, $limit = null) {
 		$query = $this->buildQuery($properties, $skip, $limit);
 		return $this->convertResultSet($query->getResultSet());
 	}
