@@ -32,13 +32,15 @@ class NodesController extends ObjectController {
 		$skip = $limit * ($page - 1);
 
 		// Check whether individual properties are being queried.
-		// Example: /people/?qp[countries_of_operation]=USA&p[first_name]=Arturo
-		if ($properties = $request->get('qp') and is_array($properties)) {
-			$view_data['properties'] = $properties;
-		} else {
-			$properties = null;
+		// Example: /people/?countries_of_operation=USA&first_name=Arturo
+		$properties = array();
+		foreach ($request->get() as $name => $value) {
+			if ($node_schema->hasProperty($name)) {
+				$properties[$name] = $value;
+			}
 		}
 
+		$view_data['properties'] = $properties;
 		$view_data['nodes'] = $node_schema->getCollection($properties, $skip, $limit);
 		$total = $node_schema->getCollectionCount($properties);
 
