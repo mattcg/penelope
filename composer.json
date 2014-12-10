@@ -30,6 +30,7 @@
 		"slim/slim": "~2.4.3",
 		"everyman/neo4jphp": "dev-master",
 		"phing/phing": "~2.9.1",
-		"phpunit/phpunit": "~4.3.5"
+		"phpunit/phpunit": "~4.3.5",
+		"psy/psysh": "~0.2.1"
 	}
 }
