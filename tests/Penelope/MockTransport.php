@@ -16,7 +16,7 @@ use Everyman\Neo4j\Transport as BaseTransport;
 
 class MockTransport extends BaseTransport {
 
-	private $requests = array(), $response;
+	private $requests = array(), $responses = array();
 
 	public function makeRequest($method, $path, $data = array()) {
 
@@ -29,27 +29,20 @@ class MockTransport extends BaseTransport {
 			);
 		}
 
-		if (!$this->response) {
+		if (empty($this->responses)) {
 			throw new \LogicException('No response to return.');
 		}
 
 		$this->requests[] = compact('method', 'path', 'data');
-		$response = $this->response;
-		$this->response = null;
+		$response = array_pop($this->responses);
 		return $response;
 	}
 
-	public function setResponse($code, array $headers, array $data) {
-		$this->response = compact('code', 'headers', 'data');
+	public function pushResponse($code, array $headers = array(), array $data = array()) {
+		$this->responses[] = compact('code', 'headers', 'data');
 	}
 
-	public function getRequests() {
-		return $this->requests;
-	}
-
-	public function getLastRequest() {
-		if (count($this->requests) > 0) {
-			return end($this->requests);
-		}
+	public function popRequest() {
+		return array_pop($this->requests);
 	}
 }

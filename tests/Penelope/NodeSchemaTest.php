@@ -241,14 +241,55 @@ class NodeSchemaTest extends \PHPUnit_Framework_TestCase {
 	/**
 	 * @dataProvider nodeSchemaProvider
 	 */
+	public function testGet_returnsNode($node_schema) {
+		$transport = $node_schema->getClient()->getTransport();
+
+		$transport->pushResponse(200, array(), array('Person'));
+		$transport->pushResponse(200, array(), array(
+			'columns' => array('n'),
+			'data' => array(
+				array(array(
+					'self' => 'http://localhost:7474/db/data/node/1',
+					'metadata' => array('id' => 1, 'labels' => array('Person')),
+					'data' => array('born' => 1964, 'name' => 'Keanu Reeves')
+				))
+			))
+		);
+
+		$node = $node_schema->get(1);
+
+		$this->assertEquals(array(
+			'method' => 'GET',
+			'path' => '/node/1/labels',
+			'data' => null), $transport->popRequest());
+
+		$this->assertEquals(array(
+			'method' => 'GET',
+			'path' => '/node/1',
+			'data' => null), $transport->popRequest());
+	}
+
+
+	/**
+	 * @dataProvider nodeSchemaProvider
+	 */
+	public function testGet_throwsExceptionForInvalidId($node_schema) {
+		$this->setExpectedException('InvalidArgumentException', 'Expecting an integer for the node ID.');
+		$node_schema->get('hi');
+	}
+
+
+	/**
+	 * @dataProvider nodeSchemaProvider
+	 */
 	public function testGetCollectionCount_returnsCount($node_schema) {
 		$transport = $node_schema->getClient()->getTransport();
-		$transport->setResponse(200, array(), array('columns' => array('count(n)'), 'data' => array(array(100))));
+		$transport->pushResponse(200, array(), array('columns' => array('count(n)'), 'data' => array(array(100))));
 
 		$count = $node_schema->getCollectionCount();
 		$this->assertEquals(100, $count);
 
-		$last_request = $transport->getLastRequest();
+		$last_request = $transport->popRequest();
 		$this->assertEquals(array('method' => 'POST', 'path' => 'cypher', 'data' => array('query' => 'MATCH (n:Person) RETURN count(n)')), $last_request);
 	}
 
@@ -258,7 +299,7 @@ class NodeSchemaTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testGetCollection_returnsCollection($node_schema) {
 		$transport = $node_schema->getClient()->getTransport();
-		$transport->setResponse(200, array(), array(
+		$transport->pushResponse(200, array(), array(
 			'columns' => array('n'),
 			'data' => array(
 				array(array(
@@ -277,7 +318,7 @@ class NodeSchemaTest extends \PHPUnit_Framework_TestCase {
 		$collection = $node_schema->getCollection();
 		$this->assertCount(2, $collection);
 
-		$last_request = $transport->getLastRequest();
+		$last_request = $transport->popRequest();
 		$this->assertEquals(array(
 			'method' => 'POST',
 			'path' => 'cypher',
@@ -294,7 +335,7 @@ class NodeSchemaTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testGetCollection_returnsOrderedCollection($node_schema) {
 		$transport = $node_schema->getClient()->getTransport();
-		$transport->setResponse(200, array(), array(
+		$transport->pushResponse(200, array(), array(
 			'columns' => array('n'),
 			'data' => array(
 				array(array(
@@ -314,7 +355,7 @@ class NodeSchemaTest extends \PHPUnit_Framework_TestCase {
 		$collection = $node_schema->getCollection();
 		$this->assertCount(2, $collection);
 
-		$last_request = $transport->getLastRequest();
+		$last_request = $transport->popRequest();
 		$this->assertEquals(array(
 			'method' => 'POST',
 			'path' => 'cypher',
@@ -331,7 +372,7 @@ class NodeSchemaTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testGetCollection_returnsPagedCollectionWithLimitSet($node_schema) {
 		$transport = $node_schema->getClient()->getTransport();
-		$transport->setResponse(200, array(), array(
+		$transport->pushResponse(200, array(), array(
 			'columns' => array('n'),
 			'data' => array(
 				array(array(
@@ -345,7 +386,7 @@ class NodeSchemaTest extends \PHPUnit_Framework_TestCase {
 		$collection = $node_schema->getCollection(null, 0, 1);
 		$this->assertCount(1, $collection);
 
-		$last_request = $transport->getLastRequest();
+		$last_request = $transport->popRequest();
 		$this->assertEquals(array(
 			'method' => 'POST',
 			'path' => 'cypher',
@@ -362,7 +403,7 @@ class NodeSchemaTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testGetCollection_returnsPagedCollectionWithSkipAndLimitSet($node_schema) {
 		$transport = $node_schema->getClient()->getTransport();
-		$transport->setResponse(200, array(), array(
+		$transport->pushResponse(200, array(), array(
 			'columns' => array('n'),
 			'data' => array(
 				array(array(
@@ -376,7 +417,7 @@ class NodeSchemaTest extends \PHPUnit_Framework_TestCase {
 		$collection = $node_schema->getCollection(null, 1, 1);
 		$this->assertCount(1, $collection);
 
-		$last_request = $transport->getLastRequest();
+		$last_request = $transport->popRequest();
 		$this->assertEquals(array(
 			'method' => 'POST',
 			'path' => 'cypher',
@@ -393,7 +434,7 @@ class NodeSchemaTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testGetCollection_returnsPagedCollectionWithSkipSet($node_schema) {
 		$transport = $node_schema->getClient()->getTransport();
-		$transport->setResponse(200, array(), array(
+		$transport->pushResponse(200, array(), array(
 			'columns' => array('n'),
 			'data' => array(
 				array(array(
@@ -407,7 +448,7 @@ class NodeSchemaTest extends \PHPUnit_Framework_TestCase {
 		$collection = $node_schema->getCollection(null, 1);
 		$this->assertCount(1, $collection);
 
-		$last_request = $transport->getLastRequest();
+		$last_request = $transport->popRequest();
 		$this->assertEquals(array(
 			'method' => 'POST',
 			'path' => 'cypher',
@@ -424,7 +465,7 @@ class NodeSchemaTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testGetCollection_returnsSearchResults($node_schema) {
 		$transport = $node_schema->getClient()->getTransport();
-		$transport->setResponse(200, array(), array(
+		$transport->pushResponse(200, array(), array(
 			'columns' => array('n'),
 			'data' => array(
 				array(array(
@@ -439,7 +480,7 @@ class NodeSchemaTest extends \PHPUnit_Framework_TestCase {
 		$collection = $node_schema->getCollection(array('name' => 'Keanu Reeves'));
 		$this->assertCount(1, $collection);
 
-		$last_request = $transport->getLastRequest();
+		$last_request = $transport->popRequest();
 		$this->assertEquals(array(
 			'method' => 'POST',
 			'path' => 'cypher',
@@ -457,13 +498,13 @@ class NodeSchemaTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testGetCollectionCount_returnsSearchCount($node_schema) {
 		$transport = $node_schema->getClient()->getTransport();
-		$transport->setResponse(200, array(), array('columns' => array('count(n)'), 'data' => array(array(1))));
+		$transport->pushResponse(200, array(), array('columns' => array('count(n)'), 'data' => array(array(1))));
 
 		$node_schema->defineProperty('name');
 		$count = $node_schema->getCollectionCount(array('name' => 'Keanu Reeves'));
 		$this->assertEquals(1, $count);
 
-		$last_request = $transport->getLastRequest();
+		$last_request = $transport->popRequest();
 		$this->assertEquals(array(
 			'method' => 'POST',
 			'path' => 'cypher',
@@ -481,12 +522,12 @@ class NodeSchemaTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testGetCollectionCount_returnsCountForEmptySearch($node_schema) {
 		$transport = $node_schema->getClient()->getTransport();
-		$transport->setResponse(200, array(), array('columns' => array('count(n)'), 'data' => array(array(1))));
+		$transport->pushResponse(200, array(), array('columns' => array('count(n)'), 'data' => array(array(1))));
 
 		$count = $node_schema->getCollectionCount(array());
 		$this->assertEquals(1, $count);
 
-		$last_request = $transport->getLastRequest();
+		$last_request = $transport->popRequest();
 		$this->assertEquals(array(
 			'method' => 'POST',
 			'path' => 'cypher',

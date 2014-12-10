@@ -165,7 +165,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase {
 
 		$client_node = new Neo4j\Node($client);
 		$client_node->setId(1);
-		$transport->setResponse(200, array(), array('Person'));
+		$transport->pushResponse(200, array(), array('Person'));
 		$node_schema = $schema->getByClientNode($client_node);
 		$this->assertEquals('Person', $node_schema->getName());
 	}
@@ -180,7 +180,7 @@ class SchemaTest extends \PHPUnit_Framework_TestCase {
 
 		$client_node = new Neo4j\Node($client);
 		$client_node->setId(1);
-		$transport->setResponse(200, array(), array());
+		$transport->pushResponse(200, array(), array());
 		$node_schema = $schema->getByClientNode($client_node);
 		$this->assertNull($node_schema);
 	}
