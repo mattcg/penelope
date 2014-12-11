@@ -195,4 +195,37 @@ class EdgeTest extends \PHPUnit_Framework_TestCase {
 		// No more requests.
 		$this->assertNull($transport->popRequest());
 	}
+
+
+	/**
+	 * @dataProvider edgeSchemaProvider
+	 */
+	public function testGetPath_returnsPath($edge_schema) {
+		$edge = new Edge($edge_schema, 1);
+
+		$transport = $edge->getClient()->getTransport();
+		$transport->pushResponse(200, array(), array(
+			'start' => 'http://localhost:7474/db/data/node/1',
+			'self' => 'http://localhost:7474/db/data/relationship/1',
+			'type' => 'OWNER',
+			'end' => 'http://localhost:7474/db/data/node/2',
+			'metadata' => array(
+				'id' => 1,
+				'type' => 'OWNER'
+			),
+			'data' => array()
+		));
+
+		$this->assertEquals('/people/1/owns/1', $edge->getPath());
+		$this->assertEquals('/people/1/owns/1/edit', $edge->getEditPath());
+		$this->assertEquals('/people/1/owns/', $edge->getCollectionPath());
+
+		$this->assertEquals(array(
+			'method' => 'GET',
+			'path' => '/relationship/1',
+			'data' => null), $transport->popRequest());
+
+		// No more requests.
+		$this->assertNull($transport->popRequest());
+	}
 }
