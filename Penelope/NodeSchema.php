@@ -19,10 +19,6 @@ class NodeSchema extends ObjectSchema {
 	protected $path_formats = array('collection' => '/%s/', 'new' => '/%s/new', 'edit' => '/%s/%s/edit', 'object' => '/%s/%s');
 
 	public function get($id) {
-		if (!is_int($id) and !ctype_digit($id)) {
-			throw new \InvalidArgumentException('Expecting an integer for the node ID.');
-		}
-
 		$node = new Node($this, $id);
 
 		// Preload data before returning.

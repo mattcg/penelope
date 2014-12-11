@@ -85,7 +85,7 @@ class EdgeSchemaTest extends \PHPUnit_Framework_TestCase {
 	 * @dataProvider edgeSchemaProvider
 	 */
 	public function testGet_throwsExceptionForInvalidId($edge_schema) {
-		$this->setExpectedException('InvalidArgumentException', 'Expecting an integer for the edge ID.');
+		$this->setExpectedException('InvalidArgumentException', 'Invalid ID.');
 		$edge_schema->get('hi');
 	}
 

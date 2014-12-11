@@ -274,7 +274,7 @@ class NodeSchemaTest extends \PHPUnit_Framework_TestCase {
 	 * @dataProvider nodeSchemaProvider
 	 */
 	public function testGet_throwsExceptionForInvalidId($node_schema) {
-		$this->setExpectedException('InvalidArgumentException', 'Expecting an integer for the node ID.');
+		$this->setExpectedException('InvalidArgumentException', 'Invalid ID.');
 		$node_schema->get('hi');
 	}
 

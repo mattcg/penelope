@@ -28,10 +28,6 @@ class EdgeSchema extends ObjectSchema {
 	}
 
 	public function get($id) {
-		if (!is_int($id) and !ctype_digit($id)) {
-			throw new \InvalidArgumentException('Expecting an integer for the edge ID.');
-		}
-
 		$edge = new Edge($this, $id);
 
 		// Preload data before returning.
