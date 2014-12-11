@@ -73,7 +73,7 @@ abstract class Object {
 		}
 
 		if (!is_callable($option)) {
-			throw new \RuntimeException('Option for "title" must be callable.');
+			throw new \InvalidArgumentException('Option for "title" must be callable.');
 		}
 
 		$title = $option($this);

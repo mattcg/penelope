@@ -38,6 +38,75 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
 	/**
 	 * @dataProvider schemaProvider
 	 */
+	public function testGetClient_returnsClient($schema) {
+		$node = new Node($schema->getNode('Person'));
+		$this->assertInstanceOf('Everyman\Neo4j\Client', $node->getClient());
+	}
+
+
+	/**
+	 * @dataProvider schemaProvider
+	 */
+	public function testGetDefaultTitle_returnsEmptyStringForNodeWithNoId($schema) {
+		$node = new Node($schema->getNode('Person'));
+		$this->assertEquals('', $node->getDefaultTitle());
+		$this->assertEquals('', $node->getTitle());
+	}
+
+
+	/**
+	 * @dataProvider schemaProvider
+	 */
+	public function testGetDefaultTitle_returnsTitleForNodeWithId($schema) {
+		$node = new Node($schema->getNode('Person'), 1);
+		$this->assertEquals('Person #1', $node->getDefaultTitle());
+		$this->assertEquals('Person #1', $node->getTitle());
+	}
+
+
+	/**
+	 * @dataProvider schemaProvider
+	 */
+	public function testGetTitle_returnsOptionalTitle($schema) {
+		$node = new Node($schema->getNode('Person'), 1);
+		$node->getSchema()->setOption('format.title', function(Node $node) {
+			return 'Leila Guerriero';
+		});
+		
+		$this->assertEquals('Person #1', $node->getDefaultTitle());
+		$this->assertEquals('Leila Guerriero', $node->getTitle());
+	}
+
+
+	/**
+	 * @dataProvider schemaProvider
+	 */
+	public function testGetTitle_returnsDefaultTitleIfOptionalTitleReturnsNothing($schema) {
+		$node = new Node($schema->getNode('Person'), 1);
+		$node->getSchema()->setOption('format.title', function(Node $node) {
+			return false;
+		});
+		
+		$this->assertEquals('Person #1', $node->getDefaultTitle());
+		$this->assertEquals('Person #1', $node->getTitle());
+	}
+
+
+	/**
+	 * @dataProvider schemaProvider
+	 */
+	public function testGetTitle_throwsIfOptionalTitleIsNotCallable($schema) {
+		$node = new Node($schema->getNode('Person'), 1);
+		$node->getSchema()->setOption('format.title', 'Leila Guerriero');
+
+		$this->setExpectedException('InvalidArgumentException', 'Option for "title" must be callable.');
+		$node->getTitle();
+	}
+
+
+	/**
+	 * @dataProvider schemaProvider
+	 */
 	public function testGetPath_throwsForNodeWithNoId($schema) {
 		$this->setExpectedException('LogicException', 'Cannot create path for node with no ID.');
 		$node = $schema->getNode('Person')->create();
@@ -152,6 +221,90 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
 	/**
 	 * @dataProvider schemaProvider
 	 */
+	public function testGetProperty_throwsForUnknownProperty($schema) {
+		$node_schema = $schema->getNode('Person');
+		$node = new Node($node_schema, 1);
+		$this->setExpectedException('InvalidArgumentException', 'Unknown property "name".');
+		$node->getProperty('name');
+	}
+
+
+	/**
+	 * @dataProvider schemaProvider
+	 */
+	public function testGetProperty_returnsProperty($schema) {
+		$transport = $schema->getClient()->getTransport();
+		$transport->pushResponse(200, array(), array('Person'));
+		$transport->pushResponse(200, array(), array(
+			'self' => 'http://localhost:7474/db/data/node/1',
+			'metadata' => array('id' => 1, 'labels' => array('Person')),
+			'data' => array('born' => 1964, 'name' => 'Keanu Reeves')
+		));
+
+		$node_schema = $schema->getNode('Person');
+		$node_schema->defineProperty('name');
+		$node = new Node($node_schema, 1);
+		$this->assertEquals('Keanu Reeves', $node->getProperty('name')->getValue());
+
+		$this->assertEquals(array(
+			'method' => 'GET',
+			'path' => '/node/1/labels',
+			'data' => null
+		), $transport->popRequest());
+
+		$this->assertEquals(array(
+			'method' => 'GET',
+			'path' => '/node/1',
+			'data' => null
+		), $transport->popRequest());
+
+		// No more requests.
+		$this->assertNull($transport->popRequest());
+	}
+
+
+	/**
+	 * @dataProvider schemaProvider
+	 */
+	public function testGetProperties_returnsProperties($schema) {
+		$transport = $schema->getClient()->getTransport();
+		$transport->pushResponse(200, array(), array('Person'));
+		$transport->pushResponse(200, array(), array(
+			'self' => 'http://localhost:7474/db/data/node/1',
+			'metadata' => array('id' => 1, 'labels' => array('Person')),
+			'data' => array('born' => '1964', 'name' => 'Keanu Reeves')
+		));
+
+		$node_schema = $schema->getNode('Person');
+		$node_schema->defineProperty('name');
+		$node_schema->defineProperty('born');
+		$node = new Node($node_schema, 1);
+
+		$properties = $node->getProperties();
+		$this->assertCount(2, $properties);
+		$this->assertEquals('1964', $properties[1]->getValue());
+		$this->assertEquals('Keanu Reeves', $properties[0]->getValue());
+
+		$this->assertEquals(array(
+			'method' => 'GET',
+			'path' => '/node/1/labels',
+			'data' => null
+		), $transport->popRequest());
+
+		$this->assertEquals(array(
+			'method' => 'GET',
+			'path' => '/node/1',
+			'data' => null
+		), $transport->popRequest());
+
+		// No more requests.
+		$this->assertNull($transport->popRequest());
+	}
+
+
+	/**
+	 * @dataProvider schemaProvider
+	 */
 	public function testFetch_throwsForNodeWithNoId($schema) {
 		$this->setExpectedException('LogicException', 'Cannot fetch without ID.');
 		$node = $schema->getNode('Person')->create();
@@ -239,6 +392,58 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
 
 		// No more requests.
 		$this->assertNull($transport->popRequest());
+	}
+
+
+	/**
+	 * @dataProvider schemaProvider
+	 */
+	public function testConstructor_throwsWhenPassedClientObjectWithMismatchingId($schema) {
+		$transport = $schema->getClient()->getTransport();
+		$transport->pushResponse(200, array(), array('Person'));
+		$transport->pushResponse(200, array(), array(
+			'columns' => array('n'),
+			'data' => array(
+				array(array(
+					'self' => 'http://localhost:7474/db/data/node/1',
+					'metadata' => array('id' => 1, 'labels' => array('Person')),
+					'data' => array('born' => 1964, 'name' => 'Keanu Reeves')
+				))
+			))
+		);
+
+		$node = new Node($schema->getNode('Person'), 1);
+		$client_object = $node->fetch();
+
+		$this->assertInstanceOf('Everyman\\Neo4j\Node', $client_object);
+		$this->assertEquals($node->getId(), $client_object->getId());
+
+		$this->assertEquals(array(
+			'method' => 'GET',
+			'path' => '/node/1/labels',
+			'data' => null
+		), $transport->popRequest());
+
+		$this->assertEquals(array(
+			'method' => 'GET',
+			'path' => '/node/1',
+			'data' => null
+		), $transport->popRequest());
+
+		// No more requests.
+		$this->assertNull($transport->popRequest());
+
+		$this->setExpectedException('InvalidArgumentException', 'IDs do not match.');
+		new Node($schema->getNode('Person'), 2, $client_object);
+	}
+
+
+	/**
+	 * @dataProvider schemaProvider
+	 */
+	public function testConstructor_throwsWhenPassedInvalidId($schema) {
+		$this->setExpectedException('InvalidArgumentException', 'Invalid ID.');
+		new Node($schema->getNode('Person'), 'hi');
 	}
 
 
