@@ -62,4 +62,137 @@ class EdgeTest extends \PHPUnit_Framework_TestCase {
 		$edge = new Edge($edge_schema);
 		$edge->getEditPath();
 	}
+
+
+	/**
+	 * @dataProvider edgeProvider
+	 */
+	public function testFetch_throwsExceptionIfEdgeHasNoId($edge) {
+		$this->setExpectedException('LogicException', 'Cannot fetch without ID.');
+		$edge->fetch();
+	}
+
+
+	/**
+	 * @dataProvider edgeSchemaProvider
+	 */
+	public function testFetch_throwsExceptionIfEdgeDoesNotExist($edge_schema) {
+		$this->setExpectedException('Karwana\Penelope\Exceptions\NotFoundException', 'No edge with ID "1".');
+		$edge = new Edge($edge_schema, 1);
+
+		$transport = $edge->getClient()->getTransport();
+		$transport->pushResponse(404, array(), array(
+			'exception' => 'RelationshipNotFoundException',
+			'fullname' => 'org.neo4j.server.rest.web.RelationshipNotFoundException',
+		));
+
+		$edge->fetch();
+
+		$this->assertEquals(array(
+			'method' => 'GET',
+			'path' => '/relationship/1',
+			'data' => null), $transport->popRequest());
+
+		// No more requests.
+		$this->assertNull($transport->popRequest());
+	}
+
+
+	/**
+	 * @dataProvider edgeSchemaProvider
+	 */
+	public function testFetch_throwsExceptionIfEdgeDoesNotMatchSchema($edge_schema) {
+		$this->setExpectedException('Karwana\Penelope\Exceptions\SchemaException', 'Edge with ID "1" exists, but does not match schema "OWNER".');
+		$edge = new Edge($edge_schema, 1);
+
+		$transport = $edge->getClient()->getTransport();
+		$transport->pushResponse(200, array(), array(
+			'start' => 'http://localhost:7474/db/data/node/1',
+			'self' => 'http://localhost:7474/db/data/relationship/1',
+			'type' => 'ACTED_IN',
+			'end' => 'http://localhost:7474/db/data/node/2',
+			'metadata' => array(
+				'id' => 1,
+				'type' => 'ACTED_IN'
+			),
+			'data' => array()
+		));
+
+		$client_edge = $edge->fetch();
+
+		$this->assertEquals(1, $client_edge->getId());
+		$this->assertEquals(array(
+			'method' => 'GET',
+			'path' => '/relationship/1',
+			'data' => null), $transport->popRequest());
+
+		// No more requests.
+		$this->assertNull($transport->popRequest());
+	}
+
+
+	/**
+	 * @dataProvider edgeSchemaProvider
+	 */
+	public function testGetStartNode_returnsStartNode($edge_schema) {
+		$edge = new Edge($edge_schema, 1);
+
+		$transport = $edge->getClient()->getTransport();
+		$transport->pushResponse(200, array(), array(
+			'start' => 'http://localhost:7474/db/data/node/1',
+			'self' => 'http://localhost:7474/db/data/relationship/1',
+			'type' => 'OWNER',
+			'end' => 'http://localhost:7474/db/data/node/2',
+			'metadata' => array(
+				'id' => 1,
+				'type' => 'OWNER'
+			),
+			'data' => array()
+		));
+
+		$start_node = $edge->getStartNode();
+
+		$this->assertEquals(1, $start_node->getId());
+
+		$this->assertEquals(array(
+			'method' => 'GET',
+			'path' => '/relationship/1',
+			'data' => null), $transport->popRequest());
+
+		// No more requests.
+		$this->assertNull($transport->popRequest());
+	}
+
+
+	/**
+	 * @dataProvider edgeSchemaProvider
+	 */
+	public function testGetEndNode_returnsEndNode($edge_schema) {
+		$edge = new Edge($edge_schema, 1);
+
+		$transport = $edge->getClient()->getTransport();
+		$transport->pushResponse(200, array(), array(
+			'start' => 'http://localhost:7474/db/data/node/1',
+			'self' => 'http://localhost:7474/db/data/relationship/1',
+			'type' => 'OWNER',
+			'end' => 'http://localhost:7474/db/data/node/2',
+			'metadata' => array(
+				'id' => 1,
+				'type' => 'OWNER'
+			),
+			'data' => array()
+		));
+
+		$start_node = $edge->getEndNode();
+
+		$this->assertEquals(2, $start_node->getId());
+
+		$this->assertEquals(array(
+			'method' => 'GET',
+			'path' => '/relationship/1',
+			'data' => null), $transport->popRequest());
+
+		// No more requests.
+		$this->assertNull($transport->popRequest());
+	}
 }
