@@ -138,6 +138,8 @@ class EdgeTest extends \PHPUnit_Framework_TestCase {
 		$edge = new Edge($edge_schema, 1);
 
 		$transport = $edge->getClient()->getTransport();
+		$transport->pushResponse(200, array(), array('Person'));
+		$transport->pushResponse(200, array(), array('Car'));
 		$transport->pushResponse(200, array(), array(
 			'start' => 'http://localhost:7474/db/data/node/1',
 			'self' => 'http://localhost:7474/db/data/relationship/1',
@@ -156,6 +158,16 @@ class EdgeTest extends \PHPUnit_Framework_TestCase {
 
 		$this->assertEquals(array(
 			'method' => 'GET',
+			'path' => '/node/1/labels',
+			'data' => null), $transport->popRequest());
+
+		$this->assertEquals(array(
+			'method' => 'GET',
+			'path' => '/node/2/labels',
+			'data' => null), $transport->popRequest());
+
+		$this->assertEquals(array(
+			'method' => 'GET',
 			'path' => '/relationship/1',
 			'data' => null), $transport->popRequest());
 
@@ -171,6 +183,9 @@ class EdgeTest extends \PHPUnit_Framework_TestCase {
 		$edge = new Edge($edge_schema, 1);
 
 		$transport = $edge->getClient()->getTransport();
+
+		$transport->pushResponse(200, array(), array('Person'));
+		$transport->pushResponse(200, array(), array('Car'));
 		$transport->pushResponse(200, array(), array(
 			'start' => 'http://localhost:7474/db/data/node/1',
 			'self' => 'http://localhost:7474/db/data/relationship/1',
@@ -189,6 +204,16 @@ class EdgeTest extends \PHPUnit_Framework_TestCase {
 
 		$this->assertEquals(array(
 			'method' => 'GET',
+			'path' => '/node/1/labels',
+			'data' => null), $transport->popRequest());
+
+		$this->assertEquals(array(
+			'method' => 'GET',
+			'path' => '/node/2/labels',
+			'data' => null), $transport->popRequest());
+
+		$this->assertEquals(array(
+			'method' => 'GET',
 			'path' => '/relationship/1',
 			'data' => null), $transport->popRequest());
 
@@ -204,6 +229,9 @@ class EdgeTest extends \PHPUnit_Framework_TestCase {
 		$edge = new Edge($edge_schema, 1);
 
 		$transport = $edge->getClient()->getTransport();
+
+		$transport->pushResponse(200, array(), array('Person'));
+		$transport->pushResponse(200, array(), array('Car'));
 		$transport->pushResponse(200, array(), array(
 			'start' => 'http://localhost:7474/db/data/node/1',
 			'self' => 'http://localhost:7474/db/data/relationship/1',
@@ -219,6 +247,16 @@ class EdgeTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals('/people/1/owns/1', $edge->getPath());
 		$this->assertEquals('/people/1/owns/1/edit', $edge->getEditPath());
 		$this->assertEquals('/people/1/owns/', $edge->getCollectionPath());
+
+		$this->assertEquals(array(
+			'method' => 'GET',
+			'path' => '/node/1/labels',
+			'data' => null), $transport->popRequest());
+
+		$this->assertEquals(array(
+			'method' => 'GET',
+			'path' => '/node/2/labels',
+			'data' => null), $transport->popRequest());
 
 		$this->assertEquals(array(
 			'method' => 'GET',

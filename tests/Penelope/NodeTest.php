@@ -450,6 +450,49 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
 	/**
 	 * @dataProvider schemaProvider
 	 */
+	public function testConstructor_throwsWhenPassedClientNodeWithMismatchingLabels($schema) {
+		$transport = $schema->getClient()->getTransport();
+
+		// Response for labels.
+		$transport->pushResponse(200, array(), array('Person'));
+
+		// Response for node.
+		$transport->pushResponse(200, array(), array(
+			'columns' => array('n'),
+			'data' => array(
+				array(array(
+					'self' => 'http://localhost:7474/db/data/node/1',
+					'metadata' => array('id' => 1, 'labels' => array('Person')),
+					'data' => array('born' => 1964, 'name' => 'Keanu Reeves')
+				))
+			))
+		);
+
+		$node = new Node($schema->getNode('Person'), 1);
+		$client_object = $node->fetch();
+
+		$this->setExpectedException('Karwana\Penelope\Exceptions\SchemaException', 'Node does not match schema "Car".');
+		new Node($schema->getNode('Car'), 1, $client_object);
+
+		// Request for labels.
+		$this->assertEquals(array(
+			'method' => 'GET',
+			'path' => '/node/1/labels',
+			'data' => null
+		), $transport->popRequest());
+
+		// Request for node.
+		$this->assertEquals(array(
+			'method' => 'GET',
+			'path' => '/node/1',
+			'data' => null
+		), $transport->popRequest());
+	}
+
+
+	/**
+	 * @dataProvider schemaProvider
+	 */
 	public function testGetOutEdges_throwsForInvalidSchema($schema) {
 		$this->setExpectedException('Karwana\Penelope\Exceptions\SchemaException', 'The schema for edges of type "Friend" does not permit edges from nodes of type "Car".');
 
@@ -497,6 +540,10 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
 		// Recreate the object from scratch.
 		$node = new Node($person_schema, 1);
 
+		// Responses for start and end node labels.
+		$transport->pushResponse(200, array(), array('Person'));
+		$transport->pushResponse(200, array(), array('Person'));
+
 		// Response for relationship.
 		$transport->pushResponse(200, array(), array(
 			array(
@@ -533,6 +580,18 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
 		);
 
 		$edges = $node->getEdges($friend_edge_schema);
+
+		$this->assertEquals(array(
+			'method' => 'GET',
+			'path' => '/node/1/labels',
+			'data' => null
+		), $transport->popRequest());
+
+		$this->assertEquals(array(
+			'method' => 'GET',
+			'path' => '/node/2/labels',
+			'data' => null
+		), $transport->popRequest());
 
 		// Request for getting relationships.
 		$this->assertEquals(array(

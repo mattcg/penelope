@@ -18,6 +18,11 @@ class Node extends Object {
 
 	public function __construct(NodeSchema $node_schema, $id = null, Neo4j\Node $client_node = null) {
 		parent::__construct($node_schema, $id, $client_node);
+
+		// Check that the node given by the ID matches the schema.
+		if ($client_node and !$node_schema->envelopes($client_node)) {
+			throw new Exceptions\SchemaException('Node does not match schema "' . $node_schema->getName() . '".');
+		}
 	}
 
 	public function getPath() {

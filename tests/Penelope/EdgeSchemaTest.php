@@ -53,6 +53,8 @@ class EdgeSchemaTest extends \PHPUnit_Framework_TestCase {
 	public function testGet_returnsEdge($edge_schema) {
 		$transport = $edge_schema->getClient()->getTransport();
 
+		$transport->pushResponse(200, array(), array('Person'));
+		$transport->pushResponse(200, array(), array('Car'));
 		$transport->pushResponse(200, array(), array(
 			'start' => 'http://localhost:7474/db/data/node/1',
 			'self' => 'http://localhost:7474/db/data/relationship/1',
@@ -69,6 +71,16 @@ class EdgeSchemaTest extends \PHPUnit_Framework_TestCase {
 
 		$this->assertInstanceOf('Karwana\Penelope\Edge', $edge);
 		$this->assertEquals(1, $edge->getId());
+
+		$this->assertEquals(array(
+			'method' => 'GET',
+			'path' => '/node/1/labels',
+			'data' => null), $transport->popRequest());
+
+		$this->assertEquals(array(
+			'method' => 'GET',
+			'path' => '/node/2/labels',
+			'data' => null), $transport->popRequest());
 
 		$this->assertEquals(array(
 			'method' => 'GET',
