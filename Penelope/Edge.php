@@ -54,7 +54,20 @@ class Edge extends Object {
 	}
 
 	public function getCollectionPath() {
-		return $this->formatPath($this->schema->getCollectionPath());
+		$start_node = $this->getStartNode();
+
+		if (!$start_node) {
+			throw new \LogicException('Cannot get collection path for edge with no start node.');
+		}
+
+		if (!$start_node->hasId()) {
+			throw new \LogicException('Cannot get collection path from node with no ID.');
+		}
+
+		$path = $this->schema->getCollectionPath();
+		$path = preg_replace('/:node_id/', $start_node->getId(), $path);
+
+		return $path;
 	}
 
 	public function fetch() {
@@ -78,18 +91,17 @@ class Edge extends Object {
 	}
 
 	private function setStartAndEndNodes() {
-
-		// Attach the start and end nodes.
-		// Implicitly checks that the edge's relationships are permitted by the schema.
 		$edge_schema = $this->getSchema();
 		$client_edge = $this->client_object;
 
+		// Attach the start and end nodes.
+		// Implicitly checks that the edge's relationships are permitted by the schema.
 		$this->end_node = $edge_schema->getEndNodeSchema()->wrap($client_edge->getEndNode());
 		$this->start_node = $edge_schema->getStartNodeSchema()->wrap($client_edge->getStartNode());
 	}
 
 	public function getStartNode() {
-		if (!$this->client_object) {
+		if ($this->hasId() and !$this->client_object) {
 			$this->fetch();
 		}
 
@@ -97,7 +109,7 @@ class Edge extends Object {
 	}
 
 	public function getEndNode() {
-		if (!$this->client_object) {
+		if ($this->hasId() and !$this->client_object) {
 			$this->fetch();
 		}
 
@@ -105,7 +117,7 @@ class Edge extends Object {
 	}
 
 	public function setRelationship(Node $start_node, Node $end_node) {
-		if ($start_node->getId() === $end_node->getId()) {
+		if ($start_node->hasId() and $start_node->getId() === $end_node->getId()) {
 			throw new Exceptions\SchemaException('A node may not have an edge to itself.');
 		}
 
@@ -121,6 +133,24 @@ class Edge extends Object {
 	}
 
 	public function save() {
+		$start_node = $this->start_node;
+		$end_node = $this->end_node;
+
+		if (!$start_node) {
+			throw new \LogicException('Cannot save an edge with no start node.');
+		}
+
+		if (!$end_node) {
+			throw new \LogicException('Cannot save an edge with no end node.');
+		}
+
+		if (!$start_node->hasId()) {
+			$start_node->save();
+		}
+
+		if (!$end_node->hasId()) {
+			$end_node->save();
+		}
 
 		// Make an edge if this edge is new.
 		if (!$this->hasId($this->id)) {
@@ -132,8 +162,8 @@ class Edge extends Object {
 		}
 
 		$client_edge = $this->client_object;
-		$client_edge->setStartNode($this->start_node->getClientObject());
-		$client_edge->setEndNode($this->end_node->getClientObject());
+		$client_edge->setStartNode($start_node->getClientObject());
+		$client_edge->setEndNode($end_node->getClientObject());
 
 		parent::save();
 	}
