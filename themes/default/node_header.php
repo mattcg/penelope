@@ -37,7 +37,7 @@
 	}
 
 	?>">
-		<a name="main"><h1 class="main-title"><?php __($title); ?></h1></a>
+		<a name="<?php __(_m('node_main_anchor')); ?>"><h1 class="main-title"><?php __($title); ?></h1></a>
 		<?php
 
 		if (isset($node)) {
@@ -102,8 +102,8 @@
 	?>
 	<nav class="sections">
 		<ol>
-			<li><a href="#main"><?php __(_m('node_main_title')); ?></a></li>
-			<li><a href="#edges"><?php __(_m('node_edges_title')); ?></a></li>
+			<li><a href="#<?php __(_m('node_main_anchor')); ?>"><?php __(_m('node_main_title')); ?></a></li>
+			<li><a href="#<?php __(_m('node_edges_anchor')); ?>"><?php __(_m('node_edges_title')); ?></a></li>
 		</ol>
 	</nav>
 	<?php

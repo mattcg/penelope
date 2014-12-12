@@ -53,7 +53,7 @@
 		</div>
 		<footer class="main-footer object node">
 			<section class="edges">
-				<a name="edges"><h1 class="section-title"><?php __(_m('node_edges_title')); ?></h1></a>
+				<a name="<?php __(_m('node_edges_anchor')); ?>"><h1 class="section-title"><?php __(_m('node_edges_title')); ?></h1></a>
 				<?php
 
 				if (empty($edge_schemas) and empty($reverse_edge_schemas)) {
