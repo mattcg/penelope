@@ -5,7 +5,7 @@ use Karwana\Penelope\Types\Image;
 if ($property->getSchema()->isMultiValue()) {
 
 ?>
-<ul class="multivalue">
+<ol class="multivalue">
 <?php
 
 	foreach ((array) $property->getValue() as $value) {
@@ -27,7 +27,7 @@ if ($property->getSchema()->isMultiValue()) {
 
 ?>
 	<li><input type="file" accept="image/*" id="<?php __($property_id); ?>" name="<?php __(_e($property->getName())); ?>[]" class="new"></li>
-</ul>
+</ol>
 <?php
 
 } else if ($property->hasValue() and Image::isValid($value = $property->getValue())) {

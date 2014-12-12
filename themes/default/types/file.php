@@ -5,7 +5,7 @@ use Karwana\Penelope\Types\File;
 if ($property->getSchema()->isMultiValue()) {
 
 ?>
-<ul class="multivalue">
+<ol class="multivalue">
 	<?php
 
 	foreach ($property->getValue() as $value) {
@@ -17,7 +17,7 @@ if ($property->getSchema()->isMultiValue()) {
 	}
 
 	?>
-</ul>
+</ol>
 <?php
 
 } else {

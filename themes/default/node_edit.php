@@ -21,11 +21,7 @@
 				<?php
 
 				foreach ($properties as $property) {
-					$property_id = __class('edit-node-property-' . $property->getName(), false);
-
-					require __DIR__ . '/property_label.php';
-					require __DIR__ . '/types/' . $property->getSchema()->getType() . '_input.php';
-					require __DIR__ . '/property_error.php';
+					require __path('property_edit.php');
 				}
 
 				?>

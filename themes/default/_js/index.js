@@ -16,7 +16,7 @@ var delegate = require('dom-delegate')(document.body);
 
 // Automatically add new blank fields to edit forms on focus.
 delegate.on('focus', 'form.object .new', function(event, target) {
-	var name, siblings, value, i, l, empty, clone;
+	var name, siblings, value, i, l, empty, clone, cloneParent;
 
 	name = target.name;
 	siblings = target.form.querySelectorAll(target.tagName + '[name="' + name + '"]');
@@ -41,5 +41,11 @@ delegate.on('focus', 'form.object .new', function(event, target) {
 	target.classList.remove('new');
 	target.removeAttribute('id');
 
-	target.parentNode.insertBefore(clone, siblings[siblings.length - 1].nextSibling);
+	if (target.parentNode.tagName.toLowerCase() === 'li') {
+		cloneParent = target.parentNode.cloneNode(false);
+		cloneParent.appendChild(clone);
+		target.parentNode.parentNode.insertBefore(cloneParent, target.parentNode.nextSibling);
+	} else {
+		target.parentNode.insertBefore(clone, siblings[siblings.length - 1].nextSibling);
+	}
 });

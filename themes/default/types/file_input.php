@@ -5,7 +5,7 @@ use Karwana\Penelope\Types\File;
 if ($property->getSchema()->isMultiValue()) {
 
 ?>
-<ul class="multivalue">
+<ol class="multivalue">
 <?php
 
 	foreach ((array) $property->getValue() as $value) {
@@ -24,7 +24,7 @@ if ($property->getSchema()->isMultiValue()) {
 
 ?>
 	<li><input type="file" id="<?php __($property_id); ?>" name="<?php __(_e($property->getName())); ?>[]" class="new"></li>
-</ul>
+</ol>
 <?php
 
 } else if ($property->hasValue() and File::isValid($value = $property->getValue())) {
