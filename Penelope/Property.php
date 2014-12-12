@@ -116,6 +116,7 @@ class Property {
 			}
 		}
 
+		// TODO: Remove duplicates from the array. It doesn't make sense for any kind of multivalue property to have duplicate values.
 		$value = array_filter((array) $value, function($value) use ($type_class) {
 			return !$type_class::isEmpty($value);
 		});
