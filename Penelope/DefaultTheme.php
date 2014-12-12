@@ -30,7 +30,7 @@ class DefaultTheme extends Slim\View {
 		$this->resources = array();
 
 		if (!$messageformat) {
-			$messageformat = new MessageFormat($this->getDefaultTemplatesDirectory() . DIRECTORY_SEPARATOR . '_lang', 'en');
+			$messageformat = new MessageFormat($this->getDefaultTemplatesDirectory() . '/_lang', 'en');
 		}
 
 		$this->setMessageFormat($messageformat);
@@ -63,10 +63,10 @@ class DefaultTheme extends Slim\View {
 
 	public function getResourcePath($resource_path) {
 		if (is_array($resource_path)) {
-			$resource_path = implode(DIRECTORY_SEPARATOR, $resource_path);
+			$resource_path = implode('/', $resource_path);
 		}
 
-		return $this->getTemplatePath(implode(DIRECTORY_SEPARATOR, array('resources', $resource_path)));
+		return $this->getTemplatePath('resources/' . $resource_path);
 	}
 
 	public function getResourceUrl($resource_path) {
@@ -74,11 +74,11 @@ class DefaultTheme extends Slim\View {
 	}
 
 	public function getDefaultTemplatesDirectory() {
-		return implode(DIRECTORY_SEPARATOR, array(__DIR__, '..', 'themes', 'default'));
+		return __DIR__ . '/../themes/default';
 	}
 
 	public function getTemplatePath($relative_path) {
-		$relative_path = DIRECTORY_SEPARATOR . ltrim($relative_path, DIRECTORY_SEPARATOR);
+		$relative_path = '/' . ltrim($relative_path, '/\\');
 		$path = $this->getTemplatesDirectory() . $relative_path;
 
 		// Allow fallback to default theme files if DefaultTheme is subclassed.
