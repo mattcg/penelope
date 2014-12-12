@@ -36,6 +36,14 @@ class PropertySchema extends OptionContainer {
 		return $this->name;
 	}
 
+	public function getLabel() {
+		if ($label = $this->getOption('label')) {
+			return $label;
+		}
+
+		return $this->getName();
+	}
+
 	public function isMultiValue() {
 		return $this->is_multi_value;
 	}

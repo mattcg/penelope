@@ -33,9 +33,9 @@ function _a() {
 }
 
 function __label(Penelope\Property $property) {
-	$label = $property->getSchema()->getOption('label');
+	$label = $property->getLabel();
 
-	if (!$label) {
+	if ($property->getName() === $label) {
 		$label = ucfirst(str_replace('_', ' ', $property->getName()));
 	}
 

@@ -28,6 +28,10 @@ class Property {
 		return $this->schema->getName();
 	}
 
+	public function getLabel() {
+		return $this->schema->getLabel();
+	}
+
 	public function hasValue() {
 		return !is_null($this->value);
 	}
