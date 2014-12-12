@@ -18,7 +18,7 @@ if ($property->getSchema()->isMultiValue()) {
 
 ?>
 <select name="<?php __(_e($property->getName())); ?>[]">
-	<option value=""></option>
+	<option value=""><?php __(_m('option_none')); ?></option>
 <?php
 
 		foreach ($countries as $code => $name) {
@@ -36,7 +36,7 @@ if ($property->getSchema()->isMultiValue()) {
 
 ?>
 <select id="<?php __($property_id); ?>" name="<?php __(_e($property->getName())); ?>[]" class="new">
-	<option value=""></option>
+	<option value=""><?php __(_m('option_none')); ?></option>
 <?php
 
 		foreach ($countries as $code => $name) {
@@ -54,7 +54,7 @@ if ($property->getSchema()->isMultiValue()) {
 
 ?>
 <select id="<?php __($property_id); ?>" name="<?php __(_e($property->getName())); ?>">
-	<option value=""></option>
+	<option value=""><?php __(_m('option_none')); ?></option>
 <?php
 
 foreach ($countries as $code => $name) {
