@@ -703,6 +703,9 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
 
 		$node_schema->defineProperties(array('born', 'name', 'addresses' => array('type' => 'text[]')));
 
+		// Add a property with indexing disabled.
+		$node_schema->defineProperty('password', array('index.ignore' => true));
+
 		// Response for saving the updated index.
 		$transport->pushResponse(201, array(), array(
 			'template' => 'http://localhost:7474/db/data/index/node/full_text/{key}/{value}',

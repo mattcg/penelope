@@ -150,14 +150,20 @@ class Node extends Object {
 
 		// Index the node.
 		$index = new Neo4j\Index\NodeFulltextIndex($this->client, 'full_text');
-		$full_text = implode(' ', array_map(function($property) {
+		$full_text = implode(' ', array_filter(array_map(function($property) {
+
+			// Some properties might be flagged for leaving out of the index (passwords, for example).
+			if ($property->getSchema()->getOption('index.ignore')) {
+				return false;
+			}
+
 			$value = $property->getSerializedValue();
 			if (is_array($value)) {
 				return implode(' ', $value);
 			}
 
 			return $value;
-		}, $this->getProperties()));
+		}, $this->getProperties())));
 
 		// Needs to be saved before anything is ever added, otherwise config errors will be thrown.
 		// See: https://github.com/jadell/neo4jphp/issues/77
