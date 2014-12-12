@@ -21,6 +21,10 @@ class Edge extends Object {
 	public function __construct(EdgeSchema $edge_schema, $id = null, Neo4j\Relationship $client_edge = null) {
 		parent::__construct($edge_schema, $id, $client_edge);
 
+		if ($client_edge and !$this->schema->envelopes($client_edge)) {
+			throw new Exceptions\SchemaException('Edge does not match schema "' . $this->schema->getName() . '".');
+		}
+
 		if ($client_edge) {
 			$this->setStartAndEndNodes();
 		}

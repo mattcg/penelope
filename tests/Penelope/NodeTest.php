@@ -504,14 +504,14 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
 				'data' => array(
 					'roles' => array('Lt. Daniel Kaffee')
 				),
-				'self' => 'http://localhost:7474/db/data/relationship/279',
-				'property' => 'http://localhost:7474/db/data/relationship/279/properties/{key}',
-				'properties' => 'http://localhost:7474/db/data/relationship/279/properties',
+				'self' => 'http://localhost:7474/db/data/relationship/1',
+				'property' => 'http://localhost:7474/db/data/relationship/1/properties/{key}',
+				'properties' => 'http://localhost:7474/db/data/relationship/1/properties',
 				'type' => 'Friend',
 				'extensions' => array(),
 				'end' => 'http://localhost:7474/db/data/node/2',
 				'metadata' => array(
-					'id' => 279,
+					'id' => 1,
 					'type' => 'Friend'
 				)
 			)
@@ -561,6 +561,7 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
 		$this->assertCount(1, $edges);
 
 		$edge = $edges[0];
+		$this->assertEquals(1, $edge->getId());
 		$this->assertEquals('Friend', $edge->getSchema()->getName());
 		$this->assertEquals(1, $edge->getStartNode()->getId());
 		$this->assertEquals(2, $edge->getEndNode()->getId());
@@ -577,6 +578,57 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
 
 		$edge_schema = $schema->getEdge('Friend');
 		$schema->getNode('Person')->create()->getEdges($edge_schema, $direction);
+	}
+
+
+	/**
+	 * @dataProvider schemaProvider
+	 */
+	public function testGetEdges_triggersErrorOnNonCompliantEdge($schema) {
+		$transport = $schema->getClient()->getTransport();
+		$person_schema = $schema->getNode('Person');
+		$friend_edge_schema = $schema->getEdge('Friend');
+
+		// Recreate the object from scratch.
+		$node = new Node($person_schema, 1);
+
+		// Response for relationship.
+		$transport->pushResponse(200, array(), array(
+			array(
+				'start' => 'http://localhost:7474/db/data/node/1',
+				'data' => array(
+					'roles' => array('Lt. Daniel Kaffee')
+				),
+				'self' => 'http://localhost:7474/db/data/relationship/1',
+				'property' => 'http://localhost:7474/db/data/relationship/1/properties/{key}',
+				'properties' => 'http://localhost:7474/db/data/relationship/1/properties',
+				'type' => 'Boyfriend',
+				'extensions' => array(),
+				'end' => 'http://localhost:7474/db/data/node/2',
+				'metadata' => array(
+					'id' => 1,
+					'type' => 'Boyfriend'
+				)
+			)
+		));
+
+		// Response for labels.
+		$transport->pushResponse(200, array(), array('Person'));
+
+		// Response for node.
+		$transport->pushResponse(200, array(), array(
+			'columns' => array('n'),
+			'data' => array(
+				array(array(
+					'self' => 'http://localhost:7474/db/data/node/1',
+					'metadata' => array('id' => 1, 'labels' => array('Person')),
+					'data' => array('born' => 1964, 'name' => 'Keanu Reeves')
+				))
+			))
+		);
+
+		$this->setExpectedException('PHPUnit_Framework_Error_Notice', 'Edge with ID "1" of type "Boyfriend" does not conform to schema.');
+		$node->getEdges($friend_edge_schema);
 	}
 
 

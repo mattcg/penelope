@@ -122,7 +122,7 @@ class Node extends Object {
 			try {
 				$edges[] = $edge_schema->wrap($client_edge);
 			} catch (Exceptions\SchemaException $e) {
-				trigger_error('Edge with ID "' . $client_edge->getId() . '" of type "' . $client_edge->getType() . '" does not conform to schema: ' . $e->getMessage());
+				trigger_error('Edge with ID "' . $client_edge->getId() . '" of type "' . $client_edge->getType() . '" does not conform to schema.');
 			}
 		}
 
