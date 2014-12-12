@@ -65,6 +65,16 @@ class EdgeTest extends \PHPUnit_Framework_TestCase {
 
 
 	/**
+	 * @dataProvider edgeSchemaProvider
+	 */
+	public function testGetCollectionPath_throwsExceptionIfEdgeHasNoId($edge_schema) {
+		$this->setExpectedException('LogicException', 'Cannot get path for edge with no ID.');
+		$edge = new Edge($edge_schema);
+		$edge->getCollectionPath();
+	}
+
+
+	/**
 	 * @dataProvider edgeProvider
 	 */
 	public function testFetch_throwsExceptionIfEdgeHasNoId($edge) {
