@@ -104,98 +104,109 @@
 							}
 
 				?>
-				<h2 class="edge-schema-title<?php
+				<section class="edge-schema<?php
 
-				if (empty($edge_schema_edges)) {
-					__(' ' . __class('no-edges', false));
-				}
+					if (empty($edge_schema_edges)) {
+						__(' ' . __class('no-edges', false));
+					}
 
-				?>"><?php __(_e($edge_schema->getDisplayName(0))); ?></h2>
-				<nav class="collection edges <?php __class('edges-' . $edge_schema->getName()); ?>">
-					<ul>
-						<li class="new"><a class="button new" href="<?php __(_e($node->getNewEdgePath($edge_schema))); ?>" title="<?php __(_a('new_edge_button_title', $edge_schema->getDisplayName(), $node->getTitle())); ?> "><?php __(_m('new_edge_button_text')); ?></a></li>
-						<?php
+					?>">
+					<h2 class="edge-schema-title"><?php __(_e($edge_schema->getDisplayName(0))); ?></h2>
+					<a class="crud-button new" href="<?php __(_e($node->getNewEdgePath($edge_schema))); ?>" title="<?php __(_a('new_edge_button_title', $edge_schema->getDisplayName(), $node->getTitle())); ?> "><?php __(_m('new_edge_button_text')); ?></a>
+					<?php
 
-							usort($edge_schema_edges, $collator_sorter);
+								if (!empty($edge_schema_edges)) {
 
-							foreach ($edge_schema_edges as $edge) {
+					?>
+					<nav class="collection edges <?php __class('edges-' . $edge_schema->getName()); ?>">
+						<ul>
+							<?php
 
-								// Switch based on context and direction, handling reverse edges.
-								if ($node->getId() === $edge->getEndNode()->getId()) {
-									$related_node = $edge->getStartNode();
-								} else {
-									$related_node = $edge->getEndNode();
+									usort($edge_schema_edges, $collator_sorter);
+
+									foreach ($edge_schema_edges as $edge) {
+
+										// Switch based on context and direction, handling reverse edges.
+										if ($node->getId() === $edge->getEndNode()->getId()) {
+											$related_node = $edge->getStartNode();
+										} else {
+											$related_node = $edge->getEndNode();
+										}
+
+							?>
+							<li class="object <?php __class('object-type-' . $related_node->getSchema()->getName()); ?>">
+								<a class="object-link" href="<?php __(_e($related_node->getPath())); ?>" title="<?php __(_s($related_node->getTitle())); ?>">
+									<h1 class="object-title"><?php __(_e($related_node->getTitle())); ?></h1>
+									<h2 class="object-subtitle"><?php __(_e($related_node->getSchema()->getDisplayName())); ?></h2>
+								</a>
+								<a class="edge-link" href="<?php __(_e($edge->getPath())); ?>" title="<?php __(_s($edge->getTitle())); ?>"><?php __(_m('node_edge_link_title')); ?></a>
+							</li>
+							<?php
+
+									}
 								}
 
-						?>
-						<li class="object <?php __class('object-type-' . $related_node->getSchema()->getName()); ?>">
-							<a class="object-link" href="<?php __(_e($related_node->getPath())); ?>" title="<?php __(_s($related_node->getTitle())); ?>">
-								<h1 class="object-title"><?php __(_e($related_node->getTitle())); ?></h1>
-								<h2 class="object-subtitle"><?php __(_e($related_node->getSchema()->getDisplayName())); ?></h2>
-							</a>
-							<a class="edge-link" href="<?php __(_e($edge->getPath())); ?>" title="<?php __(_s($edge->getTitle())); ?>"><?php __(_m('node_edge_link_title')); ?></a>
-						</li>
-						<?php
+							?>
+						</ul>
+					</nav>
+				</section>
+				<?php
 
 							}
-
-						?>
-					</ul>
-				</nav>
-				<?php
 						}
 
-					}
+						if (!empty($reverse_edge_schemas)) {
 
-					if (!empty($reverse_edge_schemas)) {
+							foreach ($reverse_edge_schemas as $reverse_edge_schema) {
 
-						foreach ($reverse_edge_schemas as $reverse_edge_schema) {
+								// Exclude edges munged into the previous list.
+								if ($reverse_edge_schema->getOption('format.reverse_name') === $reverse_edge_schema->getDisplayName() and isset($edges[$reverse_edge_schema->getName()])) {
+									continue;
+								}
 
-							// Exclude edges munged into the previous list.
-							if ($reverse_edge_schema->getOption('format.reverse_name') === $reverse_edge_schema->getDisplayName() and isset($edges[$reverse_edge_schema->getName()])) {
-								continue;
-							}
-
-							$reverse_edge_schema_edges = $reverse_edges[$reverse_edge_schema->getName()];
+								$reverse_edge_schema_edges = $reverse_edges[$reverse_edge_schema->getName()];
 
 				?>
-				<h2 class="edge-schema-title<?php
+				<section class="edge-schema<?php
 
-				if (empty($reverse_edge_schema_edges)) {
-					__(' ' . __class('no-edges', false));
-				}
+					if (empty($reverse_edge_schema_edges)) {
+						__(' ' . __class('no-edges', false));
+					}
 
-				?>"><?php __(_e($reverse_edge_schema->getOption('format.reverse_name'))); ?></h2>
-				<nav class="collection edges reverse-edges <?php __class('edges-' . $reverse_edge_schema->getName()); ?>">
-					<ul>
-						<?php
+					?>">
+					<h2 class="edge-schema-title"><?php __(_e($reverse_edge_schema->getOption('format.reverse_name'))); ?></h2>
+					<nav class="collection edges reverse-edges <?php __class('edges-' . $reverse_edge_schema->getName()); ?>">
+						<ul>
+							<?php
 
-							usort($reverse_edge_schema_edges, $collator_sorter);
+								usort($reverse_edge_schema_edges, $collator_sorter);
 
-							foreach ($reverse_edge_schema_edges as $reverse_edge) {
-								$related_node = $reverse_edge->getStartNode();
+								foreach ($reverse_edge_schema_edges as $reverse_edge) {
+									$related_node = $reverse_edge->getStartNode();
 
-						?>
-						<li class="object <?php __class('object-type-' . $related_node->getSchema()->getName()); ?>">
-							<a class="object-link" href="<?php __(_e($related_node->getPath())); ?>" title="<?php __(_s($related_node->getTitle())); ?>">
-								<h1 class="object-title"><?php __(_e($related_node->getTitle())); ?></h1>
-								<h2 class="object-subtitle"><?php __(_e($related_node->getSchema()->getDisplayName())); ?></h2>
-							</a>
-							<a class="edge-link" href="<?php __(_e($reverse_edge->getPath())); ?>" title="<?php __(_s($reverse_edge->getTitle())); ?>"><?php __(_m('node_edge_link_title')); ?></a>
-						</li>
-						<?php
+							?>
+							<li class="object <?php __class('object-type-' . $related_node->getSchema()->getName()); ?>">
+								<a class="object-link" href="<?php __(_e($related_node->getPath())); ?>" title="<?php __(_s($related_node->getTitle())); ?>">
+									<h1 class="object-title"><?php __(_e($related_node->getTitle())); ?></h1>
+									<h2 class="object-subtitle"><?php __(_e($related_node->getSchema()->getDisplayName())); ?></h2>
+								</a>
+								<a class="edge-link" href="<?php __(_e($reverse_edge->getPath())); ?>" title="<?php __(_s($reverse_edge->getTitle())); ?>"><?php __(_m('node_edge_link_title')); ?></a>
+							</li>
+							<?php
 
-						}
+								}
 
-						?>
-					</ul>
-				</nav>
+							}
+
+							?>
+						</ul>
+					</nav>
+				</section>
 				<?php
+
 						}
 
 					}
-
-				}
 
 				?>
 			</section>
