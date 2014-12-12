@@ -1,0 +1,8 @@
+{
+	"private": true,
+	"name": "penelope-jetpack",
+	"version": "1.0.0",
+	"dependencies": {
+		"dom-delegate": "~2.0.3"
+	}
+}
