@@ -98,15 +98,13 @@ class Property {
 			return;
 		}
 
-		$type_class = $this->schema->getTypeClass();
-
 		if (!$this->schema->isMultiValue()) {
-			return $type_class::serialize($this->getValue());
+			return $this->value->getSerializedValue();
 		}
 
-		return array_map(function($value) use ($type_class) {
-			return $type_class::serialize($value);
-		}, $this->getValue());
+		return array_map(function($value) {
+			return $value->getSerializedValue();
+		}, $this->value);
 	}
 
 	public function filterValue($value) {

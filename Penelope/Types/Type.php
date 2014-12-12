@@ -38,6 +38,10 @@ abstract class Type extends OptionContainer {
 		return $this->value;
 	}
 
+	public function getSerializedValue() {
+		return static::serialize($this->value);
+	}
+
 	public function hasValue() {
 		return !is_null($this->value);
 	}
