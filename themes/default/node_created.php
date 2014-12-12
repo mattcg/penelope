@@ -5,7 +5,7 @@
 		require __path('node_header.php');
 
 		?>
-		<div class="body">
+		<div class="main-body object node">
 			<p><?php __(_m('view_node_link', $node->getPath(), $node->getTitle())); ?></p>
 		</div>
 	</article>

@@ -5,7 +5,7 @@
 		require __path('edge_header.php');
 
 		?>
-		<div class="body">
+		<div class="main-body object edge">
 			<?php
 
 			if (!empty($error)) {

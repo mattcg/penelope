@@ -5,7 +5,7 @@
 		require __path('edge_header.php');
 
 		?>
-		<div class="body">
+		<div class="main-body object edge">
 			<p><?php __(_m('view_edge_collection_link', $node->getEdgeCollectionPath($edge_schema), $edge_schema->getDisplayName())); ?></p>
 		</div>
 	</article>

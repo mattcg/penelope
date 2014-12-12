@@ -5,7 +5,7 @@
 		require __path('node_header.php');
 
 		?>
-		<div class="body">
+		<div class="main-body object node">
 			<p><?php __(_m('view_node_collection_link', $node_schema->getCollectionPath(), $node_schema->getDisplayName())); ?></p>
 		</div>
 	</article>

@@ -5,7 +5,7 @@
 		require __path('edge_header.php');
 
 		?>
-		<div class="body">
+		<div class="main-body object edge">
 			<?php
 
 			if (!empty($error)) {
@@ -16,7 +16,7 @@
 
 			}
 
-			$end_nodes = $edge_schema->getEndNodeSchema()->getCollection($node->getClient());
+			$end_nodes = $edge_schema->getEndNodeSchema()->getCollection();
 
 			// A relationship to itself would be pointless.
 			if ($edge_schema->getEndNodeSchema()->getName() === $edge_schema->getStartNodeSchema()->getName()) {
