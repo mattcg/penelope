@@ -54,19 +54,24 @@ class File extends Type {
 
 	public static function store($temp_path, $original_name) {
 		$perm_name = Uuid::uuid4(). '.' . static::getExtension($temp_path, $original_name);
+		$perm_path = static::getSystemPath($perm_name);
 
 		// If the file is NOT an uploaded file, copy instead of moving.
 		// This is done in case file is being restored from backup which we don't want to mutate.
 		if (!is_uploaded_file($temp_path)) {
-			$stored = copy($temp_path, static::getSystemPath($perm_name));
+			$stored = copy($temp_path, $perm_path);
 
 		// Even though PHP clears temporary uploaded files automatically, it's better to use `rename` instead of `copy`, for efficiency.
 		} else {
-			$stored = rename($temp_path, static::getSystemPath($perm_name));
+			$stored = rename($temp_path, $perm_path);
 		}
 
 		if (false === $stored) {
-			throw new \RuntimeException('Unable to store file. Is "' . static::getSystemDirectory() . '" is writable?');
+			throw new \RuntimeException('Unable to store file. Is "' . static::getSystemDirectory() . '" writable?');
+		}
+
+		if (false === chmod($perm_path, 0644)) {
+			throw new \RuntimeException('Unable change file permissions. Is "' . $perm_path . '" writable?');
 		}
 
 		return $perm_name;
