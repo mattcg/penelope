@@ -60,7 +60,8 @@
 
 					?>
 				</select>
-				<input type="submit" value="<?php __(_m('create_edge_button_text')); ?>">
+				<hr>
+				<input class="crud-button create" type="submit" value="<?php __(_m('create_edge_button_text')); ?>">
 			</form>
 			<?php
 
