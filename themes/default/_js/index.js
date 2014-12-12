@@ -49,3 +49,18 @@ delegate.on('focus', 'form.object .new', function(event, target) {
 		target.parentNode.insertBefore(clone, siblings[siblings.length - 1].nextSibling);
 	}
 });
+
+// Confirm deletion.
+delegate.on('submit', 'form.object.delete', function(event, target) {
+	var message;
+
+	message = target.getAttribute('data-confirm');
+	if (!message) {
+		return;
+	}
+
+	if (!confirm(message)) {
+		event.preventDefault();
+		return false;
+	}
+});

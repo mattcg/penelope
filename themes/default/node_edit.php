@@ -30,7 +30,7 @@
 				<input class="crud-button update" type="submit" value="<?php __(_m('update_node_button_text')); ?>">
 			</form>
 
-			<form class="delete object node <?php __class('node-' . $node_schema->getName()); ?>" action="<?php __(_e($node->getPath())); ?>" method="POST">
+			<form class="delete object node <?php __class('node-' . $node_schema->getName()); ?>" action="<?php __(_e($node->getPath())); ?>" method="POST" data-confirm="<?php __(_m('delete_node_confirm', $node->getTitle())); ?>">
 				<input type="hidden" name="_METHOD" value="DELETE">
 				<input class="crud-button delete" type="submit" value="<?php __(_m('delete_node_button_text')); ?>">
 			</form>
