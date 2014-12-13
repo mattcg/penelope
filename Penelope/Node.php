@@ -159,8 +159,11 @@ class Node extends Object {
 
 			$value = $property->getSerializedValue();
 			if (is_array($value)) {
-				return implode(' ', $value);
+				$value = implode(' ', $value);
 			}
+
+			// Strip punctuation. This is needed because given "John, Mary and Jane", Lucene will match "Mary" but not "John" (though it will match "John,").
+			$value = preg_replace('/\pP\s?/u', ' ', $value);
 
 			return $value;
 		}, $this->getProperties())));
