@@ -30,7 +30,6 @@ class MockTransport extends BaseTransport {
 		}
 
 		if (empty($this->responses)) {
-var_dump(func_get_args());
 			throw new \LogicException('No response to return.');
 		}
 
