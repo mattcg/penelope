@@ -110,9 +110,10 @@ abstract class Object {
 		}
 
 		// Only return properties with values.
-		return array_filter($this->properties, function($property) {
+		// Use array_values because array_filter preserves keys.
+		return array_values(array_filter($this->properties, function($property) {
 			return $property->hasValue();
-		});
+		}));
 	}
 
 	public function save() {
