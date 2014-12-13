@@ -47,13 +47,7 @@ class SearchController extends Controller {
 		if (!empty($client_nodes)) {
 
 			// Map client node objects.
-			$view_data['nodes'] = array();
-			foreach ($client_nodes as $client_node) {
-				$node_schema = $this->schema->getByClientNode($client_node);
-				if ($node_schema) {
-					$view_data['nodes'][] = $node_schema->wrap($client_node);
-				}
-			}
+			$view_data['nodes'] = $this->mapClientNodes($client_nodes);
 		}
 
 		if (!empty($view_data['nodes'])) {
@@ -63,6 +57,20 @@ class SearchController extends Controller {
 		}
 
 		$this->app->render('search', $view_data);
+	}
+
+	private function mapClientNodes(array $client_nodes) {
+		$nodes = array();
+
+		// TODO: Use a NodeCollection that does wrapping on demand.
+		foreach ($client_nodes as $client_node) {
+			$node_schema = $this->schema->getByClientNode($client_node);
+			if ($node_schema) {
+				$nodes[] = $node_schema->wrap($client_node);
+			}
+		}
+
+		return $nodes;
 	}
 
 	private function queryFulltext($query) {
