@@ -149,6 +149,10 @@ class Node extends Object {
 		}
 
 		// Index the node.
+		$this->index();
+	}
+
+	public function index() {
 		$index = new Neo4j\Index\NodeFulltextIndex($this->client, 'full_text');
 		$full_text = implode(' ', array_filter(array_map(function($property) {
 
@@ -162,11 +166,11 @@ class Node extends Object {
 				$value = implode(' ', $value);
 			}
 
-			// Strip punctuation. This is needed because given "John, Mary and Jane", Lucene will match "Mary" but not "John" (though it will match "John,").
-			$value = preg_replace('/\pP\s?/u', ' ', $value);
-
 			return $value;
 		}, $this->getProperties())));
+
+		// Strip punctuation. This is needed because given "John, Mary and Jane", Lucene will match "Mary" but not "John" (though it will match "John,").
+		$full_text = preg_replace('/\pP\s?/u', ' ', $full_text);
 
 		// Needs to be saved before anything is ever added, otherwise config errors will be thrown.
 		// See: https://github.com/jadell/neo4jphp/issues/77
