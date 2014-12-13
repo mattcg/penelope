@@ -73,17 +73,9 @@ class SearchController extends Controller {
 		// See: https://github.com/jadell/neo4jphp/issues/77
 		$index->save();
 
-		$escaped_query = $this->escapeQuery($query);
-
-		try {
-			$client_nodes = $index->query('full_text:' . $escaped_query);
-		} catch (Neo4j\Exception $e) {
-			if ($e->getCode() === 404) {
-				return;
-			}
-
-			throw $e;
-		}
+		// Use proximity matching.
+		// See: http://www.lucenetutorial.com/lucene-query-syntax.html
+		$client_nodes = $index->query('full_text:"' . $this->escapeQuery($query) . '"~100');
 
 		return $client_nodes;
 	}
