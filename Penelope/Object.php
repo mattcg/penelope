@@ -109,7 +109,10 @@ abstract class Object {
 			$this->loadProperties();
 		}
 
-		return array_values($this->properties);
+		// Only return properties with values.
+		return array_filter($this->properties, function($property) {
+			return $property->hasValue();
+		});
 	}
 
 	public function save() {

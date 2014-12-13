@@ -6,15 +6,32 @@
 
 		?>
 		<div class="main-body">
-			<dl class="object-properties edge-properties">
 			<?php
 
-			foreach ($edge->getProperties() as $property) {
-				require 'property.php';
-			}
+			$properties = $edge->getProperties();
+			if (empty($properties)) {
+
+			?>
+			<p><?php __(_m('edge_no_properties')); ?></p>
+			<?php
+
+			} else {
+
+			?>
+			<dl class="object-properties edge-properties" title="<?php __(_m('object_properties_title')); ?>">
+			<?php
+
+				foreach ($properties as $property) {
+					require 'property.php';
+				}
 
 			?>
 			</dl>
+			<?php
+
+			}
+
+			?>
 		</div>
 	</article>
 </main>

@@ -23,10 +23,6 @@
 
 			}
 
-			?>
-			<dl class="object-properties node-properties" title="<?php __(_m('object_properties_title')); ?>">
-			<?php
-
 			$hidden_properties = array();
 			if ($node_schema->hasOption('format.abstract')) {
 				$hidden_properties[] = $node_schema->getOption('format.abstract');
@@ -40,16 +36,36 @@
 				$hidden_properties[] = $node_schema->getOption('format.figure');
 			}
 
+			$properties = array();
 			foreach ($node->getProperties() as $property) {
-				if (in_array($property->getName(), $hidden_properties, true)) {
-					continue;
+				if (!in_array($property->getName(), $hidden_properties, true)) {
+					$properties[] = $property;
 				}
+			}
 
+			if (empty($properties)) {
+
+			?>
+			<p><?php __(_m('node_no_properties')); ?></p>
+			<?php
+
+			} else {
+
+			?>
+			<dl class="object-properties node-properties" title="<?php __(_m('object_properties_title')); ?>">
+			<?php
+
+			foreach ($properties as $property) {
 				require __path('property.php');
 			}
 
 			?>
 			</dl>
+			<?php
+
+			}
+
+			?>
 		</div>
 		<footer class="main-footer object node">
 			<section class="edges">
