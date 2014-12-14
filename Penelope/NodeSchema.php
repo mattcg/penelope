@@ -31,75 +31,19 @@ class NodeSchema extends ObjectSchema {
 		return $node;
 	}
 
-	public function wrap(Neo4j\Node $client_node = null) {
+	public function getCollection() {
+		$collection = new NodeCollection($this);
+		$collection->fetch();
+
+		return $collection;
+	}
+
+	public function wrap(Neo4j\Node $client_node) {
 		return new Node($this, $client_node->getId(), $client_node);
 	}
 
 	public function create() {
 		return new Node($this);
-	}
-
-	public function getCollectionCount(array $properties = null) {
-		$query = $this->buildQuery($properties, null, null, 'count');
-		return (int) $query->getResultSet()[0][0];
-	}
-
-	public function getCollection(array $properties = null, $skip = null, $limit = null) {
-		$query = $this->buildQuery($properties, $skip, $limit);
-		return $this->convertResultSet($query->getResultSet());
-	}
-
-	private function buildQuery(array $properties = null, $skip = null, $limit = null, $aggregate = null) {
-		$query_string = 'MATCH (n:' . $this->getName() . ')';
-		$params = array();
-
-		$i = 0;
-		$query_parts = array();
-		foreach ((array) $properties as $name => $value) {
-			if (!$this->hasProperty($name)) {
-				throw new \InvalidArgumentException('Unknown property "' . $name . '".');
-			}
-
-			$params['value_' . $i] = $value;
-			$query_parts[] = 'ANY (m IN {value_' . $i . '} WHERE m IN n.' . $name . ')';
-			$i++;
-		}
-
-		if (!empty($query_parts)) {
-			$query_string .=  ' WHERE ' . join(' AND ', $query_parts);
-		}
-
-		if ($aggregate) {
-			$query_string .= ' RETURN ' . $aggregate . '(n)';
-		} else {
-			$query_string .= ' RETURN (n)';
-
-			// Order by only makes sense when not using aggregate.
-			$order_by = $this->getOption('collection.order_by');
-			if ($order_by) {
-				$query_string .= ' ORDER BY n.' . join(', n.', (array) $order_by);
-			}
-
-			// Aggregate results would be unexpected when using limit.
-			if (is_int($skip) and $skip > 0) {
-				$query_string .= ' SKIP ' . $skip;
-			}
-
-			if (is_int($limit) and $limit > 0) {
-				$query_string .= ' LIMIT ' . $limit;
-			}
-		}
-
-		return new Neo4j\Cypher\Query($this->client, $query_string, $params);
-	}
-
-	private function convertResultSet(Neo4j\Query\ResultSet $result_set) {
-		$nodes = array();
-		foreach ($result_set as $row) {
-			$nodes[] = $this->wrap($row['n']);
-		}
-
-		return $nodes;
 	}
 
 	public function envelopes(Neo4j\Node $client_node) {

@@ -161,7 +161,7 @@ class Penelope extends OptionContainer {
 
 		// Factory middleware for creating the collection controller.
 		$edges_middleware = Closure::bind(function() {
-			$controller = new Controllers\EdgesController($this->app, $this->schema, $this->client);
+			$controller = new Controllers\EdgeCollectionController($this->app, $this->schema, $this->client);
 			$this->app->controller = $controller;
 		}, $this);
 
@@ -221,7 +221,7 @@ class Penelope extends OptionContainer {
 
 		// Factory middleware for creating the collection controller.
 		$nodes_middleware = Closure::bind(function() {
-			$controller = new Controllers\NodesController($this->app, $this->schema, $this->client);
+			$controller = new Controllers\NodeCollectionController($this->app, $this->schema, $this->client);
 			$this->app->controller = $controller;
 		}, $this);
 

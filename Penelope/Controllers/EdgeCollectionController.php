@@ -16,7 +16,7 @@ use Karwana\Penelope\Edge;
 use Karwana\Penelope\Exceptions;
 use Karwana\Penelope\TransientProperty;
 
-class EdgesController extends ObjectController {
+class EdgeCollectionController extends ObjectController {
 
 	public function getEdgesByParams($node_schema_slug, $node_id, $edge_schema_slug) {
 		$node = $this->getNodeByParams($node_schema_slug, $node_id);
@@ -124,13 +124,15 @@ class EdgesController extends ObjectController {
 			$view_data['properties'][] = $transient_property;
 		}
 
+		$view_data['edge_schema'] = $edge_schema;
+		$view_data['end_nodes'] = $edge_schema->getEndNodeSchema()->getCollection();
+
 		if ($e) {
 			$this->app->response->setStatus(500);
 		} else if (!empty($transient_properties)) {
 			$this->app->response->setStatus(422);
 		}
 
-		$view_data['edge_schema'] = $edge_schema;
 		$this->app->render('edge_new', $view_data);
 	}
 }

@@ -16,15 +16,6 @@
 
 			}
 
-			$end_nodes = $edge_schema->getEndNodeSchema()->getCollection();
-
-			// A relationship to itself would be pointless.
-			if ($edge_schema->getEndNodeSchema()->getName() === $edge_schema->getStartNodeSchema()->getName()) {
-				$end_nodes = array_filter($end_nodes, function($end_node) use ($node) {
-					return $end_node->getId() !== $node->getId();
-				});
-			}
-
 			if (empty($end_nodes)) {
 
 			?>
@@ -51,6 +42,11 @@
 					<?php
 
 					foreach ($end_nodes as $end_node) {
+
+						// A relationship to itself would be pointless.
+						if ($end_node->getId() === $node->getId()) {
+							continue;
+						}
 
 					?>
 					<option value="<?php __(_e($end_node->getId())); ?>"><?php __(_e($end_node->getTitle())); ?></option>

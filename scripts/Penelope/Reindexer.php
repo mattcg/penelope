@@ -14,6 +14,7 @@ namespace Karwana\Penelope\Scripts;
 
 use Karwana\Penelope\Schema;
 use Karwana\Penelope\NodeSchema;
+use Karwana\Penelope\NodeCollection;
 
 class Reindexer {
 
@@ -24,19 +25,24 @@ class Reindexer {
 	}
 
 	public function reindexSchema(NodeSchema $node_schema, $batch, $usleep) {
-		$skip = 0;
+		$page = 1;
+		$collection = new NodeCollection($node_schema);
+		$collection->setPageSize($batch);
+		$collection->fetch();
 
-		while (!empty($collection = $node_schema->getCollection(null, $skip, $batch))) {
+		while (!empty($collection)) {
 			$this->reindexCollection($collection);
 			usleep($usleep);
 
-			$skip += $batch;
+			$page++;
+			$collection->setPage($page);
+			$collection->fetch();
 		}
 	}
 
-	public function reindexCollection(array $nodes) {
+	public function reindexCollection(NodeCollection $collection) {
 		try {
-			foreach ($nodes as $node) {
+			foreach ($collection as $node) {
 				$node->index();
 			}
 		} catch (\Exception $e) {
