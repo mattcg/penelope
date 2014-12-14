@@ -110,16 +110,22 @@ class Property {
 	public function filterValue($value) {
 		$type_class = $this->schema->getTypeClass();
 
-		if (!$this->schema->isMultiValue()) {
-			if (!$type_class::isEmpty($value)) {
-				return $value;
-			}
+		if ($type_class::isEmpty($value)) {
+			return;
 		}
 
-		// TODO: Remove duplicates from the array. It doesn't make sense for any kind of multivalue property to have duplicate values.
-		$value = array_filter((array) $value, function($value) use ($type_class) {
+		// All further checks are for multivalue properties.
+		if (!$this->schema->isMultiValue()) {
+			return $value;
+		}
+
+		$value = array_filter($value, function($value) use ($type_class) {
 			return !$type_class::isEmpty($value);
 		});
+
+		// Remove duplicates from the array.
+		// It doesn't make sense for any kind of multivalue property to have duplicate values.
+		$value = array_unique($value, SORT_REGULAR);
 
 		if (!empty($value)) {
 			return $value;
