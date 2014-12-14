@@ -1,4 +1,4 @@
-<form action="<?php
+<form autocomplete="off" action="<?php
 
 	global $app;
 
