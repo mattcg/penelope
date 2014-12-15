@@ -18,9 +18,7 @@ class NodeCollection extends ObjectCollection {
 		parent::__construct($node_schema, $properties);
 	}
 
-	protected function getResultSet($aggregate = null) {
-		$query = parent::getQuery('MATCH (o:' . $this->schema->getName() . ')', array(), array(), $aggregate);
-
-		return $query->getResultSet();
+	protected function getQueryMatch() {
+		return 'MATCH (o:' . $this->schema->getName() . ')';
 	}
 }

@@ -78,7 +78,7 @@ abstract class ObjectCollection implements \Iterator, \Countable, \ArrayAccess {
 		$this->resultset = $this->getResultSet();
 	}
 
-	protected function getQuery($query_string, array $query_parts = array(), array $query_params = array(), $aggregate = null) {
+	public function getQueryWhere(array &$query_params) {
 		$i = 0;
 		foreach ((array) $this->properties as $name => $value) {
 			if (!$this->schema->hasProperty($name)) {
@@ -86,12 +86,21 @@ abstract class ObjectCollection implements \Iterator, \Countable, \ArrayAccess {
 			}
 
 			$query_params['value_' . $i] = $value;
-			$query_parts[] = 'ANY (m IN {value_' . $i . '} WHERE m IN o.' . $name . ')';
+			$parts[] = 'ANY (m IN {value_' . $i . '} WHERE m IN o.' . $name . ')';
 			$i++;
 		}
 
-		if (!empty($query_parts)) {
-			$query_string .=  ' WHERE ' . join(' AND ', $query_parts);
+		if (!empty($parts)) {
+			return ' WHERE ' . join(' AND ', $parts);
+		}
+	}
+
+	protected function getQuery($aggregate = null) {
+		$query_params = array();
+		$query_string = $this->getQueryMatch();
+
+		if ($query_where = $this->getQueryWhere($query_params)) {
+			$query_string .= $query_where;
 		}
 
 		if ($aggregate) {
@@ -123,6 +132,10 @@ abstract class ObjectCollection implements \Iterator, \Countable, \ArrayAccess {
 		// Neither do they support querying by multiple properties (only by a single property).
 		// This is why we use Cypher instead.
 		return new Neo4j\Cypher\Query($client, $query_string, $query_params);
+	}
+
+	protected function getResultSet($aggregate = null) {
+		return $this->getQuery($aggregate)->getResultSet();
 	}
 
 	public function rewind() {

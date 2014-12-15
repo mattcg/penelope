@@ -23,12 +23,19 @@ class EdgeCollection extends ObjectCollection {
 		parent::__construct($edge_schema, $properties);
 	}
 
-	protected function getResultSet($aggregate = null) {
-		$query_parts = array('id(n) = {node_id}');
+	protected function getQueryMatch() {
+		return 'MATCH (n)-[o]->(' . $this->schema->getName() . ')';
+	}
+
+	protected function getQueryWhere(array &$query_params) {
+		$query_where = parent::getQueryWhere($query_params);
+
+		if (!$query_where) {
+			$query_where = ' WHERE';
+		}
+
 		$query_params = array('node_id' => $this->node->getId());
 
-		$query = parent::getQuery('MATCH (n)-[o]->(' . $this->schema->getName() . ')', $query_parts, $query_params, $aggregate);
-
-		return $query->getResultSet();
+		return $query_where . ' id(n) = {node_id}';
 	}
 }
