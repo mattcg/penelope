@@ -134,7 +134,7 @@ class Schema {
 		$node_schema = $this->getNode($node_name);
 
 		return array_filter($this->getEdges(), function($edge_schema) use ($node_schema) {
-			return $edge_schema->permitsStartNode($node_schema->getName());
+			return $edge_schema->permitsStartNode($node_schema);
 		});
 	}
 
@@ -142,7 +142,7 @@ class Schema {
 		$node_schema = $this->getNode($node_name);
 
 		return array_filter($this->getEdges(), function($edge_schema) use ($node_schema) {
-			return $edge_schema->permitsEndNode($node_schema->getName());
+			return $edge_schema->permitsEndNode($node_schema);
 		});
 	}
 }

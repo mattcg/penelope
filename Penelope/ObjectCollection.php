@@ -78,7 +78,7 @@ abstract class ObjectCollection implements \Iterator, \Countable, \ArrayAccess {
 		$this->resultset = $this->getResultSet();
 	}
 
-	public function getQueryWhere(array &$query_params) {
+	protected function getQueryWhere(array &$query_params) {
 		$i = 0;
 		foreach ((array) $this->properties as $name => $value) {
 			if (!$this->schema->hasProperty($name)) {

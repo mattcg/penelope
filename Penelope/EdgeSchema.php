@@ -42,6 +42,13 @@ class EdgeSchema extends ObjectSchema {
 		return $edge;
 	}
 
+	public function getCollection(Node $node, $direction = Neo4j\Relationship::DirectionAll) {
+		$collection = new EdgeCollection($this, $node, $direction);
+		$collection->fetch();
+
+		return $collection;
+	}
+
 	public function wrap(Neo4j\Relationship $client_edge) {
 		return new Edge($this, $client_edge->getId(), $client_edge);
 	}
@@ -62,20 +69,20 @@ class EdgeSchema extends ObjectSchema {
 		return $client_edge->getType() === $this->getName();
 	}
 
-	public function permits($start_name, $end_name) {
-		if ($this->permitsStartNode($start_name) and $this->permitsEndNode($end_name)) {
+	public function permits(NodeSchema $start_schema, NodeSchema $end_schema) {
+		if ($this->permitsStartNode($start_schema) and $this->permitsEndNode($end_schema)) {
 			return true;
 		}
 
 		return false;
 	}
 
-	public function permitsStartNode($start_name) {
-		return $this->start_schema->getName() === $start_name;
+	public function permitsStartNode(NodeSchema $node_schema) {
+		return $this->start_schema->getName() === $node_schema->getName();
 	}
 
-	public function permitsEndNode($end_name) {
-		return $this->end_schema->getName() === $end_name;
+	public function permitsEndNode(NodeSchema $node_schema) {
+		return $this->end_schema->getName() === $node_schema->getName();
 	}
 
 	public function getNewPath() {

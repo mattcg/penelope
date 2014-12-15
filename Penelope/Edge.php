@@ -121,11 +121,8 @@ class Edge extends Object {
 			throw new Exceptions\SchemaException('A node may not have an edge to itself.');
 		}
 
-		$to_name = $end_node->schema->getName();
-		$from_name = $start_node->schema->getName();
-
-		if (!$this->schema->permits($from_name, $to_name)) {
-			throw new Exceptions\SchemaException('Relationship between ' . $from_name . ' and ' . $to_name . ' forbidden by schema.');
+		if (!$this->schema->permits($start_node->getSchema(), $end_node->getSchema())) {
+			throw new Exceptions\SchemaException('Relationship between ' . $start_node->getSchema()->getName() . ' and ' . $end_node->getSchema()->getName() . ' forbidden by schema.');
 		}
 
 		$this->end_node = $end_node;

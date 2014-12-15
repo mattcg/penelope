@@ -112,11 +112,11 @@
 
 						foreach ($edge_schemas as $edge_schema) {
 
-							$edge_schema_edges = $edges[$edge_schema->getName()];
+							$edge_schema_edges = iterator_to_array($edges[$edge_schema->getName()]);
 
 							// Munge reverse edges into the same list if the reverse relationship uses the same name.
 							if ($edge_schema->getOption('format.reverse_name') === $edge_schema->getDisplayName() and isset($reverse_edges[$edge_schema->getName()])) {
-								$edge_schema_edges += $reverse_edges[$edge_schema->getName()];
+								$edge_schema_edges += iterator_to_array($reverse_edges[$edge_schema->getName()]);
 							}
 
 				?>
