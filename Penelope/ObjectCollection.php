@@ -78,7 +78,10 @@ abstract class ObjectCollection implements \Iterator, \Countable, \ArrayAccess {
 		$this->resultset = $this->getResultSet();
 	}
 
-	protected function getQueryWhere(array &$query_params) {
+	protected function formatQuery($match, array $where_parts = array(), $aggregate = null) {
+		$query_params = array();
+		$query_string = $match;
+
 		$i = 0;
 		foreach ((array) $this->properties as $name => $value) {
 			if (!$this->schema->hasProperty($name)) {
@@ -86,21 +89,12 @@ abstract class ObjectCollection implements \Iterator, \Countable, \ArrayAccess {
 			}
 
 			$query_params['value_' . $i] = $value;
-			$parts[] = 'ANY (m IN {value_' . $i . '} WHERE m IN o.' . $name . ')';
+			$where_parts[] = 'ANY (m IN {value_' . $i . '} WHERE m IN o.' . $name . ')';
 			$i++;
 		}
 
-		if (!empty($parts)) {
-			return ' WHERE ' . join(' AND ', $parts);
-		}
-	}
-
-	protected function getQuery($aggregate = null) {
-		$query_params = array();
-		$query_string = $this->getQueryMatch();
-
-		if ($query_where = $this->getQueryWhere($query_params)) {
-			$query_string .= $query_where;
+		if (!empty($where_parts)) {
+			$query_string .= ' WHERE ' . join(' AND ', $where_parts);
 		}
 
 		if ($aggregate) {

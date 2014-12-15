@@ -60,32 +60,24 @@ class EdgeCollection extends ObjectCollection {
 		parent::__construct($edge_schema, $properties);
 	}
 
-	protected function getQueryMatch() {
+	protected function getQuery($aggregate = null) {
 		switch ($this->direction) {
 		case self::ALL:
-			$direction = '-[o]-';
+			$direction = '-[o:%s]-';
 			break;
 
 		case self::OUT:
-			$direction = '-[o]->';
+			$direction = '-[o:%s]->';
 			break;
 
 		case self::IN:
-			$direction = '<-[o]-';
+			$direction = '<-[o:%s]-';
 			break;
 		}
 
-		return 'MATCH (n)' . $direction . '(' . $this->schema->getName() . ')';
-	}
+		$match = 'MATCH (a)' . sprintf($direction, $this->schema->getName()) . '(b)';
+		$where = array('id(a) = ' . $this->node->getId());
 
-	protected function getQueryWhere(array &$query_params) {
-		$query_where = parent::getQueryWhere($query_params);
-
-		if (!$query_where) {
-			$query_where = ' WHERE';
-		}
-
-		$query_params = array('node_id' => $this->node->getId());
-		return $query_where . ' id(n) = {node_id}';
+		return $this->formatQuery($match, $where, $aggregate);
 	}
 }

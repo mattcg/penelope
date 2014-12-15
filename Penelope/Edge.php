@@ -22,7 +22,7 @@ class Edge extends Object {
 		parent::__construct($edge_schema, $id, $client_edge);
 
 		if ($client_edge and !$edge_schema->envelopes($client_edge)) {
-			throw new Exceptions\SchemaException('Edge does not match schema "' . $edge_schema->getName() . '".');
+			throw new Exceptions\SchemaException('Edge ' . $client_edge->getId() . ' does not match schema "' . $edge_schema->getName() . '".');
 		}
 
 		if ($client_edge) {
