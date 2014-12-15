@@ -14,7 +14,7 @@ namespace Karwana\Penelope;
 
 use Everyman\Neo4j;
 
-class ObjectCollection implements \Iterator, \Countable, \ArrayAccess {
+abstract class ObjectCollection implements \Iterator, \Countable, \ArrayAccess {
 
 	const PAGE_SIZE = 10;
 
@@ -70,30 +70,22 @@ class ObjectCollection implements \Iterator, \Countable, \ArrayAccess {
 		return $this->schema->getOption('collection.order_by');
 	}
 
-	protected function query($id = null, $aggregate = null) {
+	public function getTotalCount() {
+		return (int) $this->getResultSet('count')[0][0];
+	}
 
-		// If an ID is passed, get the relationships. Otherwise get nodes.
-		if (is_null($id)) {
-			$query_string = 'MATCH (o:' . $this->schema->getName() . ')';
-		} else {
-			$query_string = 'MATCH (n)-[o]->(' . $this->schema->getName() . ')';
-		}
+	public function fetch() {
+		$this->resultset = $this->getResultSet();
+	}
 
+	protected function getQuery($query_string, array $query_parts = array(), array $query_params = array(), $aggregate = null) {
 		$i = 0;
-		$params = array();
-		$query_parts = array();
-
-		if (!is_null($id)) {
-			$query_parts[] = 'id(n) = {node_id}';
-			$params['node_id'] = $id;
-		}
-
 		foreach ((array) $this->properties as $name => $value) {
 			if (!$this->schema->hasProperty($name)) {
 				throw new \InvalidArgumentException('Unknown property "' . $name . '".');
 			}
 
-			$params['value_' . $i] = $value;
+			$query_params['value_' . $i] = $value;
 			$query_parts[] = 'ANY (m IN {value_' . $i . '} WHERE m IN o.' . $name . ')';
 			$i++;
 		}
@@ -130,9 +122,7 @@ class ObjectCollection implements \Iterator, \Countable, \ArrayAccess {
 		// The standard REST API methods for getting nodes by a label don't support paging.
 		// Neither do they support querying by multiple properties (only by a single property).
 		// This is why we use Cypher instead.
-		$query = new Neo4j\Cypher\Query($client, $query_string, $params);
-
-		return $query->getResultset();
+		return new Neo4j\Cypher\Query($client, $query_string, $query_params);
 	}
 
 	public function rewind() {
