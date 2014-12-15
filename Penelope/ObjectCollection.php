@@ -14,7 +14,7 @@ namespace Karwana\Penelope;
 
 class ObjectCollection implements \Iterator, \Countable, \ArrayAccess {
 
-	protected $schema, $results = array();
+	protected $schema, $client_objects = array();
 
 	public function __construct(ObjectSchema $object_schema) {
 		$this->schema = $object_schema;
@@ -25,28 +25,28 @@ class ObjectCollection implements \Iterator, \Countable, \ArrayAccess {
 	}
 
 	public function rewind() {
-		reset($this->results);
+		reset($this->client_objects);
 	}
 
 	public function current() {
-		$current = current($this->results);
+		$current = current($this->client_objects);
 
 		if ($current !== false) {
-			return $this->schema->wrap($current);
+			return $this->schema->wrap($current['o']);
 		}
 
 		return false;
 	}
 
 	public function key() {
-		return key($this->results);
+		return key($this->client_objects);
 	}
 
 	public function next() {
-		$next = next($this->results);
+		$next = next($this->client_objects);
 
 		if (false !== $next) {
-			return $this->schema->wrap($next);
+			return $this->schema->wrap($next['o']);
 		}
 
 		return false;
@@ -57,15 +57,15 @@ class ObjectCollection implements \Iterator, \Countable, \ArrayAccess {
 	}
 
 	public function count() {
-		return count($this->results);
+		return count($this->client_objects);
 	}
 
 	public function offsetExists($offset) {
-		return isset($this->results[$offset]);
+		return isset($this->client_objects[$offset]);
 	}
 
 	public function offsetGet($offset) {
-		return $this->schema->wrap($this->results[$offset]);
+		return $this->schema->wrap($this->client_objects[$offset]['o']);
 	}
 
 	public function offsetSet($offset, $value) {
@@ -73,6 +73,6 @@ class ObjectCollection implements \Iterator, \Countable, \ArrayAccess {
 	}
 
 	public function offsetUnset($offset) {
-		unset($this->results[$offset]);
+		unset($this->client_objects[$offset]);
 	}
 }

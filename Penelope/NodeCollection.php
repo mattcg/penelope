@@ -47,27 +47,16 @@ class NodeCollection extends ObjectCollection {
 		return $this->page;
 	}
 
-	public function fetch() {
-		$result_set = $this->buildQuery()->getResultSet();
-
-		// Clear any existing result set.
-		if (!empty($this->results)) {
-			$this->results = array();
-		}
-
-		foreach ($result_set as $row) {
-			$this->results[] = $row['n'];
-		}
-	}
-
 	public function getTotalCount() {
-		$result_set = $this->buildQuery('count')->getResultSet();
-
-		return (int) $result_set[0][0];
+		return (int) $this->query('count')[0][0];
 	}
 
-	private function buildQuery($aggregate = null) {
-		$query_string = 'MATCH (n:' . $this->schema->getName() . ')';
+	public function fetch() {
+		$this->client_objects[] = $this->query();
+	}
+
+	private function query($aggregate = null) {
+		$query_string = 'MATCH (o:' . $this->schema->getName() . ')';
 		$params = array();
 
 		$i = 0;
@@ -78,7 +67,7 @@ class NodeCollection extends ObjectCollection {
 			}
 
 			$params['value_' . $i] = $value;
-			$query_parts[] = 'ANY (m IN {value_' . $i . '} WHERE m IN n.' . $name . ')';
+			$query_parts[] = 'ANY (m IN {value_' . $i . '} WHERE m IN o.' . $name . ')';
 			$i++;
 		}
 
@@ -87,14 +76,14 @@ class NodeCollection extends ObjectCollection {
 		}
 
 		if ($aggregate) {
-			$query_string .= ' RETURN ' . $aggregate . '(n)';
+			$query_string .= ' RETURN ' . $aggregate . '(o)';
 		} else {
-			$query_string .= ' RETURN (n)';
+			$query_string .= ' RETURN (o)';
 
 			// Order by only makes sense when not using aggregate.
 			$order_by = $this->schema->getOption('collection.order_by');
 			if ($order_by) {
-				$query_string .= ' ORDER BY n.' . join(', n.', (array) $order_by);
+				$query_string .= ' ORDER BY o.' . join(', o.', (array) $order_by);
 			}
 
 			$limit = $this->page_size;
@@ -105,12 +94,13 @@ class NodeCollection extends ObjectCollection {
 				$skip = 0;
 			}
 
-			// Aggregate results would be unexpected when using limit.
+			// Aggregate client_objects would be unexpected when using limit.
 			$query_string .= ' SKIP ' . $skip . ' LIMIT ' . $limit;
 		}
 
 		$client = $this->schema->getClient();
+		$query = new Neo4j\Cypher\Query($client, $query_string, $params);
 
-		return new Neo4j\Cypher\Query($client, $query_string, $params);
+		return $query->getResultset();
 	}
 }
