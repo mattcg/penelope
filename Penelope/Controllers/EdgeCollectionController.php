@@ -125,7 +125,9 @@ class EdgeCollectionController extends ObjectController {
 		}
 
 		$view_data['edge_schema'] = $edge_schema;
-		$view_data['end_nodes'] = $edge_schema->getEndNodeSchema()->getCollection();
+
+		// TODO: Something a bit more intelligent than this hack to fetch all the possible end nodes and render them in a dropdown.
+		$view_data['end_nodes'] = $edge_schema->getEndNodeSchema()->getCollection(1, 1000);
 
 		if ($e) {
 			$this->app->response->setStatus(500);

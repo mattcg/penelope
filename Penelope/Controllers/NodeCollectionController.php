@@ -41,10 +41,7 @@ class NodeCollectionController extends ObjectController {
 			}
 		}
 
-		$collection = new NodeCollection($node_schema, $properties);
-		$collection->setPage($page);
-		$collection->setPageSize($page_size);
-		$collection->fetch();
+		$collection = $node_schema->getCollection($page, $page_size, $properties);
 		$total = $collection->getTotalCount();
 
 		$view_data['properties'] = $properties;

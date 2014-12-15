@@ -31,8 +31,10 @@ class NodeSchema extends ObjectSchema {
 		return $node;
 	}
 
-	public function getCollection() {
-		$collection = new NodeCollection($this);
+	public function getCollection($page = 1, $page_size = NodeCollection::PAGE_SIZE, array $properties = null) {
+		$collection = new NodeCollection($this, $properties);
+		$collection->setPage($page);
+		$collection->setPageSize($page_size);
 		$collection->fetch();
 
 		return $collection;
