@@ -31,12 +31,12 @@
 				?>
 				<input type="hidden" name="_METHOD" value="PUT">
 				<hr>
-				<input type="submit" value="<?php __(_m('update_edge_button_text')); ?>">
+				<input class="crud-button" type="submit" value="<?php __(_m('update_edge_button_text')); ?>">
 			</form>
 
 			<form class="delete object edge <?php __class('edge-' . $edge_schema->getName()); ?>" action="<?php __(_e($edge->getPath())); ?>" method="POST" data-confirm="<?php __(_m('delete_edge_confirm', $edge->getTitle())); ?>">
 				<input type="hidden" name="_METHOD" value="DELETE">
-				<input type="submit" value="<?php __(_m('delete_edge_button_text')); ?>">
+				<input class="crud-button delete" type="submit" value="<?php __(_m('delete_edge_button_text')); ?>">
 			</form>
 		</div>
 	</article>
