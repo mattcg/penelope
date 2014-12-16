@@ -39,7 +39,7 @@ abstract class Batchable {
 		$collection->setPageSize($this->batch_size);
 		$collection->fetch();
 
-		while (!empty($collection)) {
+		while (count($collection) > 0) {
 			$this->processBatch($collection);
 			usleep($this->usleep);
 
