@@ -57,7 +57,12 @@ abstract class PropertyMapper extends Batchable {
 	public function split(Object $object, $delimiter = ',') {
 		$value = $object->getProperty($this->property_name)->getValue();
 
-		if (!empty($value) and is_string($value)) {
+		// If it's already an array, join and re-split.
+		if (is_array($value)) {
+			$value = implode($delimiter, $value);
+		}
+
+		if (is_string($value)) {
 			$value = explode($delimiter, $value);
 		}
 
