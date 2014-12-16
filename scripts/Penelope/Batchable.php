@@ -18,7 +18,7 @@ use Everyman\Neo4j;
 
 abstract class Batchable {
 
-	protected $batch_size = 10, $usleep = 500000;
+	protected $batch_size = 10, $usleep = 100000;
 
 	public function setBatchSize($batch_size) {
 		$this->batch_size = $batch_size;
