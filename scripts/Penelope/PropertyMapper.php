@@ -20,40 +20,35 @@ use Everyman\Neo4j;
 
 require_once __DIR__ . '/Batchable.php';
 
-abstract class PropertySplitter extends Batchable {
+abstract class PropertyMapper extends Batchable {
 
-	protected $object_schema;
+	protected $object_schema, $mapper;
 
-	public $delimiter = ',', $map;
-
-	public function __construct(ObjectSchema $object_schema, $property_name) {
-		$this->object_schema = $object_schema;
-		$this->property_name = $property_name;
-
+	public function __construct(ObjectSchema $object_schema, $property_name, \Closure $mapper) {
 		if ($object_schema->getProperty($property_name)->isMultiValue()) {
 			throw new \InvalidArgumentException('Property "' . $property_name . '" is already a multivalue property.');
 		}
 
-		$this->map = function($value) {
-			if ($value) {
-				return trim($value);
-			}
-		};
+		$this->object_schema = $object_schema;
+		$this->property_name = $property_name;
+		$this->mapper = $mapper;
 	}
 
 	public function process(Object $object) {
-		$this->split($object);
+		$this->map($object);
 	}
 
-	public function split(Object $object) {
+	public function split(Object $object, $delimiter = ',') {
 		$value = $object->getProperty($this->property_name)->getValue();
 
-		if (!empty($value)) {
-			$value_split = explode($this->delimiter, $value);
+		if (!empty($value) and is_string($value)) {
+			$value_split = explode($delimiter, $value);
 		}
 
-		if (!empty($value_split) and $this->map) {
-			$value_split = array_map($this->map, $value_split);
+		if (!empty($value_split)) {
+			$value_split = array_map(function($value) {
+				return trim($value);
+			}, $value_split);
 		}
 
 		if (!empty($value_split)) {

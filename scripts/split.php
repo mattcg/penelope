@@ -14,8 +14,11 @@ use Karwana\Penelope\NodeSchema;
 use Karwana\Penelope\Scripts\NodePropertySplitter;
 
 function split_node(NodeSchema $node_schema, $property_name) {
-	$splitter = new NodePropertySplitter($node_schema, $property_name);
-	$splitter->run();
+	$mapper = new NodePropertyMapper($node_schema, $property_name, function(Node $node) use ($mapper) {
+		return $mapper>split($node);
+	});
+
+	$mapper->run();
 }
 
 if (empty($argv[1])) {

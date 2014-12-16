@@ -20,18 +20,18 @@ use Everyman\Neo4j;
 
 require_once __DIR__ . '/PropertySplitter.php';
 
-class NodePropertySplitter extends PropertySplitter {
+class NodePropertyMapper extends PropertySplitter {
 
-	public function __construct(NodeSchema $node_schema, $property_name) {
-		parent::__construct($node_schema, $property_name);
+	public function __construct(NodeSchema $node_schema, $property_name, \Closure $mapper) {
+		parent::__construct($node_schema, $property_name, $mapper);
 	}
 
 	public function getCollections() {
 		return array(new NodeCollection($this->object_schema));
 	}
 
-	public function split(Object $node) {
-		$value_split = parent::split($node);
+	public function map(Object $node) {
+		$value_split = parent::mapper($node);
 
 		$query_string = 'MATCH (n) WHERE id(n) = ' . $node->getId() . ' SET n.`' . $this->property_name . '` = {value} RETURN n';
 		$query_params = array('value' => $value_split);
