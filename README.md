@@ -4,6 +4,8 @@ An editor front-end for Neo4j.
 
 Contributors are listed in the AUTHORS file.
 
+For documentation, see the [wiki](https://github.com/karwana/penelope/wiki).
+
 ## Requirements ##
 
 - Neo4j 2.0 or later.
