@@ -12,41 +12,31 @@
 
 namespace Karwana\Penelope\Scripts;
 
+use Karwana\Penelope\Node;
 use Karwana\Penelope\Schema;
-use Karwana\Penelope\NodeSchema;
 use Karwana\Penelope\NodeCollection;
 
-class Reindexer {
+require_once __DIR__ . '/Batchable.php';
 
-	public function reindex(Schema $schema, $batch = 10, $usleep = 500000) {
-		foreach ($schema->getNodes() as $node_schema) {
-			$this->reindexSchema($node_schema, $batch, $usleep);
-		}
+class Reindexer extends Batchable {
+
+	private $schema;
+
+	public function __construct(Schema $schema) {
+		$this->schema = $schema;
 	}
 
-	public function reindexSchema(NodeSchema $node_schema, $batch, $usleep) {
-		$page = 1;
-		$collection = new NodeCollection($node_schema);
-		$collection->setPageSize($batch);
-		$collection->fetch();
+	public function getCollections() {
+		$collections = array();
 
-		while (!empty($collection)) {
-			$this->reindexCollection($collection);
-			usleep($usleep);
-
-			$page++;
-			$collection->setPage($page);
-			$collection->fetch();
+		foreach ($this->schema->getNodes() as $node_schema) {
+			$collections[] = new NodeCollection($node_schema);
 		}
+
+		return $collections;
 	}
 
-	public function reindexCollection(NodeCollection $collection) {
-		try {
-			foreach ($collection as $node) {
-				$node->index();
-			}
-		} catch (\Exception $e) {
-			throw new \Exception('Error while indexing ' . $node->getSchema()->getName() . ' node ' . $node->getId() . '.', 0, $e);
-		}
+	public function process(Node $node) {
+		$node->index();
 	}
 }

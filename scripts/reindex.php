@@ -14,8 +14,8 @@ use Karwana\Penelope\Schema;
 use Karwana\Penelope\Scripts\Reindexer;
 
 function reindex(Schema $schema) {
-	$reindexer = new Reindexer();
-	$reindexer->reindex($schema);
+	$reindexer = new Reindexer($schema);
+	$reindexer->run();
 }
 
 if (empty($argv[1])) {
