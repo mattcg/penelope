@@ -22,15 +22,6 @@ class NodeCollectionController extends ObjectController {
 		$node_schema = $this->getNodeSchemaBySlug($schema_slug);
 		$request = $this->app->request;
 
-		$view_data = array('title' => $this->_m('node_collection_title', $node_schema->getDisplayName(0)), 'node_schema' => $node_schema);
-
-		// TODO: Return a 404 for invalid page numbers.
-		$page_size = 20;
-		$page = (int) $request->get('p');
-		if ($page < 1) {
-			$page = 1;
-		}
-
 		// Check whether individual properties are being queried.
 		// Example: /people/?countries_of_operation=USA&first_name=Arturo
 		// TODO: Handle the exception thrown by NodeCollection#query instead and return a 404.
@@ -41,8 +32,22 @@ class NodeCollectionController extends ObjectController {
 			}
 		}
 
+		$page_size = 20;
+		$page = (int) $request->get('p');
+		if ($page < 1) {
+			$page = 1;
+		}
+
 		$collection = $node_schema->getCollection($page, $page_size, $properties);
 		$total = $collection->getTotalCount();
+
+		// Return a 404 for invalid pages.
+		if (count($collection) < 1 and $page > 1) {
+			$this->app->notFound();
+			$this->app->stop();
+		}
+
+		$view_data = array('title' => $this->_m('node_collection_title', $node_schema->getDisplayName(0)), 'node_schema' => $node_schema);
 
 		$view_data['properties'] = $properties;
 		$view_data['nodes'] = $collection;
