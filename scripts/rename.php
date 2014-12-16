@@ -13,9 +13,9 @@
 use Karwana\Penelope\NodeSchema;
 use Karwana\Penelope\Scripts\NodePropertySplitter;
 
-function split_node_property(NodeSchema $node_schema, $property_name) {
-	$mapper = new NodePropertyMapper($node_schema, $property_name, function(Node $node) use ($mapper) {
-		return $mapper->split($node);
+function rename_node_property(NodeSchema $node_schema, $property_name, $new_property_name) {
+	$mapper = new NodePropertyMapper($node_schema, $property_name, function(Node $node) use ($mapper, $new_property_name) {
+		return $mapper->rename($node, $new_property_name);
 	});
 
 	$mapper->run();
@@ -30,7 +30,11 @@ if (empty($argv[2])) {
 }
 
 if (empty($argv[3])) {
-	throw new \InvalidArgumentException('Missing property name.');
+	throw new \InvalidArgumentException('Missing old property name.');
+}
+
+if (empty($argv[4])) {
+	throw new \InvalidArgumentException('Missing new property name.');
 }
 
 require_once __DIR__ . '/Penelope/NodePropertyMapper.php';
@@ -40,4 +44,4 @@ if (!isset($schema)) {
 	$schema = $penelope->getSchema();
 }
 
-split_node_property($schema->getNode($argv[2]), $argv[3]);
+rename_node_property($schema->getNode($argv[2]), $argv[3], $argv[4]);

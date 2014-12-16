@@ -38,6 +38,12 @@ abstract class PropertyMapper extends Batchable {
 		$this->map($object);
 	}
 
+	public function rename(Object $object, $new_name) {
+		$value = $object->getProperty($this->property_name)->getValue();
+
+		return array($new_name => $value);
+	}
+
 	public function split(Object $object, $delimiter = ',') {
 		$value = $object->getProperty($this->property_name)->getValue();
 
@@ -52,7 +58,9 @@ abstract class PropertyMapper extends Batchable {
 		}
 
 		if (!empty($value_split)) {
-			return array_filter($value_split);
+			$value_split = array_filter($value_split);
 		}
+
+		return array($this->property_name => $value_split);
 	}
 }
