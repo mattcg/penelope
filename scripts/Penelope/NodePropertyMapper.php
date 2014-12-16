@@ -33,6 +33,8 @@ class NodePropertyMapper extends PropertySplitter {
 	public function map(Object $node) {
 		$value_split = parent::mapper($node);
 
+		// Note that because this update bypasses `Node#save`, reindexing will have to be done manually after mapping.
+		// This is by design, a you might want to perform multiple mappings and indexing is expensive, so it should be done last.
 		$query_string = 'MATCH (n) WHERE id(n) = ' . $node->getId() . ' SET n.`' . $this->property_name . '` = {value} RETURN n';
 		$query_params = array('value' => $value_split);
 		$query = new Neo4j\Cypher\Query($node->getClient(), $query_string, $query_params);
