@@ -15,7 +15,7 @@ use Karwana\Penelope\Scripts\NodePropertySplitter;
 
 function split_node(NodeSchema $node_schema, $property_name) {
 	$mapper = new NodePropertyMapper($node_schema, $property_name, function(Node $node) use ($mapper) {
-		return $mapper>split($node);
+		return $mapper->split($node);
 	});
 
 	$mapper->run();
