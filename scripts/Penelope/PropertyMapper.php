@@ -40,23 +40,37 @@ abstract class PropertyMapper extends Batchable {
 		return array($new_name => $value);
 	}
 
+	public function replace(Object $object, $pattern, $replacement) {
+		$value = $object->getProperty($this->property_name)->getValue();
+
+		if (!is_array($value)) {
+			$value = preg_replace($pattern, $replacement, $value);
+		} else {
+			$value = array_map(function($value) use ($pattern, $replacement) {
+				return preg_replace($pattern, $replacement, $value);
+			}, $value);
+		}
+
+		return array($this->property_name => $value);
+	}
+
 	public function split(Object $object, $delimiter = ',') {
 		$value = $object->getProperty($this->property_name)->getValue();
 
 		if (!empty($value) and is_string($value)) {
-			$value_split = explode($delimiter, $value);
+			$value = explode($delimiter, $value);
 		}
 
-		if (!empty($value_split)) {
-			$value_split = array_map(function($value) {
+		if (!empty($value)) {
+			$value = array_map(function($value) {
 				return trim($value);
-			}, $value_split);
+			}, $value);
 		}
 
-		if (!empty($value_split)) {
-			$value_split = array_filter($value_split);
+		if (!empty($value)) {
+			$value = array_filter($value);
 		}
 
-		return array($this->property_name => $value_split);
+		return array($this->property_name => $value);
 	}
 }
