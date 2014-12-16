@@ -18,9 +18,9 @@ use Karwana\Penelope\NodeCollection;
 
 use Everyman\Neo4j;
 
-require_once __DIR__ . '/PropertySplitter.php';
+require_once __DIR__ . '/PropertyMapper.php';
 
-class NodePropertyMapper extends PropertySplitter {
+class NodePropertyMapper extends PropertyMapper {
 
 	public function __construct(NodeSchema $node_schema, $property_name, \Closure $mapper) {
 		parent::__construct($node_schema, $property_name, $mapper);
@@ -31,7 +31,9 @@ class NodePropertyMapper extends PropertySplitter {
 	}
 
 	public function map(Object $node) {
-		$pair = parent::mapper($node);
+		$mapper = $this->mapper;
+
+		$pair = $mapper($node);
 		$property_name = key($pair);
 
 		// Note that because this update bypasses `Node#save`, reindexing will have to be done manually after mapping.

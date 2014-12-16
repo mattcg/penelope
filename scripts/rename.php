@@ -10,11 +10,12 @@
  * @since      File available since Release 1.0.0
  */
 
+use Karwana\Penelope\Node;
 use Karwana\Penelope\NodeSchema;
-use Karwana\Penelope\Scripts\NodePropertySplitter;
+use Karwana\Penelope\Scripts\NodePropertyMapper;
 
 function rename_node_property(NodeSchema $node_schema, $property_name, $new_property_name) {
-	$mapper = new NodePropertyMapper($node_schema, $property_name, function(Node $node) use ($mapper, $new_property_name) {
+	$mapper = new NodePropertyMapper($node_schema, $property_name, function(Node $node) use (&$mapper, $new_property_name) {
 		return $mapper->rename($node, $new_property_name);
 	});
 

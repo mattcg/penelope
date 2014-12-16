@@ -10,11 +10,12 @@
  * @since      File available since Release 1.0.0
  */
 
+use Karwana\Penelope\Node;
 use Karwana\Penelope\NodeSchema;
-use Karwana\Penelope\Scripts\NodePropertySplitter;
+use Karwana\Penelope\Scripts\NodePropertyMapper;
 
 function split_node_property(NodeSchema $node_schema, $property_name) {
-	$mapper = new NodePropertyMapper($node_schema, $property_name, function(Node $node) use ($mapper) {
+	$mapper = new NodePropertyMapper($node_schema, $property_name, function(Node $node) use (&$mapper) {
 		return $mapper->split($node);
 	});
 

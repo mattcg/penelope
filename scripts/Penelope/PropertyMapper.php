@@ -25,10 +25,6 @@ abstract class PropertyMapper extends Batchable {
 	protected $object_schema, $mapper;
 
 	public function __construct(ObjectSchema $object_schema, $property_name, \Closure $mapper) {
-		if ($object_schema->getProperty($property_name)->isMultiValue()) {
-			throw new \InvalidArgumentException('Property "' . $property_name . '" is already a multivalue property.');
-		}
-
 		$this->object_schema = $object_schema;
 		$this->property_name = $property_name;
 		$this->mapper = $mapper;
