@@ -16,21 +16,32 @@ use Everyman\Neo4j;
 
 abstract class ObjectCollection implements \Iterator, \Countable, \ArrayAccess {
 
-	const PAGE_SIZE = 10;
-
-	protected $order_by, $page = 1, $page_size = self::PAGE_SIZE;
+	protected $order_by, $page = 1, $page_size;
 
 	protected $properties;
 
-	protected $schema, $position = 0, $resultset = array();
+	protected $object_schema, $position = 0, $resultset = array();
 
-	public function __construct(ObjectSchema $object_schema, array $properties = null) {
-		$this->schema = $object_schema;
-		$this->properties = $properties;
+	public function __construct(ObjectSchema $object_schema) {
+		$this->object_schema = $object_schema;
 	}
 
 	public function getSchema() {
-		return $this->schema;
+		return $this->object_schema;
+	}
+
+	public function setProperties(array $properties) {
+		foreach (array_keys($properties) as $name) {
+			if (!$this->object_schema->hasProperty($name)) {
+				throw new \InvalidArgumentException('Unknown property "' . $name . '".');
+			}
+		}
+
+		$this->properties = $properties;
+	}
+
+	public function clearProperties() {
+		$this->properties = null;
 	}
 
 	public function setPageSize($page_size) {
@@ -39,6 +50,10 @@ abstract class ObjectCollection implements \Iterator, \Countable, \ArrayAccess {
 		}
 
 		$this->page_size = $page_size;
+	}
+
+	public function clearPageSize() {
+		$this->page_size = null;
 	}
 
 	public function getPageSize() {
@@ -51,6 +66,10 @@ abstract class ObjectCollection implements \Iterator, \Countable, \ArrayAccess {
 		}
 
 		$this->page = $page;
+	}
+
+	public function clearPage() {
+		$this->page = null;
 	}
 
 	public function getPage() {
@@ -67,7 +86,7 @@ abstract class ObjectCollection implements \Iterator, \Countable, \ArrayAccess {
 		}
 
 		// Return the default.
-		return $this->schema->getOption('collection.order_by');
+		return $this->object_schema->getOption('collection.order_by');
 	}
 
 	public function getTotalCount() {
@@ -84,10 +103,6 @@ abstract class ObjectCollection implements \Iterator, \Countable, \ArrayAccess {
 
 		$i = 0;
 		foreach ((array) $this->properties as $name => $value) {
-			if (!$this->schema->hasProperty($name)) {
-				throw new \InvalidArgumentException('Unknown property "' . $name . '".');
-			}
-
 			$query_params['value_' . $i] = $value;
 			$where_parts[] = 'ANY (m IN {value_' . $i . '} WHERE m IN o.' . $name . ')';
 			$i++;
@@ -101,26 +116,24 @@ abstract class ObjectCollection implements \Iterator, \Countable, \ArrayAccess {
 			$query_string .= ' RETURN ' . $aggregate . '(o)';
 		} else {
 			$query_string .= ' RETURN (o)';
-
-			// Order by only makes sense when not using aggregate.
-			$order_by = $this->getOrderBy();
-			if ($order_by) {
-				$query_string .= ' ORDER BY o.' . join(', o.', (array) $order_by);
-			}
-
-			$limit = $this->page_size;
-
-			if ($this->page > 1) {
-				$skip = $this->page * $this->page_size;
-			} else {
-				$skip = 0;
-			}
-
-			// Aggregate results would be unexpected when using limit.
-			$query_string .= ' SKIP ' . $skip . ' LIMIT ' . $limit;
 		}
 
-		$client = $this->schema->getClient();
+		// Order by only makes sense when not using aggregate.
+		if (!$aggregate and ($order_by = $this->getOrderBy())) {
+			$query_string .= ' ORDER BY o.' . join(', o.', (array) $order_by);
+		}
+
+		// Aggregate results would be unexpected when using limit.
+		// Return all objects if page and page size are not set.
+		if (!$aggregate and $this->page_size and $this->page) {
+			if ($this->page > 1) {
+				$query_string .= ' SKIP ' . (($this->page * $this->page_size) - $this->page_size);
+			}
+
+			$query_string .= ' LIMIT ' . $this->page_size;
+		}
+
+		$client = $this->object_schema->getClient();
 
 		// The standard REST API methods for getting nodes by a label don't support paging.
 		// Neither do they support querying by multiple properties (only by a single property).
@@ -161,7 +174,7 @@ abstract class ObjectCollection implements \Iterator, \Countable, \ArrayAccess {
 	}
 
 	public function offsetGet($offset) {
-		return $this->schema->wrap($this->resultset[$offset]['o']);
+		return $this->object_schema->wrap($this->resultset[$offset]['o']);
 	}
 
 	public function offsetSet($offset, $value) {

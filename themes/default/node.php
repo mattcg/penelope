@@ -180,7 +180,7 @@
 									continue;
 								}
 
-								$reverse_edge_schema_edges = $reverse_edges[$reverse_edge_schema->getName()];
+								$reverse_edge_schema_edges = iterator_to_array($reverse_edges[$reverse_edge_schema->getName()]);
 
 				?>
 				<section class="edge-schema<?php

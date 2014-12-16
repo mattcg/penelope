@@ -31,13 +31,23 @@ class NodeSchema extends ObjectSchema {
 		return $node;
 	}
 
-	public function getCollection($page = 1, $page_size = NodeCollection::PAGE_SIZE, array $properties = null) {
-		$collection = new NodeCollection($this, $properties);
-		$collection->setPage($page);
-		$collection->setPageSize($page_size);
-		$collection->fetch();
+	public function getCollection($page = null, $page_size = null, array $properties = null) {
+		$node_collection = new NodeCollection($this);
 
-		return $collection;
+		if ($page) {
+			$node_collection->setPage($page);
+		}
+
+		if ($page_size) {
+			$node_collection->setPageSize($page_size);
+		}
+
+		if ($properties) {
+			$node_collection->setProperties($properties);
+		}
+
+		$node_collection->fetch();
+		return $node_collection;
 	}
 
 	public function wrap(Neo4j\Node $client_node) {

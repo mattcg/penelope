@@ -16,10 +16,9 @@
 		} else {
 
 			if ($prev_page) {
-				if (isset($properties)) {
-					$query_string = http_build_query(array('qp' => $properties, 'p' => $prev_page));
-				} else {
-					$query_string = http_build_query(array('p' => $prev_page));
+				$query_string = http_build_query(array('p' => $prev_page));
+				if (!empty($properties)) {
+					$query_string .= http_build_query($properties);
 				}
 
 		?>
@@ -52,10 +51,9 @@
 		<?php
 
 			if ($next_page) {
-				if (isset($properties)) {
-					$query_string = http_build_query(array('qp' => $properties, 'p' => $next_page));
-				} else {
-					$query_string = http_build_query(array('p' => $next_page));
+				$query_string = http_build_query(array('p' => $next_page));
+				if (!empty($properties)) {
+					$query_string .= http_build_query($properties);
 				}
 
 		?>

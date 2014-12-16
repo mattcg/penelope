@@ -75,7 +75,7 @@ class EdgeCollection extends ObjectCollection {
 			break;
 		}
 
-		$match = 'MATCH (a)' . sprintf($direction, $this->schema->getName()) . '(b)';
+		$match = 'MATCH (a)' . sprintf($direction, $this->object_schema->getName()) . '(b)';
 		$where = array('id(a) = ' . $this->node->getId());
 
 		return $this->formatQuery($match, $where, $aggregate);

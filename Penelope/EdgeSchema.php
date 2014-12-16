@@ -42,11 +42,23 @@ class EdgeSchema extends ObjectSchema {
 		return $edge;
 	}
 
-	public function getCollection(Node $node, $direction = Neo4j\Relationship::DirectionAll) {
-		$collection = new EdgeCollection($this, $node, $direction);
-		$collection->fetch();
+	public function getCollection(Node $node, $direction = Neo4j\Relationship::DirectionAll, $page = null, $page_size = null, array $properties = null) {
+		$edge_collection = new EdgeCollection($this, $node, $direction);
 
-		return $collection;
+		if ($page) {
+			$edge_collection->setPage($page);
+		}
+
+		if ($page_size) {
+			$edge_collection->setPageSize($page_size);
+		}
+
+		if ($properties) {
+			$edge_collection->setProperties($properties);
+		}
+
+		$edge_collection->fetch();
+		return $edge_collection;
 	}
 
 	public function wrap(Neo4j\Relationship $client_edge) {

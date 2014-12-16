@@ -13,10 +13,11 @@
 namespace Karwana\Penelope\Controllers;
 
 use Karwana\Penelope\Edge;
+use Karwana\Penelope\EdgeCollection;
 use Karwana\Penelope\Exceptions;
 use Karwana\Penelope\TransientProperty;
 
-class EdgeCollectionController extends ObjectController {
+class EdgeCollectionController extends ObjectCollectionController {
 
 	public function getEdgesByParams($node_schema_slug, $node_id, $edge_schema_slug) {
 		$node = $this->getNodeByParams($node_schema_slug, $node_id);
@@ -27,7 +28,9 @@ class EdgeCollectionController extends ObjectController {
 		$edge_schema = $this->getEdgeSchemaBySlugs($node_schema_slug, $edge_schema_slug);
 
 		try {
-			$edges = $node->getOutEdges($edge_schema);
+
+			// Don't use EdgeSchema#getCollection as we don't want to fetch as yet.
+			$edges = new EdgeCollection($edge_schema, $node, EdgeCollection::OUT);
 
 		// If the edge schema does not define relationships from nodes of the given type.
 		} catch (Exceptions\SchemaException $e) {
@@ -81,27 +84,16 @@ class EdgeCollectionController extends ObjectController {
 		$node = $this->getNodeByParams($node_schema_slug, $node_id);
 
 		$edge_schema = $this->getEdgeSchemaBySlugs($node_schema_slug, $edge_schema_slug);
-		$edges = $this->getEdgesByParams($node_schema_slug, $node_id, $edge_schema_slug);
+		$edge_collection = $this->getEdgesByParams($node_schema_slug, $node_id, $edge_schema_slug);
 
-		$view_data = array('title' => $this->_m('edge_collection_title', $edge_schema->getDisplayName(), $node->getTitle()));
+		$view_data = $this->readPagedCollection($edge_collection);
+
+		$view_data['title'] = $this->_m('edge_collection_title', $edge_schema->getDisplayName(), $node->getTitle());
 		$view_data['node'] = $node;
 		$view_data['edge_schema'] = $edge_schema;
-		$view_data['edges'] = $edges;
+		$view_data['edges'] = $edge_collection;
 
 		$this->app->render('edges', $view_data);
-	}
-
-	public function delete($node_schema_slug, $node_id, $edge_schema_slug) {
-
-		// TODO: View.
-		throw \BadMethodCallException('Not implemented.');
-
-		$edges = $this->getEdgesByParams($node_schema_slug, $node_id, $edge_schema_slug);
-
-		// Delete the entire collection.
-		foreach ($edges as $edge) {
-			$edge->delete();
-		}
 	}
 
 	public function renderNewForm($node_schema_slug, $node_id, $edge_schema_slug, array $transient_properties = null, \Exception $e = null) {
@@ -126,8 +118,9 @@ class EdgeCollectionController extends ObjectController {
 
 		$view_data['edge_schema'] = $edge_schema;
 
-		// TODO: Something a bit more intelligent than this hack to fetch all the possible end nodes and render them in a dropdown.
-		$view_data['end_nodes'] = $edge_schema->getEndNodeSchema()->getCollection(1, 1000);
+		// Get all the end nodes, without paging.
+		// TODO: A more intelligent interface that doesn't involve searching potentially millions of nodes. Maybe a search that posts back to the form?
+		$view_data['end_nodes'] = $edge_schema->getEndNodeSchema()->getCollection();
 
 		if ($e) {
 			$this->app->response->setStatus(500);

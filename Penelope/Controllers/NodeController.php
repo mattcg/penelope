@@ -29,10 +29,12 @@ class NodeController extends ObjectController {
 		$has_edges = false;
 
 		foreach ($edge_schemas as $edge_schema) {
+
+			// Get all the "out" edges, without paging.
 			$edges = $node->getOutEdges($edge_schema);
 			$view_data['edges'][$edge_schema->getName()] = $edges;
 
-			if (!empty($edges)) {
+			if (count($edges) > 0) {
 				$has_edges = true;
 			}
 		}
@@ -48,8 +50,10 @@ class NodeController extends ObjectController {
 				continue;
 			}
 
+			// Get all the "in" edges, without paging.
 			$reverse_edges = $node->getInEdges($reverse_edge_schema);
-			if (!empty($reverse_edges)) {
+
+			if (count($reverse_edges) > 0) {
 				$view_data['reverse_edge_schemas'][] = $reverse_edge_schema;
 				$view_data['reverse_edges'][$reverse_edge_schema->getName()] = $reverse_edges;
 				$has_edges = true;

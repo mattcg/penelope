@@ -16,53 +16,19 @@ use Karwana\Penelope\Node;
 use Karwana\Penelope\NodeCollection;
 use Karwana\Penelope\TransientProperty;
 
-class NodeCollectionController extends ObjectController {
+class NodeCollectionController extends ObjectCollectionController {
 
 	public function read($schema_slug) {
 		$node_schema = $this->getNodeSchemaBySlug($schema_slug);
-		$request = $this->app->request;
 
-		// Check whether individual properties are being queried.
-		// Example: /people/?countries_of_operation=USA&first_name=Arturo
-		// TODO: Handle the exception thrown by NodeCollection#query instead and return a 404.
-		$properties = array();
-		foreach ($request->get() as $name => $value) {
-			if ($node_schema->hasProperty($name)) {
-				$properties[$name] = $value;
-			}
-		}
+		// Don't use NodeSchema#getCollection as we don't want to fetch as yet.
+		$node_collection = new NodeCollection($node_schema);
 
-		$page_size = 20;
-		$page = (int) $request->get('p');
-		if ($page < 1) {
-			$page = 1;
-		}
+		$view_data = $this->readPagedCollection($node_collection);
 
-		$collection = $node_schema->getCollection($page, $page_size, $properties);
-		$total = $collection->getTotalCount();
-
-		// Return a 404 for invalid pages.
-		if (count($collection) < 1 and $page > 1) {
-			$this->app->notFound();
-			$this->app->stop();
-		}
-
-		$view_data = array('title' => $this->_m('node_collection_title', $node_schema->getDisplayName(0)), 'node_schema' => $node_schema);
-
-		$view_data['properties'] = $properties;
-		$view_data['nodes'] = $collection;
-
-		if ($total and ($page_size * $page) < $total) {
-			$view_data['next_page'] = $page + 1;
-		} else {
-			$view_data['next_page'] = 0;
-		}
-
-		if ($page > 1) {
-			$view_data['prev_page'] = $page - 1;
-		} else {
-			$view_data['prev_page'] = 0;
-		}
+		$view_data['title'] = $this->_m('node_collection_title', $node_schema->getDisplayName(0));
+		$view_data['node_schema'] = $node_schema;
+		$view_data['nodes'] = $node_collection;
 
 		$this->app->render('nodes', $view_data);
 	}

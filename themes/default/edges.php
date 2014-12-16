@@ -15,6 +15,18 @@
 
 		} else {
 
+			if ($prev_page) {
+				$query_string = http_build_query(array('p' => $prev_page));
+				if (!empty($properties)) {
+					$query_string .= http_build_query($properties);
+				}
+
+		?>
+		<p><a class="crud-button paging prev" href="?<?php __($query_string); ?>"><?php __(_m('collection_prev_page')); ?></a></p>
+		<?php
+
+			}
+
 		?>
 		<nav class="collection edges">
 			<ul>
@@ -39,6 +51,18 @@
 			</ul>
 		</nav>
 		<?php
+
+			if ($next_page) {
+				$query_string = http_build_query(array('p' => $next_page));
+				if (!empty($properties)) {
+					$query_string .= http_build_query($properties);
+				}
+
+		?>
+		<p><a class="crud-button paging next" href="?<?php __($query_string); ?>"><?php __(_m('collection_next_page')); ?></a></p>
+		<?php
+
+			}
 
 		}
 

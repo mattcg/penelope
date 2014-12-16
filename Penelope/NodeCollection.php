@@ -14,11 +14,11 @@ namespace Karwana\Penelope;
 
 class NodeCollection extends ObjectCollection {
 
-	public function __construct(NodeSchema $node_schema, array $properties = null) {
-		parent::__construct($node_schema, $properties);
+	public function __construct(NodeSchema $node_schema) {
+		parent::__construct($node_schema);
 	}
 
 	protected function getQuery($aggregate = null) {
-		return $this->formatQuery('MATCH (o:' . $this->schema->getName() . ')', array(), $aggregate);
+		return $this->formatQuery('MATCH (o:' . $this->object_schema->getName() . ')', array(), $aggregate);
 	}
 }
