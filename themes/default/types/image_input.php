@@ -43,7 +43,7 @@ if ($property->getSchema()->isMultiValue()) {
 } else {
 
 ?>
-<input type="file" accept="image/*" id="<?php __($property_id); ?>" name="<?php __(_e($property->getName())); ?>" class="new">
+<input type="file" accept="image/*" id="<?php __($property_id); ?>" name="<?php __(_e($property->getName())); ?>">
 <?php
 
 }
