@@ -86,11 +86,15 @@ class Node extends Object {
 	}
 
 	public function getOutEdges(EdgeSchema $edge_schema) {
-		return $edge_schema->getCollection($this, Neo4j\Relationship::DirectionOut);
+		return $edge_schema->getCollection($this, EdgeCollection::OUT);
 	}
 
 	public function getInEdges(EdgeSchema $edge_schema) {
-		return $edge_schema->getCollection($this, Neo4j\Relationship::DirectionIn);
+		return $edge_schema->getCollection($this, EdgeCollection::IN);
+	}
+
+	public function getEdges(EdgeSchema $edge_schema) {
+		return $edge_schema->getCollection($this);
 	}
 
 	public function save() {

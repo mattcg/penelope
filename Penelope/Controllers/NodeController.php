@@ -17,49 +17,38 @@ use Karwana\Penelope\Exceptions;
 class NodeController extends ObjectController {
 
 	public function read($schema_slug, $node_id) {
+		$schema = $this->schema;
+
 		$node = $this->getNodeByParams($schema_slug, $node_id);
 		$node_schema = $node->getSchema();
 
-		$view_data = array('title' => $node->getTitle(), 'node' => $node, 'node_schema' => $node_schema);
+		$edge_schemas = $schema->getOutEdges($node_schema->getName()) + $schema->getInEdges($node_schema->getName());
+		$edges = array();
 
-		$edge_schemas = $this->schema->getOutEdges($node_schema->getName());
-
-		$view_data['edge_schemas'] = $edge_schemas;
-		$view_data['edges'] = array();
 		$has_edges = false;
 
 		foreach ($edge_schemas as $edge_schema) {
+			$edge_schema_name = $edge_schema->getName();
 
-			// Get all the "out" edges, without paging.
-			$edges = $node->getOutEdges($edge_schema);
-			$view_data['edges'][$edge_schema->getName()] = $edges;
+			// If the edges of this schema should be formatted as being undirected.
+			// Note that this is strictly for formatting only as Neo4j doesn't support undirected edges.
+			if ($edge_schema->getOption('format.undirected') or $edge_schema->permits($node_schema, $node_schema)) {
+				$edges[$edge_schema_name] = $node->getEdges($edge_schema); // Get all the edges in all directions.
+			} else if ($edge_schema->permitsStartNode($node_schema)) {
+				$edges[$edge_schema_name] = $node->getOutEdges($edge_schema);
+			} else {
+				$edges[$edge_schema_name] = $node->getInEdges($edge_schema);
+			}
 
-			if (count($edges) > 0) {
+			if (count($edges[$edge_schema_name]) > 0) {
 				$has_edges = true;
 			}
 		}
 
-		$reverse_edge_schemas = $this->schema->getInEdges($node_schema->getName());
+		$view_data = array('title' => $node->getTitle(), 'node' => $node, 'node_schema' => $node_schema);
 
-		$view_data['reverse_edge_schemas'] = array();
-		$view_data['reverse_edges'] = array();
-
-		// Add reverse relationships, but only if a display name is specified.
-		foreach ($reverse_edge_schemas as $reverse_edge_schema) {
-			if (!$reverse_edge_schema->hasOption('format.reverse_name')) {
-				continue;
-			}
-
-			// Get all the "in" edges, without paging.
-			$reverse_edges = $node->getInEdges($reverse_edge_schema);
-
-			if (count($reverse_edges) > 0) {
-				$view_data['reverse_edge_schemas'][] = $reverse_edge_schema;
-				$view_data['reverse_edges'][$reverse_edge_schema->getName()] = $reverse_edges;
-				$has_edges = true;
-			}
-		}
-
+		$view_data['edge_schemas'] = $edge_schemas;
+		$view_data['edges'] = $edges;
 		$view_data['has_edges'] = $has_edges;
 
 		$this->app->render('node', $view_data);

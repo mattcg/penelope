@@ -18,7 +18,31 @@ class NodeCollection extends ObjectCollection {
 		parent::__construct($node_schema);
 	}
 
-	protected function getQuery($aggregate = null) {
-		return $this->formatQuery('MATCH (o:' . $this->object_schema->getName() . ')', array(), $aggregate);
+	protected function getQueryString($aggregate = null, array &$query_params) {
+		$query_string = 'MATCH (o:' . $this->object_schema->getName() . ')';
+
+		$i = 0;
+		foreach ((array) $this->properties as $name => $value) {
+			$query_params['value_' . $i] = $value;
+			$where_parts[] = 'ANY (m IN {value_' . $i . '} WHERE m IN o.' . $name . ')';
+			$i++;
+		}
+
+		if (!empty($where_parts)) {
+			$query_string .= ' WHERE ' . join(' AND ', $where_parts);
+		}
+
+		if ($aggregate) {
+			$query_string .= ' RETURN ' . $aggregate . '(o)';
+		} else {
+			$query_string .= ' RETURN (o)';
+		}
+
+		// Order by only makes sense when not using aggregate.
+		if (!$aggregate and ($order_by = $this->getOrderBy())) {
+			$query_string .= ' ORDER BY o.' . join(', o.', (array) $order_by);
+		}
+
+		return $query_string;
 	}
 }

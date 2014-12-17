@@ -60,7 +60,7 @@ class EdgeCollection extends ObjectCollection {
 		parent::__construct($edge_schema, $properties);
 	}
 
-	protected function getQuery($aggregate = null) {
+	protected function getQueryString($aggregate = null, array &$query_params) {
 		switch ($this->direction) {
 		case self::ALL:
 			$direction = '-[o:%s]-';
@@ -75,9 +75,33 @@ class EdgeCollection extends ObjectCollection {
 			break;
 		}
 
-		$match = 'MATCH (a)' . sprintf($direction, $this->object_schema->getName()) . '(b)';
-		$where = array('id(a) = ' . $this->node->getId());
+		$query_string = 'MATCH (a)' . sprintf($direction, $this->object_schema->getName()) . '(b)';
 
-		return $this->formatQuery($match, $where, $aggregate);
+		$i = 0;
+		$where_parts = array();
+		foreach ((array) $this->properties as $name => $value) {
+			$query_params['value_' . $i] = $value;
+			$where_parts[] = 'ANY (m IN {value_' . $i . '} WHERE m IN o.' . $name . ')';
+			$i++;
+		}
+
+		$query_string .= ' WHERE id(a) = ' . $this->node->getId();
+
+		if (!empty($where_parts)) {
+			$query_string .= ' ' . join(' AND ', $where_parts);
+		}
+
+		if ($aggregate) {
+			$query_string .= ' RETURN ' . $aggregate . '(o)';
+		} else {
+			$query_string .= ' RETURN (o)';
+		}
+
+		// Order by only makes sense when not using aggregate.
+		if (!$aggregate and ($order_by = $this->getOrderBy())) {
+			$query_string .= ' ORDER BY b.' . join(', b.', (array) $order_by);
+		}
+
+		return $query_string;
 	}
 }

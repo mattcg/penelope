@@ -90,59 +90,30 @@ abstract class ObjectCollection implements \Iterator, \Countable, \ArrayAccess {
 	}
 
 	public function getTotalCount() {
-		return (int) $this->getResultSet('count')[0][0];
+		return (int) $this->query('count')[0][0];
 	}
 
 	public function fetch() {
-		$this->resultset = $this->getResultSet();
+		$this->resultset = $this->query();
 	}
 
-	protected function formatQuery($match, array $where_parts = array(), $aggregate = null) {
+	protected function query($aggregate = null) {
 		$query_params = array();
-		$query_string = $match;
-
-		$i = 0;
-		foreach ((array) $this->properties as $name => $value) {
-			$query_params['value_' . $i] = $value;
-			$where_parts[] = 'ANY (m IN {value_' . $i . '} WHERE m IN o.' . $name . ')';
-			$i++;
-		}
-
-		if (!empty($where_parts)) {
-			$query_string .= ' WHERE ' . join(' AND ', $where_parts);
-		}
-
-		if ($aggregate) {
-			$query_string .= ' RETURN ' . $aggregate . '(o)';
-		} else {
-			$query_string .= ' RETURN (o)';
-		}
-
-		// Order by only makes sense when not using aggregate.
-		if (!$aggregate and ($order_by = $this->getOrderBy())) {
-			$query_string .= ' ORDER BY o.' . join(', o.', (array) $order_by);
-		}
+		$query_string = $this->getQueryString($aggregate, $query_params);
 
 		// Aggregate results would be unexpected when using limit.
 		// Return all objects if page and page size are not set.
 		if (!$aggregate and $this->page_size and $this->page) {
-			if ($this->page > 1) {
-				$query_string .= ' SKIP ' . (($this->page * $this->page_size) - $this->page_size);
-			}
-
-			$query_string .= ' LIMIT ' . $this->page_size;
+			$limit = $this->page_size;
+			$query_string .= ' SKIP ' . (($this->page * $limit) - $limit) . ' LIMIT ' . $limit;
 		}
-
-		$client = $this->object_schema->getClient();
 
 		// The standard REST API methods for getting nodes by a label don't support paging.
 		// Neither do they support querying by multiple properties (only by a single property).
 		// This is why we use Cypher instead.
-		return new Neo4j\Cypher\Query($client, $query_string, $query_params);
-	}
+		$query = new Neo4j\Cypher\Query($this->object_schema->getClient(), $query_string, $query_params);
 
-	protected function getResultSet($aggregate = null) {
-		return $this->getQuery($aggregate)->getResultSet();
+		return $query->getResultSet();
 	}
 
 	public function rewind() {
