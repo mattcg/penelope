@@ -95,7 +95,8 @@
 				?>
 				<section class="edge-schema<?php
 
-					if (empty($edge_schema_edges)) {
+					// Need to use count() as variable is an Iterator object and empty will always return false.
+					if (0 === count($edge_schema_edges)) {
 						__(' ' . __class('no-edges', false));
 					}
 
