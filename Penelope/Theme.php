@@ -16,7 +16,7 @@ use Slim;
 use Negotiation\FormatNegotiator;
 use Karwana\MessageFormat\MessageFormat;
 
-class DefaultTheme extends Slim\View {
+abstract class Theme extends Slim\View {
 
 	const ROUTE_NAME = 'resource';
 	const ROUTE_SLUG = 'resources';
@@ -73,15 +73,11 @@ class DefaultTheme extends Slim\View {
 		return $this->app->urlFor(static::ROUTE_NAME, array('resource_path' => $resource_path));
 	}
 
-	public function getDefaultTemplatesDirectory() {
-		return __DIR__ . '/../themes/default';
-	}
-
 	public function getTemplatePath($relative_path) {
 		$relative_path = '/' . ltrim($relative_path, '/\\');
 		$path = $this->getTemplatesDirectory() . $relative_path;
 
-		// Allow fallback to default theme files if DefaultTheme is subclassed.
+		// Allow fallback to default theme files if Theme is subclassed.
 		if (!is_file($path)) {
 			$path = $this->getDefaultTemplatesDirectory() . $relative_path;
 		}

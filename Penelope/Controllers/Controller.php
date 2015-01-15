@@ -14,8 +14,6 @@ namespace Karwana\Penelope\Controllers;
 
 use Slim;
 
-use Karwana\Penelope\DefaultTheme;
-
 class Controller {
 
 	protected $app;
@@ -24,22 +22,12 @@ class Controller {
 		$this->app = $app;
 	}
 
-	public function _e($string) {
-		$view = $this->app->view();
-
-		if ($view instanceof DefaultTheme) {
-			return $view->_e($string);
-		}
-
-		return htmlspecialchars($string, ENT_COMPAT | ENT_HTML5, 'UTF-8', false);
+	public function _e($message) {
+		return $this->app->view->_e($message);
 	}
 
 	public function _m() {
 		$view = $this->app->view();
-
-		if (!($view instanceof DefaultTheme)) {
-			return func_get_arg(0);
-		}
 
 		return call_user_func_array(array($view, '_m'), func_get_args());
 	}

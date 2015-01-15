@@ -28,7 +28,7 @@ class Penelope extends OptionContainer {
 
 	private $schema, $app, $client;
 
-	public function __construct(Neo4j\Client $client, Slim\Slim $app, DefaultTheme $theme = null, array $options = null) {
+	public function __construct(Neo4j\Client $client, Slim\Slim $app, Theme $theme = null, array $options = null) {
 		parent::__construct($options);
 
 		$this->app = $app;
@@ -93,7 +93,7 @@ class Penelope extends OptionContainer {
 		return $this->app;
 	}
 
-	public function setTheme(DefaultTheme $theme) {
+	public function setTheme(Theme $theme) {
 		$old_theme = $this->getTheme();
 		$this->app->view($theme);
 
@@ -110,7 +110,7 @@ class Penelope extends OptionContainer {
 		$this->app->get($pattern, Closure::bind(function(array $resource_path) {
 			$theme = $this->getTheme();
 
-			// Pass if not an instance or child of the default theme, as DefaultTheme#renderResource won't be present.
+			// Pass if not an instance or child of the default theme, as Theme#renderResource won't be present.
 			// In non-standard use cases, this allows the user to use a regular Slim\View as the view.
 			if (!$theme) {
 				$this->getApp()->pass();
@@ -129,7 +129,7 @@ class Penelope extends OptionContainer {
 	public function getTheme() {
 		$view = $this->app->view();
 
-		if ($view instanceof DefaultTheme) {
+		if ($view instanceof Theme) {
 			return $view;
 		}
 	}
