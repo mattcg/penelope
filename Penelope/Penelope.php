@@ -24,12 +24,14 @@ Slim\Route::setDefaultConditions(array(
 	'edge_id' => '\d+'
 ));
 
-class Penelope extends OptionContainer {
+class Penelope {
+
+	use OptionContainer;
 
 	private $schema, $app, $client;
 
 	public function __construct(Neo4j\Client $client, Slim\Slim $app, Theme $theme = null, array $options = null) {
-		parent::__construct($options);
+		$this->setOptions($options);
 
 		$this->app = $app;
 		$this->client = $client;

@@ -12,13 +12,9 @@
 
 namespace Karwana\Penelope;
 
-class OptionContainer {
+trait OptionContainer {
 
 	protected $options;
-
-	public function __construct(array $options = null) {
-		$this->options = $options;
-	}
 
 	public function hasOption($name) {
 		return isset($this->options[$name]);
@@ -40,5 +36,9 @@ class OptionContainer {
 
 	public function getOptions() {
 		return $this->options;
+	}
+
+	public function setOptions(array $options = null) {
+		$this->options = $options;
 	}
 }

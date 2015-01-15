@@ -12,18 +12,16 @@
 
 namespace Karwana\Penelope\Tests;
 
-use Karwana\Penelope\OptionContainer;
-
 class OptionContainerTest extends \PHPUnit_Framework_TestCase {
 
 	public function optionContainerProvider() {
 		$options = array('opt_a' => 1, 'opt_b' => 2);
-		return array(array(new OptionContainer($options)));
+		return array(array(new MockOptionContainer($options)));
 	}
 
 	public function testGetOptions_ReturnsAllOptions() {
 		$options = array('opt_a' => 1, 'opt_b' => 2);
-		$oc = new OptionContainer($options);
+		$oc = new MockOptionContainer($options);
 		$this->assertEquals($options, $oc->getOptions());
 	}
 

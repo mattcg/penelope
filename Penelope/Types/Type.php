@@ -15,12 +15,14 @@ namespace Karwana\Penelope\Types;
 use Karwana\Penelope\OptionContainer;
 use Karwana\Penelope\Exceptions;
 
-abstract class Type extends OptionContainer {
+abstract class Type {
+
+	use OptionContainer;
 
 	protected $value;
 
 	public function __construct($value = null, array $options = null) {
-		parent::__construct($options);
+		$this->setOptions($options);
 
 		if (static::isEmpty($value)) {
 			$this->value = null;
