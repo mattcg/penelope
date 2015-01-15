@@ -14,7 +14,19 @@ namespace Karwana\Penelope;
 
 trait OptionContainer {
 
-	protected $options;
+	public function hasDefault($name) {
+		if (!isset(static::$defaults)) {
+			return false;
+		}
+
+		return isset(static::$defaults[$name]);
+	}
+
+	public function getDefault($name) {
+		if ($this->hasDefault($name)) {
+			return static::$defaults[$name];
+		}
+	}
 
 	public function hasOption($name) {
 		return isset($this->options[$name]);
@@ -24,6 +36,8 @@ trait OptionContainer {
 		if ($this->hasOption($name)) {
 			return $this->options[$name];
 		}
+
+		return $this->getDefault($name);
 	}
 
 	public function setOption($name, $value) {
