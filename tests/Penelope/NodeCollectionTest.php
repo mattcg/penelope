@@ -37,14 +37,14 @@ class NodeCollectionTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testGetCollectionCount_returnsCount($node_schema) {
 		$transport = $node_schema->getClient()->getTransport();
-		$transport->pushResponse(200, array(), array('columns' => array('count(n)'), 'data' => array(array(100))));
+		$transport->pushResponse(200, array(), array('columns' => array('count(o)'), 'data' => array(array(100))));
 
 		$collection = new NodeCollection($node_schema);
 		$count = $collection->getTotalCount();
 		$this->assertEquals(100, $count);
 
 		$last_request = $transport->popRequest();
-		$this->assertEquals(array('method' => 'POST', 'path' => 'cypher', 'data' => array('query' => 'MATCH (n:Person) RETURN count(n)')), $last_request);
+		$this->assertEquals(array('method' => 'POST', 'path' => 'cypher', 'data' => array('query' => 'MATCH (o:Person) RETURN count(o)')), $last_request);
 	}
 
 
@@ -98,7 +98,7 @@ class NodeCollectionTest extends \PHPUnit_Framework_TestCase {
 			'method' => 'POST',
 			'path' => 'cypher',
 			'data' => array(
-				'query' => 'MATCH (n:Person) RETURN (n) SKIP 0 LIMIT 10'
+				'query' => 'MATCH (o:Person) RETURN (o)'
 			)),
 			$last_request
 		);
@@ -138,7 +138,7 @@ class NodeCollectionTest extends \PHPUnit_Framework_TestCase {
 			'method' => 'POST',
 			'path' => 'cypher',
 			'data' => array(
-				'query' => 'MATCH (n:Person) RETURN (n) ORDER BY n.name, n.born SKIP 0 LIMIT 10'
+				'query' => 'MATCH (o:Person) RETURN (o) ORDER BY o.name, o.born'
 			)), $transport->popRequest());
 
 		$this->assertNull($transport->popRequest());
@@ -172,7 +172,7 @@ class NodeCollectionTest extends \PHPUnit_Framework_TestCase {
 			'method' => 'POST',
 			'path' => 'cypher',
 			'data' => array(
-				'query' => 'MATCH (n:Person) RETURN (n) SKIP 2 LIMIT 1'
+				'query' => 'MATCH (o:Person) RETURN (o) SKIP 1 LIMIT 1'
 			)), $transport->popRequest());
 
 		$this->assertNull($transport->popRequest());
@@ -199,7 +199,8 @@ class NodeCollectionTest extends \PHPUnit_Framework_TestCase {
 
 		$node_schema->defineProperty('name');
 
-		$collection = new NodeCollection($node_schema, array('name' => 'Keanu Reeves'));
+		$collection = new NodeCollection($node_schema);
+		$collection->setProperties(array('name' => 'Keanu Reeves'));
 		$collection->fetch();
 
 		$this->assertCount(1, $collection);
@@ -208,7 +209,7 @@ class NodeCollectionTest extends \PHPUnit_Framework_TestCase {
 			'method' => 'POST',
 			'path' => 'cypher',
 			'data' => array(
-				'query' => 'MATCH (n:Person) WHERE ANY (m IN {value_0} WHERE m IN n.name) RETURN (n) SKIP 0 LIMIT 10',
+				'query' => 'MATCH (o:Person) WHERE ANY (m IN {value_0} WHERE m IN o.name) RETURN (o)',
 				'params' => array('value_0' => 'Keanu Reeves')
 			)), $transport->popRequest());
 
@@ -221,11 +222,12 @@ class NodeCollectionTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testGetCollectionCount_returnsSearchCount($node_schema) {
 		$transport = $node_schema->getClient()->getTransport();
-		$transport->pushResponse(200, array(), array('columns' => array('count(n)'), 'data' => array(array(1))));
+		$transport->pushResponse(200, array(), array('columns' => array('count(o)'), 'data' => array(array(1))));
 
 		$node_schema->defineProperty('name');
 
-		$collection = new NodeCollection($node_schema, array('name' => 'Keanu Reeves'));
+		$collection = new NodeCollection($node_schema);
+		$collection->setProperties(array('name' => 'Keanu Reeves'));
 		$count = $collection->getTotalCount();
 
 		$this->assertEquals(1, $count);
@@ -234,7 +236,7 @@ class NodeCollectionTest extends \PHPUnit_Framework_TestCase {
 			'method' => 'POST',
 			'path' => 'cypher',
 			'data' => array(
-				'query' => 'MATCH (n:Person) WHERE ANY (m IN {value_0} WHERE m IN n.name) RETURN count(n)',
+				'query' => 'MATCH (o:Person) WHERE ANY (m IN {value_0} WHERE m IN o.name) RETURN count(o)',
 				'params' => array('value_0' => 'Keanu Reeves')
 			)),
 			$transport->popRequest()
@@ -249,7 +251,7 @@ class NodeCollectionTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testGetCollectionCount_returnsCountForEmptySearch($node_schema) {
 		$transport = $node_schema->getClient()->getTransport();
-		$transport->pushResponse(200, array(), array('columns' => array('count(n)'), 'data' => array(array(1))));
+		$transport->pushResponse(200, array(), array('columns' => array('count(o)'), 'data' => array(array(1))));
 
 		$collection = new NodeCollection($node_schema);
 		$count = $collection->getTotalCount();
@@ -260,7 +262,7 @@ class NodeCollectionTest extends \PHPUnit_Framework_TestCase {
 			'method' => 'POST',
 			'path' => 'cypher',
 			'data' => array(
-				'query' => 'MATCH (n:Person) RETURN count(n)'
+				'query' => 'MATCH (o:Person) RETURN count(o)'
 			)),
 			$transport->popRequest()
 		);
@@ -273,10 +275,10 @@ class NodeCollectionTest extends \PHPUnit_Framework_TestCase {
 	 * @dataProvider nodeSchemaProvider
 	 */
 	public function testGetCollection_throwsExceptionIfPropertyIsUnknown($node_schema) {
-		$collection = new NodeCollection($node_schema, array('name' => 'Keanu Reeves'));
+		$collection = new NodeCollection($node_schema);
 
 		$this->setExpectedException('InvalidArgumentException', 'Unknown property "name".');
 
-		$collection->fetch();
+		$collection->setProperties(array('name' => 'Keanu Reeves'));
 	}
 }

@@ -184,15 +184,6 @@ class NodeSchemaTest extends \PHPUnit_Framework_TestCase {
 	/**
 	 * @dataProvider nodeSchemaProvider
 	 */
-	public function testGetPathFormat_throwsExceptionForUnkownType($node_schema) {
-		$this->setExpectedException('InvalidArgumentException', 'Invalid path type "test".');
-		$node_schema->getPathFormat('test');
-	}
-
-
-	/**
-	 * @dataProvider nodeSchemaProvider
-	 */
 	public function testGetNewPath_returnsNewPath($node_schema) {
 		$this->assertEquals('/people/new', $node_schema->getNewPath());
 

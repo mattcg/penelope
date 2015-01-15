@@ -21,6 +21,12 @@ use Karwana\Penelope\EdgeSchema;
 class EdgeSchemaTest extends \PHPUnit_Framework_TestCase {
 
 	public function getSchema() {
+		static $schema;
+
+		if ($schema) {
+			return $schema;
+		}
+
 		$transport = new MockTransport();
 		$schema = new Schema(new Neo4j\Client($transport));
 		$schema->addNode('Person', 'people');
@@ -105,9 +111,12 @@ class EdgeSchemaTest extends \PHPUnit_Framework_TestCase {
 	 * @dataProvider edgeSchemaProvider
 	 */
 	public function testPermits_checksAllowedStartAndEndNodes($edge_schema) {
-		$this->assertFalse($edge_schema->permits('Person', 'Person'));
-		$this->assertFalse($edge_schema->permits('Car', 'Person'));
-		$this->assertFalse($edge_schema->permits('Car', 'Car'));
-		$this->assertTrue($edge_schema->permits('Person', 'Car'));
+		$person_schema = $this->getSchema()->getNode('Person');
+		$car_schema = $this->getSchema()->getNode('Car');
+
+		$this->assertFalse($edge_schema->permits($person_schema, $person_schema));
+		$this->assertFalse($edge_schema->permits($car_schema, $person_schema));
+		$this->assertFalse($edge_schema->permits($car_schema, $car_schema));
+		$this->assertTrue($edge_schema->permits($person_schema, $car_schema));
 	}
 }
