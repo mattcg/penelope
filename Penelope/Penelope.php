@@ -30,6 +30,12 @@ class Penelope {
 
 	private $schema, $app, $client;
 
+	protected static $defaults = array(
+		'path.format.uploads' => '/uploads/:file_name',
+		'path.format.resources' => '/resources/:resource_path+',
+		'path.format.search' => '/search'
+	);
+
 	public function __construct(Neo4j\Client $client, Slim\Slim $app, Theme $theme = null, array $options = null) {
 		$this->setOptions($options);
 
@@ -51,25 +57,36 @@ class Penelope {
 			$controller->read();
 		}, $this));
 
-		// TODO: Make the uploads slug configurable using the same suggested method as for search (below).
 		// Set up the uploads route.
-		$app->get('/uploads/:file_name', Closure::bind(function($file_name) {
+		$app->get($this->getOption('path.format.uploads'), Closure::bind(function($file_name) {
 			$controller = new Controllers\UploadController($this->app);
 			$controller->read($file_name);
 		}, $this));
 
-		// TODO: Use the same technique using getPathFormat as used by ObjectSchema. Perhaps hive off those methods into a separate PathFormatter class.
-		if ($this->hasOption('search.slug')) {
-			$search_slug = $this->getOption('search.slug');
-		} else {
-			$search_slug = 'search';
-		}
-
 		// Set up the search controller.
-		$app->get('/' . $search_slug, Closure::bind(function() {
+		$app->get($this->getOption('path.format.search'), Closure::bind(function() {
 			$controller = new Controllers\SearchController($this->app, $this->schema, $this->client);
 			$controller->run();
 		}, $this))->name('search');
+
+		// Set up the resources controller.
+		$this->app->get($this->getOption('path.format.resources'), Closure::bind(function(array $resource_path) {
+			$theme = $this->getTheme();
+
+			// Pass if not an instance or child of the default theme, as Theme#renderResource won't be present.
+			// In non-standard use cases, this allows the user to use a regular Slim\View as the view.
+			if (!$theme) {
+				$this->getApp()->pass();
+			}
+
+			$controller = new Controllers\FileController($this->app);
+			if ($theme->hasResource($resource_path)) {
+				$controller->read($theme->getResourcePath($resource_path));
+			} else {
+				$this->getApp()->notFound(new Exceptions\Exception('Unknown resource "' . implode('/', $resource_path) . '".'));
+			}
+
+		}, $this))->name('resources');
 
 		// Set up a default handler for 404 errors.
 		// Only Penelope application-generated exceptions are permitted.
@@ -96,36 +113,7 @@ class Penelope {
 	}
 
 	public function setTheme(Theme $theme) {
-		$old_theme = $this->getTheme();
 		$this->app->view($theme);
-
-		$pattern = '/' . $theme::ROUTE_SLUG . '/:resource_path+';
-
-		// Slim doesn't allow a named route to be removed or overwritten once added, so some trickery is needed to rename it.
-		if ($old_theme) {
-			$route = $this->app->router->getNamedRoute($old_theme::ROUTE_NAME);
-			$route->setName($theme::ROUTE_NAME);
-			$route->setPattern($pattern);
-			return;
-		}
-
-		$this->app->get($pattern, Closure::bind(function(array $resource_path) {
-			$theme = $this->getTheme();
-
-			// Pass if not an instance or child of the default theme, as Theme#renderResource won't be present.
-			// In non-standard use cases, this allows the user to use a regular Slim\View as the view.
-			if (!$theme) {
-				$this->getApp()->pass();
-			}
-
-			$controller = new Controllers\FileController($this->app);
-			if ($theme->hasResource($resource_path)) {
-				$controller->read($theme->getResourcePath($resource_path));
-			} else {
-				$this->getApp()->notFound(new Exceptions\Exception('Unknown resource "' . implode('/', $resource_path) . '".'));
-			}
-
-		}, $this))->name($theme::ROUTE_NAME);
 	}
 
 	public function getTheme() {

@@ -18,9 +18,6 @@ use Karwana\MessageFormat\MessageFormat;
 
 abstract class Theme extends Slim\View {
 
-	const ROUTE_NAME = 'resource';
-	const ROUTE_SLUG = 'resources';
-
 	protected $app, $resources = array(), $messageformat;
 
 	public function __construct(Slim\Slim $app, MessageFormat $messageformat = null) {
@@ -70,7 +67,7 @@ abstract class Theme extends Slim\View {
 	}
 
 	public function getResourceUrl($resource_path) {
-		return $this->app->urlFor(static::ROUTE_NAME, array('resource_path' => $resource_path));
+		return $this->app->urlFor('resources', array('resource_path' => $resource_path));
 	}
 
 	public function getTemplatePath($relative_path) {

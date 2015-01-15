@@ -18,7 +18,12 @@ class EdgeSchema extends ObjectSchema {
 
 	private $end_schema, $start_schema;
 
-	protected $path_formats = array('collection' => '/%s/%s/%s/', 'new' => '/%s/%s/%s/new', 'edit' => '/%s/%s/%s/%s/edit', 'object' => '/%s/%s/%s/%s');
+	protected static $defaults = array(
+		'path.format.collection' => '/%s/%s/%s/',
+		'path.format.new' => '/%s/%s/%s/new',
+		'path.format.edit' => '/%s/%s/%s/%s/edit',
+		'path.format.object' => '/%s/%s/%s/%s'
+	);
 
 	public function __construct(Neo4j\Client $client, $name, $slug, NodeSchema $start_schema, NodeSchema $end_schema, array $properties = null, array $options = null) {
 		$this->end_schema = $end_schema;
@@ -99,21 +104,21 @@ class EdgeSchema extends ObjectSchema {
 
 	public function getNewPath() {
 		$node_slug = $this->start_schema->getSlug();
-		return sprintf($this->getPathFormat('new'), $node_slug, ':node_id',  $this->getSlug());
+		return sprintf($this->getOption('path.format.new'), $node_slug, ':node_id',  $this->getSlug());
 	}
 
 	public function getEditPath() {
 		$node_slug = $this->start_schema->getSlug();
-		return sprintf($this->getPathFormat('edit'), $node_slug, ':node_id',  $this->getSlug(), ':edge_id');
+		return sprintf($this->getOption('path.format.edit'), $node_slug, ':node_id',  $this->getSlug(), ':edge_id');
 	}
 
 	public function getPath() {
 		$node_slug = $this->start_schema->getSlug();
-		return sprintf($this->getPathFormat(), $node_slug, ':node_id',  $this->getSlug(), ':edge_id');
+		return sprintf($this->getOption('path.format.object'), $node_slug, ':node_id',  $this->getSlug(), ':edge_id');
 	}
 
 	public function getCollectionPath() {
 		$node_slug = $this->start_schema->getSlug();
-		return sprintf($this->getPathFormat('collection'), $node_slug, ':node_id', $this->getSlug());
+		return sprintf($this->getOption('path.format.collection'), $node_slug, ':node_id', $this->getSlug());
 	}
 }

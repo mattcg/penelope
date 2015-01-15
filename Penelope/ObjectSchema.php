@@ -20,8 +20,6 @@ abstract class ObjectSchema {
 
 	protected $client, $name, $slug, $property_schemas = array();
 
-	protected $path_formats = array();
-
 	public function __construct(Neo4j\Client $client, $name, $slug, array $properties = null, array $options = null) {
 		$this->setOptions($options);
 
@@ -121,18 +119,5 @@ abstract class ObjectSchema {
 		}
 
 		return $this->property_schemas[$name];
-	}
-
-	public function getPathFormat($type = 'object') {
-		if (!isset($this->path_formats[$type])) {
-			throw new \InvalidArgumentException('Invalid path type "' . $type . '".');
-		}
-
-		$format = $this->getOption('path.format.' . $type);
-		if ($format) {
-			return $format;
-		}
-
-		return $this->path_formats[$type];
 	}
 }

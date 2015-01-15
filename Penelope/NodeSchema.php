@@ -16,7 +16,12 @@ use Everyman\Neo4j;
 
 class NodeSchema extends ObjectSchema {
 
-	protected $path_formats = array('collection' => '/%s/', 'new' => '/%s/new', 'edit' => '/%s/%s/edit', 'object' => '/%s/%s');
+	protected static $defaults = array(
+		'path.format.collection' => '/%s/',
+		'path.format.new' => '/%s/new',
+		'path.format.edit' => '/%s/%s/edit',
+		'path.format.object' => '/%s/%s'
+	);
 
 	public function get($id) {
 		$node = new Node($this, $id);
@@ -72,18 +77,18 @@ class NodeSchema extends ObjectSchema {
 	}
 
 	public function getNewPath() {
-		return sprintf($this->getPathFormat('new'), $this->getSlug());
+		return sprintf($this->getOption('path.format.new'), $this->getSlug());
 	}
 
 	public function getEditPath() {
-		return sprintf($this->getPathFormat('edit'), $this->getSlug(), ':node_id');
+		return sprintf($this->getOption('path.format.edit'), $this->getSlug(), ':node_id');
 	}
 
 	public function getPath() {
-		return sprintf($this->getPathFormat(), $this->getSlug(), ':node_id');
+		return sprintf($this->getOption('path.format.object'), $this->getSlug(), ':node_id');
 	}
 
 	public function getCollectionPath() {
-		return sprintf($this->getPathFormat('collection'), $this->getSlug());
+		return sprintf($this->getOption('path.format.collection'), $this->getSlug());
 	}
 }
