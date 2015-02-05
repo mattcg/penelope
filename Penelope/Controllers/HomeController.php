@@ -49,8 +49,12 @@ class HomeController extends Controller {
 		// Get label totals.
 		$query = new Neo4j\Cypher\Query($this->client, 'MATCH n RETURN DISTINCT count(labels(n)), labels(n);');
 		foreach ($query->getResultSet() as $row) {
-			if (!empty($row[1][0]) and isset($view_data['node_totals'][$row[1][0]])) {
-				$view_data['node_totals'][$row[1][0]] = $row[0];
+
+			// The query result groups nodes with the same label. For example, a group of nodes will have `array('PERSON', 'DOCUMENT')` and another `array('PERSON')`.
+			foreach ($row[1] as $label) {
+				if (isset($view_data['node_totals'][$label])) {
+					$view_data['node_totals'][$label] += $row[0];
+				}
 			}
 		}
 
