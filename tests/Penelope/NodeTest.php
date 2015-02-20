@@ -514,6 +514,22 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
 		$car_node = new Node($schema->getNode('Car'), 1);
 		$car_node->fetch();
 
+		// Request for labels.
+		$this->assertEquals(array(
+			'method' => 'GET',
+			'path' => '/node/1/labels',
+			'data' => null
+		), $transport->popRequest());
+
+		// Request for node.
+		$this->assertEquals(array(
+			'method' => 'GET',
+			'path' => '/node/1',
+			'data' => null
+		), $transport->popRequest());
+
+		$this->assertNull($transport->popRequest());
+
 		$friend_edge_schema = $schema->getEdge('Friend');
 
 		$this->setExpectedException('Karwana\Penelope\Exceptions\SchemaException', 'The schema for edges of type "Friend" does not permit edges from nodes of type "Car".');
@@ -546,6 +562,22 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
 		$car_node = new Node($schema->getNode('Car'), 1);
 		$car_node->fetch();
 
+		// Request for labels.
+		$this->assertEquals(array(
+			'method' => 'GET',
+			'path' => '/node/1/labels',
+			'data' => null
+		), $transport->popRequest());
+
+		// Request for node.
+		$this->assertEquals(array(
+			'method' => 'GET',
+			'path' => '/node/1',
+			'data' => null
+		), $transport->popRequest());
+
+		$this->assertNull($transport->popRequest());
+
 		$friend_edge_schema = $schema->getEdge('Friend');
 
 		$this->setExpectedException('Karwana\Penelope\Exceptions\SchemaException', 'The schema for edges of type "Friend" does not permit edges to nodes of type "Car".');
@@ -577,6 +609,22 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
 
 		$car_node = new Node($schema->getNode('Car'), 1);
 		$car_node->fetch();
+
+		// Request for labels.
+		$this->assertEquals(array(
+			'method' => 'GET',
+			'path' => '/node/1/labels',
+			'data' => null
+		), $transport->popRequest());
+
+		// Request for node.
+		$this->assertEquals(array(
+			'method' => 'GET',
+			'path' => '/node/1',
+			'data' => null
+		), $transport->popRequest());
+
+		$this->assertNull($transport->popRequest());
 
 		$friend_edge_schema = $schema->getEdge('Friend');
 
@@ -688,12 +736,48 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
 	 * @dataProvider schemaProvider
 	 */
 	public function testGetEdges_throwsOnInvalidDirection($schema) {
-		$direction = '💩';
+		$transport = $schema->getClient()->getTransport();
 
-		$this->setExpectedException('RuntimeException', 'Invalid direction: "' . $direction . '".');
+		// Response for labels.
+		$transport->pushResponse(200, array(), array('Person'));
+
+		// Response for node.
+		$transport->pushResponse(200, array(), array(
+			'columns' => array('n'),
+			'data' => array(
+				array(array(
+					'self' => 'http://localhost:7474/db/data/node/1',
+					'metadata' => array('id' => 1, 'labels' => array('Person')),
+					'data' => array()
+				))
+			))
+		);
+
+		$person_node = new Node($schema->getNode('Person'), 1);
+		$person_node->fetch();
+
+		// Request for labels.
+		$this->assertEquals(array(
+			'method' => 'GET',
+			'path' => '/node/1/labels',
+			'data' => null
+		), $transport->popRequest());
+
+		// Request for node.
+		$this->assertEquals(array(
+			'method' => 'GET',
+			'path' => '/node/1',
+			'data' => null
+		), $transport->popRequest());
+
+		$this->assertNull($transport->popRequest());
 
 		$edge_schema = $schema->getEdge('Friend');
-		$schema->getNode('Person')->create()->getEdges($edge_schema, $direction);
+
+		$direction = 'nothing';
+		$this->setExpectedException('RuntimeException', 'Invalid direction: "' . $direction . '".');
+
+		$person_node->getEdges($edge_schema, $direction);
 	}
 
 

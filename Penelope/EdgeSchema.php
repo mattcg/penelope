@@ -47,7 +47,7 @@ class EdgeSchema extends ObjectSchema {
 		return $edge;
 	}
 
-	public function getCollection(Node $node, $direction = Neo4j\Relationship::DirectionAll, $page = null, $page_size = null, array $properties = null) {
+	public function getCollection(Node $node, $direction = EdgeCollection::ALL, $page = null, $page_size = null, array $properties = null) {
 		$edge_collection = new EdgeCollection($this, $node, $direction);
 
 		if ($page) {

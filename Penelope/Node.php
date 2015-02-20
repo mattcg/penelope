@@ -93,8 +93,8 @@ class Node extends Object {
 		return $edge_schema->getCollection($this, EdgeCollection::IN);
 	}
 
-	public function getEdges(EdgeSchema $edge_schema) {
-		return $edge_schema->getCollection($this);
+	public function getEdges(EdgeSchema $edge_schema, $direction = EdgeCollection::ALL) {
+		return $edge_schema->getCollection($this, $direction);
 	}
 
 	public function save() {
