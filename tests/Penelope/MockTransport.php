@@ -29,11 +29,12 @@ class MockTransport extends BaseTransport {
 			);
 		}
 
+		$this->requests[] = compact('method', 'path', 'data');
+
 		if (empty($this->responses)) {
 			throw new \LogicException('No response to return.');
 		}
 
-		$this->requests[] = compact('method', 'path', 'data');
 		$response = array_pop($this->responses);
 		return $response;
 	}
@@ -44,5 +45,9 @@ class MockTransport extends BaseTransport {
 
 	public function popRequest() {
 		return array_pop($this->requests);
+	}
+
+	public function getRequests() {
+		return $this->requests;
 	}
 }
