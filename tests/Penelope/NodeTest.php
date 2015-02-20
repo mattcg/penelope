@@ -494,10 +494,29 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
 	 * @dataProvider schemaProvider
 	 */
 	public function testGetOutEdges_throwsForInvalidSchema($schema) {
-		$this->setExpectedException('Karwana\Penelope\Exceptions\SchemaException', 'The schema for edges of type "Friend" does not permit edges from nodes of type "Car".');
+		$transport = $schema->getClient()->getTransport();
 
-		$car_node = $schema->getNode('Car')->create();
+		// Response for labels.
+		$transport->pushResponse(200, array(), array('Car'));
+
+		// Response for node.
+		$transport->pushResponse(200, array(), array(
+			'columns' => array('n'),
+			'data' => array(
+				array(array(
+					'self' => 'http://localhost:7474/db/data/node/1',
+					'metadata' => array('id' => 1, 'labels' => array('Car')),
+					'data' => array()
+				))
+			))
+		);
+
+		$car_node = new Node($schema->getNode('Car'), 1);
+		$car_node->fetch();
+
 		$friend_edge_schema = $schema->getEdge('Friend');
+
+		$this->setExpectedException('Karwana\Penelope\Exceptions\SchemaException', 'The schema for edges of type "Friend" does not permit edges from nodes of type "Car".');
 
 		$car_node->getOutEdges($friend_edge_schema);
 	}
@@ -507,10 +526,29 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
 	 * @dataProvider schemaProvider
 	 */
 	public function testGetInEdges_throwsForInvalidSchema($schema) {
-		$this->setExpectedException('Karwana\Penelope\Exceptions\SchemaException', 'The schema for edges of type "Friend" does not permit edges to nodes of type "Car".');
+		$transport = $schema->getClient()->getTransport();
 
-		$car_node = $schema->getNode('Car')->create();
+		// Response for labels.
+		$transport->pushResponse(200, array(), array('Car'));
+
+		// Response for node.
+		$transport->pushResponse(200, array(), array(
+			'columns' => array('n'),
+			'data' => array(
+				array(array(
+					'self' => 'http://localhost:7474/db/data/node/1',
+					'metadata' => array('id' => 1, 'labels' => array('Car')),
+					'data' => array()
+				))
+			))
+		);
+
+		$car_node = new Node($schema->getNode('Car'), 1);
+		$car_node->fetch();
+
 		$friend_edge_schema = $schema->getEdge('Friend');
+
+		$this->setExpectedException('Karwana\Penelope\Exceptions\SchemaException', 'The schema for edges of type "Friend" does not permit edges to nodes of type "Car".');
 
 		$car_node->getInEdges($friend_edge_schema);
 	}
@@ -520,10 +558,29 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
 	 * @dataProvider schemaProvider
 	 */
 	public function testGetEdges_throwsForInvalidSchema($schema) {
-		$this->setExpectedException('Karwana\Penelope\Exceptions\SchemaException', 'The schema for edges of type "Friend" does not permit edges to or from nodes of type "Car".');
+		$transport = $schema->getClient()->getTransport();
 
-		$car_node = $schema->getNode('Car')->create();
+		// Response for labels.
+		$transport->pushResponse(200, array(), array('Car'));
+
+		// Response for node.
+		$transport->pushResponse(200, array(), array(
+			'columns' => array('n'),
+			'data' => array(
+				array(array(
+					'self' => 'http://localhost:7474/db/data/node/1',
+					'metadata' => array('id' => 1, 'labels' => array('Car')),
+					'data' => array()
+				))
+			))
+		);
+
+		$car_node = new Node($schema->getNode('Car'), 1);
+		$car_node->fetch();
+
 		$friend_edge_schema = $schema->getEdge('Friend');
+
+		$this->setExpectedException('Karwana\Penelope\Exceptions\SchemaException', 'The schema for edges of type "Friend" does not permit edges to or from nodes of type "Car".');
 
 		$car_node->getEdges($friend_edge_schema);
 	}
