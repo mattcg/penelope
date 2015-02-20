@@ -350,7 +350,7 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
 
 		$node_schema = $schema->getNode('Car');
 
-		$this->setExpectedException('Karwana\Penelope\Exceptions\SchemaException', 'Node with ID "1" exists, but does not match schema "Car".');
+		$this->setExpectedException('Karwana\Penelope\Exceptions\SchemaException', 'Node with ID "1" does not match schema "Car".');
 		$node_schema->get(1);
 	}
 
@@ -778,57 +778,6 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
 		$this->setExpectedException('RuntimeException', 'Invalid direction: "' . $direction . '".');
 
 		$person_node->getEdges($edge_schema, $direction);
-	}
-
-
-	/**
-	 * @dataProvider schemaProvider
-	 */
-	public function testGetEdges_triggersErrorOnNonCompliantEdge($schema) {
-		$transport = $schema->getClient()->getTransport();
-		$person_schema = $schema->getNode('Person');
-		$friend_edge_schema = $schema->getEdge('Friend');
-
-		// Recreate the object from scratch.
-		$node = new Node($person_schema, 1);
-
-		// Response for relationship.
-		$transport->pushResponse(200, array(), array(
-			array(
-				'start' => 'http://localhost:7474/db/data/node/1',
-				'data' => array(
-					'roles' => array('Lt. Daniel Kaffee')
-				),
-				'self' => 'http://localhost:7474/db/data/relationship/1',
-				'property' => 'http://localhost:7474/db/data/relationship/1/properties/{key}',
-				'properties' => 'http://localhost:7474/db/data/relationship/1/properties',
-				'type' => 'Boyfriend',
-				'extensions' => array(),
-				'end' => 'http://localhost:7474/db/data/node/2',
-				'metadata' => array(
-					'id' => 1,
-					'type' => 'Boyfriend'
-				)
-			)
-		));
-
-		// Response for labels.
-		$transport->pushResponse(200, array(), array('Person'));
-
-		// Response for node.
-		$transport->pushResponse(200, array(), array(
-			'columns' => array('n'),
-			'data' => array(
-				array(array(
-					'self' => 'http://localhost:7474/db/data/node/1',
-					'metadata' => array('id' => 1, 'labels' => array('Person')),
-					'data' => array('born' => 1964, 'name' => 'Keanu Reeves')
-				))
-			))
-		);
-
-		$this->setExpectedException('PHPUnit_Framework_Error_Notice', 'Edge with ID "1" of type "Boyfriend" does not conform to schema.');
-		$node->getEdges($friend_edge_schema);
 	}
 
 

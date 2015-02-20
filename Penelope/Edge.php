@@ -81,7 +81,7 @@ class Edge extends Object {
 		}
 
 		if (!$this->schema->envelopes($client_edge)) {
-			throw new Exceptions\SchemaException('Edge with ID "' . $this->id . '" exists, but does not match schema "' . $this->schema->getName() . '".');
+			throw new Exceptions\SchemaException('Edge with ID "' . $this->id . '" does not match schema "' . $this->schema->getName() . '".');
 		}
 
 		$this->client_object = $client_edge;

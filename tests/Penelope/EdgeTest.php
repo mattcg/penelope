@@ -113,7 +113,7 @@ class EdgeTest extends \PHPUnit_Framework_TestCase {
 	 * @dataProvider edgeSchemaProvider
 	 */
 	public function testFetch_throwsExceptionIfEdgeDoesNotMatchSchema($edge_schema) {
-		$this->setExpectedException('Karwana\Penelope\Exceptions\SchemaException', 'Edge with ID "1" exists, but does not match schema "OWNER".');
+		$this->setExpectedException('Karwana\Penelope\Exceptions\SchemaException', 'Edge with ID "1" does not match schema "OWNER".');
 		$edge = new Edge($edge_schema, 1);
 
 		$transport = $edge->getClient()->getTransport();
