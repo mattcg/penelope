@@ -645,47 +645,46 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
 		// Recreate the object from scratch.
 		$node = new Node($person_schema, 1);
 
-		// Responses for start and end node labels.
+		// Response for labels.
 		$transport->pushResponse(200, array(), array('Person'));
 		$transport->pushResponse(200, array(), array('Person'));
 
 		// Response for relationship.
 		$transport->pushResponse(200, array(), array(
-			array(
-				'start' => 'http://localhost:7474/db/data/node/1',
-				'data' => array(
-					'roles' => array('Lt. Daniel Kaffee')
-				),
-				'self' => 'http://localhost:7474/db/data/relationship/1',
-				'property' => 'http://localhost:7474/db/data/relationship/1/properties/{key}',
-				'properties' => 'http://localhost:7474/db/data/relationship/1/properties',
-				'type' => 'Friend',
-				'extensions' => array(),
-				'end' => 'http://localhost:7474/db/data/node/2',
-				'metadata' => array(
-					'id' => 1,
-					'type' => 'Friend'
-				)
-			)
-		));
-
-		// Response for labels.
-		$transport->pushResponse(200, array(), array('Person'));
-
-		// Response for node.
-		$transport->pushResponse(200, array(), array(
-			'columns' => array('n'),
+			'columns' => array('o'),
 			'data' => array(
 				array(array(
-					'self' => 'http://localhost:7474/db/data/node/1',
-					'metadata' => array('id' => 1, 'labels' => array('Person')),
-					'data' => array('born' => 1964, 'name' => 'Keanu Reeves')
+					'self' => 'http://localhost:7474/db/data/relationship/1',
+					'property' => 'http://localhost:7474/db/data/relationship/1/properties/{key}',
+					'properties' => 'http://localhost:7474/db/data/relationship/1/properties',
+					'start' => 'http://localhost:7474/db/data/node/1',
+					'end' => 'http://localhost:7474/db/data/node/2',
+					'extensions' => array(),
+					'type' => 'Friend',
+					'metadata' => array('id' => 1, 'type' =>'Friend'),
+					'data' => array()
 				))
 			))
 		);
 
 		$edges = $node->getEdges($friend_edge_schema);
 
+		$this->assertEquals(array(
+			'method' => 'POST',
+			'path' => 'cypher',
+			'data' => array(
+				'query' => 'MATCH (a)-[o:Friend]-(b) WHERE id(a) = 1 RETURN (o)'
+			)
+		), $transport->popRequest());
+
+		// No more requests.
+		$this->assertNull($transport->popRequest());
+
+		$this->assertCount(1, $edges);
+
+		$edge = $edges[0];
+
+		// Requests for labels.
 		$this->assertEquals(array(
 			'method' => 'GET',
 			'path' => '/node/1/labels',
@@ -698,37 +697,13 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
 			'data' => null
 		), $transport->popRequest());
 
-		// Request for getting relationships.
-		$this->assertEquals(array(
-			'method' => 'GET',
-			'path' => '/node/1/relationships/all/Friend',
-			'data' => null
-		), $transport->popRequest());
-
-		// Request for labels.
-		$this->assertEquals(array(
-			'method' => 'GET',
-			'path' => '/node/1/labels',
-			'data' => null
-		), $transport->popRequest());
-
-		// Request for node.
-		$this->assertEquals(array(
-			'method' => 'GET',
-			'path' => '/node/1',
-			'data' => null
-		), $transport->popRequest());
-
-		// No more requests.
-		$this->assertNull($transport->popRequest());
-
-		$this->assertCount(1, $edges);
-
-		$edge = $edges[0];
 		$this->assertEquals(1, $edge->getId());
 		$this->assertEquals('Friend', $edge->getSchema()->getName());
 		$this->assertEquals(1, $edge->getStartNode()->getId());
 		$this->assertEquals(2, $edge->getEndNode()->getId());
+
+		// No more requests.
+		$this->assertNull($transport->popRequest());
 	}
 
 
