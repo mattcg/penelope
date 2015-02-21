@@ -40,6 +40,8 @@
 		<a name="<?php __(_m('node_main_anchor')); ?>"><h1 class="main-title"><?php __($title); ?></h1></a>
 		<?php
 
+		__optional_require('node_share.php');
+
 		if (isset($node)) {
 			$option = $node_schema->getOption('format.abstract');
 			if ($option and $property = $node->getProperty($option) and $property->hasValue()) {
