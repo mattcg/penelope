@@ -109,6 +109,12 @@ abstract class Theme extends Slim\View {
 		$resources = $this->resources;
 		foreach ($resources as $resource_type => $resource_paths) {
 			foreach ($resource_paths as $i => $resource_path) {
+
+				// Ignore absolute URLs.
+				if (preg_match('/^[a-z]*:?\/\//', $resource_path)) {
+					continue;
+				}
+
 				$resources[$resource_type][$i] = $this->getResourceUrl($resource_path);
 			}
 		}
